@@ -1,4 +1,4 @@
-from langgraph.graph import StateGraph, END
+from langgraph.graph import StateGraph, END, START
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_groq import ChatGroq
 from typing import Dict, List ,TypedDict
@@ -21,9 +21,8 @@ class DataAnalystAgent:
     def __init__(self ,groq_api_key: str):# Initialize with Groq's LLM (using Mixtral model)
         self.llm = ChatGroq(
             api_key=groq_api_key,
-            model_name="llama2-70b-4096",  # or "llama2-70b-4096"
-            temperature=0.1,
-            max_tokens=4096
+            model_name="llama3-8b-8192",  # or "llama2-70b-4096"
+            temperature=0.1
         )
         self.graph = self._create_workflow()
         
@@ -68,7 +67,36 @@ class DataAnalystAgent:
         """
         
         response = self.llm.invoke([HumanMessage(content=viz_prompt)])
-        state.suggested_visualizations = eval(response.content)
+        
+        # Instead of using eval directly, parse the response to extract valid JSON
+        try:
+            # Try to find JSON-like content in the response
+            import re
+            import json
+            # Look for content that might be a list of dictionaries
+            json_match = re.search(r'\[\s*\{.*\}\s*\]', response.content, re.DOTALL)
+            if json_match:
+                state.suggested_visualizations = json.loads(json_match.group(0))
+            else:
+                # Fallback to a simple visualization if parsing fails
+                state.suggested_visualizations = [
+                    {
+                        "chart_type": "histogram",
+                        "variables_to_use": [state.column_types.get("numerical", [])[0] if state.column_types.get("numerical", []) else list(state.data.columns)[0]],
+                        "reasoning": "Fallback visualization due to parsing error"
+                    }
+                ]
+        except Exception as e:
+            # Handle any parsing errors with a fallback visualization
+            print(f"Error parsing visualization suggestions: {e}")
+            state.suggested_visualizations = [
+                {
+                    "chart_type": "histogram",
+                    "variables_to_use": [list(state.data.columns)[0]],
+                    "reasoning": "Fallback visualization due to parsing error"
+                }
+            ]
+        
         return state
 
     def create_visualization(self, state: DataAnalysisState) -> DataAnalysisState:
@@ -87,18 +115,23 @@ class DataAnalystAgent:
             plt.title(f"{viz['chart_type'].title()} of {', '.join(viz['variables_to_use'])}")
             plt.show()
         
+        # Set current_step to complete to prevent infinite loop
+        state.current_step = "complete"
         return state
 
     def _create_workflow(self) -> StateGraph:
         """Create the workflow graph"""
-        graph = StateGraph()
+        # Define the state schema based on DataAnalysisState
+        graph = StateGraph(state_schema=DataAnalysisState)
         
         # Add nodes
         graph.add_node("analyze", self.analyze_data_types)
         graph.add_node("suggest", self.suggest_visualizations)
         graph.add_node("visualize", self.create_visualization)
         
-        # Add edges
+                
+        # Add edges between nodes
+        graph.add_edge(START, "analyze")
         graph.add_edge("analyze", "suggest")
         graph.add_edge("suggest", "visualize")
         
