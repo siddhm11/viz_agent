@@ -12,6 +12,8 @@ import logging
 import sys
 import traceback
 import time
+import datetime
+
 
 # Set up logging configuration
 logging.basicConfig(
@@ -294,7 +296,14 @@ class DataAnalystAgent:
             """
             explanation_resp = self.llm.invoke([HumanMessage(content=explain_prompt)])
             explanation = explanation_resp.content.strip()
-            
+            log_path = "explanations.log"   # or wherever you want the file
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write("=== New Explanation ===\n")
+                f.write("Prompt:\n")
+                f.write(explain_prompt.strip() + "\n\n")
+                f.write("Explanation:\n")
+                f.write(explanation + "\n\n")
+
             # 2. Now ask LLM to generate the plotting code
             code_prompt = f"""
             Generate Python code to create a {chart_type} visualization for the variables {variables}.
@@ -328,6 +337,7 @@ class DataAnalystAgent:
             1. The base64-encoded image string
             2. Any detected insights or warnings (string)
             3. Success status (boolean)
+            4. the code should be in runnable in seaborn(version 0.13.2) or matplotlib (version 3.7.2)
             """
             
             code_response = self.llm.invoke([HumanMessage(content=code_prompt)])
@@ -378,6 +388,23 @@ class DataAnalystAgent:
                             'image_base64': img_str,
                             'generated_code': plot_code  # Store the generated code for reference
                         })
+                    
+                        # Now: append prompt, raw LLM response, and final sanitized code to a log file
+                        log_path = "generated_plot_code.log"
+                        with open(log_path, "a", encoding="utf-8") as f:
+                            f.write("=== New Code Generation Entry ===\n")
+                            f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+
+                            f.write("1) Code Prompt:\n")
+                            f.write(code_prompt.strip() + "\n\n")
+
+                            f.write("2) Raw LLM Response:\n")
+                            f.write(code_response.content.strip() + "\n\n")
+
+                            f.write("3) Extracted `generate_plot` Code:\n")
+                            f.write("```python\n")
+                            f.write(plot_code.strip() + "\n")
+                            f.write("```\n\n\n")
                     else:
                         # If the code reported failure but didn't raise an exception
                         self.logger.warning(f"Code executed but reported failure: {insights}")
@@ -501,7 +528,8 @@ class DataAnalystAgent:
         
         response = self.llm.invoke([HumanMessage(content=evaluation_prompt)])
         state.feedback = response.content
-        
+        print("LLM Feedback:")
+        print(state.feedback)
         # Set current_step to complete to end the workflow
         state.current_step = "complete"
         return state
@@ -575,21 +603,3 @@ class DataAnalystAgent:
             self.logger.error(f"Error in run_analysis: {str(e)}")
             self.logger.error(traceback.format_exc())
             raise
-# Example usage:
-# agent = DataAnalystAgent(groq_api_key="your-groq-api-key")
-# result = agent.run_analysis(your_dataframe)
-# 
-# # To display visualizations in a notebook:
-# from IPython.display import Image, display
-# import base64
-# 
-# for viz in result.visualization_outputs:
-#     if 'image_base64' in viz:
-#         display(Image(data=base64.b64decode(viz['image_base64'])))
-#         print(f"Chart: {viz['chart_type']} of {viz['variables']}")
-#         print(f"Reasoning: {viz['reasoning']}")
-#         print("---")
-# 
-# # Display LLM feedback and evaluation
-# print("\nAnalysis Feedback:")
-# print(result.feedback)

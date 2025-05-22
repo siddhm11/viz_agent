@@ -58,3 +58,28 @@ viz_prompt = f"""
         - variables_to_use
         - reasoning
         """
+
+
+evaluation_prompt = f"""
+        You are a data visualization expert.
+        
+        Here's the dataset preview:
+        {state.data_preview}
+        
+        Here are the column types identified:
+        {state.column_types}
+        
+        Here are the relationships identified:
+        {state.variable_relationships}
+        
+        The following visualizations were created:
+        {chr(10).join(viz_descriptions)}
+        
+        Please evaluate the visualizations and provide:
+        1. Are there any issues with the current visualizations?
+        2. What additional visualizations would be helpful?
+        3. Are there any alternative approaches that might reveal insights better?
+        4. What conclusions can be drawn from the current visualizations?
+        
+        Format your response as a report that could be shown to a data analyst.
+        """

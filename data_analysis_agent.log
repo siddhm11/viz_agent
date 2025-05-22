@@ -1595,3 +1595,885 @@ I think that's a more accurate approach.
 2025-05-21 17:07:12,042 - newviz - INFO - Analysis workflow completed in 651.24 seconds
 2025-05-21 17:07:12,042 - newviz - INFO - Result contains 28 visualizations
 2025-05-21 17:07:12,042 - newviz - INFO - LLM feedback was generated
+2025-05-22 10:45:17,221 - newviz - INFO - Initializing DataAnalystAgent
+2025-05-22 10:45:17,392 - newviz - INFO - Initialized LLM with model: llama3-70b-8192
+2025-05-22 10:45:17,402 - newviz - INFO - Created workflow graph
+2025-05-22 10:45:17,402 - newviz - INFO - Starting analysis workflow
+2025-05-22 10:45:17,402 - newviz - INFO - Input data shape: (1000, 16)
+2025-05-22 10:45:17,402 - newviz - INFO - Invoking workflow graph
+2025-05-22 10:45:17,405 - newviz - INFO - Starting data preview preparation
+2025-05-22 10:45:17,405 - newviz - INFO - DataFrame shape: (1000, 16)
+2025-05-22 10:45:17,405 - newviz - INFO - DataFrame columns: ['student_id', 'age', 'gender', 'study_hours_per_day', 'social_media_hours', 'netflix_hours', 'part_time_job', 'attendance_percentage', 'sleep_hours', 'diet_quality', 'exercise_frequency', 'parental_education_level', 'internet_quality', 'mental_health_rating', 'extracurricular_participation', 'exam_score']
+2025-05-22 10:45:17,420 - newviz - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-22 10:45:17,421 - newviz - INFO - Starting data type analysis
+2025-05-22 10:45:17,422 - newviz - INFO - Analyzing data types for 16 columns
+2025-05-22 10:45:17,422 - newviz - INFO - Sending analyze_data_types prompt to LLM
+2025-05-22 10:45:20,120 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:45:20,125 - newviz - INFO - Received response from LLM for data type analysis
+2025-05-22 10:45:20,125 - newviz - ERROR - Error parsing column types: unterminated string literal (detected at line 4) (<string>, line 4)
+2025-05-22 10:45:20,125 - newviz - ERROR - Raw LLM response: <think>
+Okay, I need to categorize each column in the dataset into numerical (continuous or discrete), categorical (ordinal or nominal), or temporal. Let me go through each column one by one.
+
+Starting with 'student_id'. It's an object type, so it's likely a string identifier. Since it's unique for each student and doesn't have any inherent order, it's nominal categorical.
+
+Next, 'age' is an integer. It's a count of years, so it's discrete numerical.
+
+'gender' is an object, which usually means strings like 'Male' or 'Female'. This is a nominal category since it's a label without any order.
+
+'study_hours_per_day' is a float. It represents a continuous measure of time spent studying, so it's continuous numerical.
+
+'social_media_hours' and 'netflix_hours' are also floats, similar to study hours. They measure time spent, so they're continuous numerical as well.
+
+'part_time_job' is an object, likely 'Yes' or 'No'. This is a binary category, so nominal categorical.
+
+'attendance_percentage' is a float, ranging from 0 to 100. It's a continuous measure, so continuous numerical.
+
+'sleep_hours' is a float, indicating the number of hours slept. That's continuous numerical.
+
+'diet_quality' is an object. If it has categories like 'Poor', 'Fair', 'Good', that's an ordinal category because it has a natural order.
+
+'exercise_frequency' is an integer, probably on a scale from 0 to 6. This is an ordinal categorical variable since the numbers represent levels of frequency.
+
+'parental_education_level' is an object. If it includes levels like 'High School', 'Master', etc., it's ordinal because higher levels are better.
+
+'internet_quality' is an object. If it's something like 'Poor', 'Average', 'Good', that's ordinal.
+
+'mental_health_rating' is an integer, likely on a scale from 1 to 10. This is an ordinal categorical variable.
+
+'extracurricular_participation' is an object, probably 'Yes' or 'No'. That's nominal categorical.
+
+'exam_score' is a float, which is a continuous measure of score, so continuous numerical.
+
+I don't see any temporal columns here, so none of them fall into that category.
+</think>
+
+{
+    "student_id": "categorical_nominal",
+    "age": "numerical_discrete",
+    "gender": "categorical_nominal",
+    "study_hours_per_day": "numerical_continuous",
+    "social_media_hours": "numerical_continuous",
+    "netflix_hours": "numerical_continuous",
+    "part_time_job": "categorical_nominal",
+    "attendance_percentage": "numerical_continuous",
+    "sleep_hours": "numerical_continuous",
+    "diet_quality": "categorical_ordinal",
+    "exercise_frequency": "categorical_ordinal",
+    "parental_education_level": "categorical_ordinal",
+    "internet_quality": "categorical_ordinal",
+    "mental_health_rating": "categorical_ordinal",
+    "extracurricular_participation": "categorical_nominal",
+    "exam_score": "numerical_continuous"
+}
+2025-05-22 10:45:20,126 - newviz - INFO - Using fallback column types: {'student_id': 'categorical', 'age': 'numerical', 'gender': 'categorical', 'study_hours_per_day': 'numerical', 'social_media_hours': 'numerical', 'netflix_hours': 'numerical', 'part_time_job': 'categorical', 'attendance_percentage': 'numerical', 'sleep_hours': 'numerical', 'diet_quality': 'categorical', 'exercise_frequency': 'numerical', 'parental_education_level': 'categorical', 'internet_quality': 'categorical', 'mental_health_rating': 'numerical', 'extracurricular_participation': 'categorical', 'exam_score': 'numerical'}
+2025-05-22 10:45:20,126 - newviz - INFO - Completed data type analysis in 2.70 seconds
+2025-05-22 10:45:20,127 - newviz - INFO - Starting relationship identification
+2025-05-22 10:45:20,127 - newviz - INFO - Sending identify_relationships prompt to LLM
+2025-05-22 10:45:26,362 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:45:26,364 - newviz - INFO - Received response from LLM for relationship identification
+2025-05-22 10:45:26,364 - newviz - WARNING - Could not extract relationships list from LLM response. Using empty list.
+2025-05-22 10:45:26,364 - newviz - INFO - Completed relationship identification in 6.24 seconds
+2025-05-22 10:45:32,728 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:45:32,732 - newviz - INFO - Starting dynamic LLM-based visualization creation
+2025-05-22 10:45:32,736 - newviz - INFO - Created data summary for LLM with 16 columns
+2025-05-22 10:45:32,736 - newviz - INFO - Requesting code for histogram visualization of age
+2025-05-22 10:45:32,771 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:45:32,771 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:45:43,058 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:45:43,094 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:45:43,094 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:45:55,870 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:45:55,873 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:45:55,873 - newviz - INFO - Extracted plotting code of length 2069
+2025-05-22 10:45:55,875 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 10:45:55,875 - newviz - WARNING - Code executed but reported failure: Error generating plot: The 'age' column is either missing or not of numerical type
+2025-05-22 10:45:56,088 - newviz - INFO - Requesting code for histogram visualization of study_hours_per_day
+2025-05-22 10:45:56,118 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:45:56,118 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 10:46:04,792 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:46:04,826 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:46:04,827 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:46:16,415 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:46:16,416 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:46:16,416 - newviz - INFO - Extracted plotting code of length 1554
+2025-05-22 10:46:16,485 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:46:16,486 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:46:16,487 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:46:16,512 - newviz - INFO - Requesting code for histogram visualization of social_media_hours
+2025-05-22 10:46:16,542 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:46:16,542 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:46:22,979 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:46:23,014 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:46:23,015 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:46:34,731 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:46:34,735 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:46:34,735 - newviz - INFO - Extracted plotting code of length 1191
+2025-05-22 10:46:34,825 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:46:34,825 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:46:34,827 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:46:34,845 - newviz - INFO - Requesting code for histogram visualization of netflix_hours
+2025-05-22 10:46:34,873 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:46:34,873 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:46:41,502 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:46:41,578 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:46:41,578 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:46:53,647 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:46:53,649 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:46:53,649 - newviz - INFO - Extracted plotting code of length 1364
+2025-05-22 10:46:53,716 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:46:53,717 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:46:53,718 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:46:53,735 - newviz - INFO - Requesting code for histogram visualization of attendance_percentage
+2025-05-22 10:46:53,774 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:46:53,775 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:47:00,843 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:00,878 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:00,879 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:47:11,591 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:11,592 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:47:11,592 - newviz - INFO - Extracted plotting code of length 1529
+2025-05-22 10:47:11,687 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:47:11,687 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:47:11,689 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:47:11,706 - newviz - INFO - Requesting code for histogram visualization of sleep_hours
+2025-05-22 10:47:11,736 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:11,737 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:47:19,586 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:19,628 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:19,628 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:47:31,302 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:31,305 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:47:31,305 - newviz - INFO - Extracted plotting code of length 1238
+2025-05-22 10:47:31,398 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:47:31,398 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:47:31,400 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:47:31,416 - newviz - INFO - Requesting code for histogram visualization of exercise_frequency
+2025-05-22 10:47:31,455 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:31,456 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:47:38,018 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:38,072 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:38,072 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:47:49,820 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:49,824 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:47:49,824 - newviz - INFO - Extracted plotting code of length 1658
+2025-05-22 10:47:49,879 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:47:49,880 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:47:49,881 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:47:49,898 - newviz - INFO - Requesting code for histogram visualization of mental_health_rating
+2025-05-22 10:47:49,968 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:49,968 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:47:56,029 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:47:56,064 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:47:56,065 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:48:08,436 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:48:08,440 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:48:08,440 - newviz - INFO - Extracted plotting code of length 1626
+2025-05-22 10:48:08,592 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:48:08,592 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:48:08,594 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:48:08,611 - newviz - INFO - Requesting code for histogram visualization of exam_score
+2025-05-22 10:48:08,639 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:48:08,639 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:48:16,678 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:48:16,715 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:48:16,715 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 10:48:29,668 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:48:29,671 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:48:29,671 - newviz - INFO - Extracted plotting code of length 1638
+2025-05-22 10:48:29,744 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:48:29,744 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:48:29,745 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:48:29,763 - newviz - INFO - Requesting code for bar chart visualization of gender
+2025-05-22 10:48:29,796 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:48:29,797 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:48:37,203 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:48:37,243 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:48:37,245 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:48:49,837 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:48:49,838 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:48:49,838 - newviz - INFO - Extracted plotting code of length 1462
+2025-05-22 10:48:49,881 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:48:49,881 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:48:49,883 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:48:49,901 - newviz - INFO - Requesting code for bar chart visualization of part_time_job
+2025-05-22 10:48:49,927 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:48:49,927 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 10:48:59,082 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:48:59,115 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:48:59,116 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:49:10,772 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:49:10,773 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:49:10,774 - newviz - INFO - Extracted plotting code of length 1283
+2025-05-22 10:49:10,826 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:49:10,826 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:49:10,827 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:49:10,846 - newviz - INFO - Requesting code for bar chart visualization of diet_quality
+2025-05-22 10:49:10,989 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:49:10,989 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:49:17,238 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:49:17,273 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:49:17,273 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:49:29,268 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:49:29,272 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:49:29,272 - newviz - INFO - Extracted plotting code of length 1238
+2025-05-22 10:49:29,332 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:49:29,332 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:49:29,334 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:49:29,351 - newviz - INFO - Requesting code for bar chart visualization of parental_education_level
+2025-05-22 10:49:29,405 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:49:29,405 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:49:36,764 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:49:36,797 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:49:36,798 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:49:49,129 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:49:49,133 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:49:49,133 - newviz - INFO - Extracted plotting code of length 1988
+2025-05-22 10:49:49,185 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 10:49:49,185 - newviz - WARNING - Code executed but reported failure: Error generating plot: The 'parental_education_level' column contains missing values
+2025-05-22 10:49:49,207 - newviz - INFO - Requesting code for bar chart visualization of internet_quality
+2025-05-22 10:49:49,234 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:49:49,234 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:49:56,930 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:49:56,965 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:49:56,965 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:50:08,730 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:50:08,732 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:50:08,732 - newviz - INFO - Extracted plotting code of length 1259
+2025-05-22 10:50:08,791 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:50:08,791 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:50:08,792 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:50:08,811 - newviz - INFO - Requesting code for bar chart visualization of extracurricular_participation
+2025-05-22 10:50:08,837 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:50:08,838 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:50:15,398 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:50:15,448 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:50:15,448 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:50:27,846 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:50:27,850 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:50:27,850 - newviz - INFO - Extracted plotting code of length 1398
+2025-05-22 10:50:27,900 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:50:27,901 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:50:27,902 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:50:27,919 - newviz - INFO - Requesting code for scatter plot visualization of study_hours_per_day vs exam_score
+2025-05-22 10:50:28,033 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:50:28,033 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:50:35,545 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:50:35,609 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:50:35,609 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:50:48,132 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:50:48,133 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:50:48,134 - newviz - INFO - Extracted plotting code of length 1724
+2025-05-22 10:50:48,152 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 10:50:48,152 - newviz - WARNING - Code executed but reported failure: Error generating plot: PathCollection.set() got an unexpected keyword argument 'ci'
+2025-05-22 10:50:48,171 - newviz - INFO - Requesting code for scatter plot visualization of social_media_hours vs exam_score
+2025-05-22 10:50:48,205 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:50:48,205 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 10:50:56,691 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:50:56,724 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:50:56,725 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:51:08,819 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:51:08,821 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:51:08,822 - newviz - INFO - Extracted plotting code of length 1508
+2025-05-22 10:51:08,889 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:51:08,889 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:51:08,891 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:51:08,910 - newviz - INFO - Requesting code for scatter plot visualization of netflix_hours vs exam_score
+2025-05-22 10:51:08,954 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:51:08,954 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:51:16,801 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:51:16,829 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:51:16,829 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:51:29,829 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:51:29,830 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:51:29,830 - newviz - INFO - Extracted plotting code of length 2025
+2025-05-22 10:51:29,890 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:51:29,891 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:51:29,892 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:51:29,910 - newviz - INFO - Requesting code for scatter plot visualization of attendance_percentage vs exam_score
+2025-05-22 10:51:29,951 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:51:29,951 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-22 10:51:38,836 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:51:38,878 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:51:38,878 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:51:50,150 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:51:50,154 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:51:50,154 - newviz - INFO - Extracted plotting code of length 1415
+2025-05-22 10:51:50,218 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:51:50,218 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:51:50,220 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:51:50,237 - newviz - INFO - Requesting code for box plot visualization of exam_score by gender
+2025-05-22 10:51:50,274 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:51:50,274 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:51:57,386 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:51:57,419 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:51:57,419 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:52:07,392 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:52:07,393 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:52:07,393 - newviz - INFO - Extracted plotting code of length 1251
+2025-05-22 10:52:07,482 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:52:07,482 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:52:07,484 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:52:07,500 - newviz - INFO - Requesting code for box plot visualization of exam_score by part_time_job
+2025-05-22 10:52:07,533 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:52:07,533 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 3.000000 seconds
+2025-05-22 10:52:13,004 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:52:13,037 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:52:13,037 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 10:52:27,255 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:52:27,255 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:52:27,256 - newviz - INFO - Extracted plotting code of length 2483
+2025-05-22 10:52:27,318 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:52:27,318 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:52:27,319 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:52:27,337 - newviz - INFO - Requesting code for box plot visualization of exam_score by diet_quality
+2025-05-22 10:52:27,363 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:52:27,363 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-22 10:52:36,108 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:52:36,166 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:52:36,167 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:52:48,762 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:52:48,767 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:52:48,767 - newviz - INFO - Extracted plotting code of length 2301
+2025-05-22 10:52:48,838 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:52:48,838 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:52:48,839 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:52:48,856 - newviz - INFO - Requesting code for box plot visualization of exam_score by parental_education_level
+2025-05-22 10:52:48,888 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:52:48,888 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:52:58,955 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:52:58,989 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:52:58,990 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:53:11,612 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:53:11,614 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:53:11,614 - newviz - INFO - Extracted plotting code of length 1974
+2025-05-22 10:53:11,679 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:53:11,680 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:53:11,681 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:53:11,698 - newviz - INFO - Requesting code for box plot visualization of exam_score by internet_quality
+2025-05-22 10:53:11,807 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:53:11,808 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 10:53:20,141 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:53:20,171 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:53:20,172 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:53:32,547 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:53:32,548 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:53:32,549 - newviz - INFO - Extracted plotting code of length 1562
+2025-05-22 10:53:32,609 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:53:32,609 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:53:32,611 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:53:32,629 - newviz - INFO - Requesting code for box plot visualization of exam_score by extracurricular_participation
+2025-05-22 10:53:32,663 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:53:32,663 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:53:39,757 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:53:39,804 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:53:39,805 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:53:52,741 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:53:52,743 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:53:52,743 - newviz - INFO - Extracted plotting code of length 2002
+2025-05-22 10:53:52,795 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:53:52,795 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:53:52,796 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:53:52,814 - newviz - INFO - Requesting code for violin plot visualization of exam_score by gender
+2025-05-22 10:53:52,847 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:53:52,847 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-22 10:54:01,985 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:54:02,030 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:54:02,030 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:54:12,884 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:54:12,888 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:54:12,888 - newviz - INFO - Extracted plotting code of length 1747
+2025-05-22 10:54:12,950 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:54:12,950 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:54:12,951 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:54:12,970 - newviz - INFO - Requesting code for violin plot visualization of exam_score by part_time_job
+2025-05-22 10:54:13,068 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:54:13,068 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:54:20,273 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:54:20,319 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:54:20,320 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 10:54:33,620 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:54:33,623 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:54:33,623 - newviz - INFO - Extracted plotting code of length 1866
+2025-05-22 10:54:33,695 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:54:33,695 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:54:33,696 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:54:33,713 - newviz - INFO - Requesting code for violin plot visualization of exam_score by diet_quality
+2025-05-22 10:54:33,745 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:54:33,746 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:54:41,522 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:54:41,573 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:54:41,574 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 10:54:54,862 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:54:54,867 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:54:54,868 - newviz - INFO - Extracted plotting code of length 1622
+2025-05-22 10:54:55,120 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:54:55,120 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:54:55,121 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:54:55,138 - newviz - INFO - Requesting code for violin plot visualization of exam_score by parental_education_level
+2025-05-22 10:54:55,171 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:54:55,171 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 10:55:02,277 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:55:02,321 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:55:02,322 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 10:55:13,485 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:55:13,489 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:55:13,489 - newviz - INFO - Extracted plotting code of length 1544
+2025-05-22 10:55:13,550 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:55:13,553 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:55:13,554 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:55:13,572 - newviz - INFO - Requesting code for violin plot visualization of exam_score by internet_quality
+2025-05-22 10:55:13,601 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:55:13,601 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 10:55:21,636 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:55:21,680 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:55:21,681 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 10:55:33,598 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:55:33,602 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:55:33,602 - newviz - INFO - Extracted plotting code of length 1341
+2025-05-22 10:55:33,664 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:55:33,665 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:55:33,666 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:55:33,683 - newviz - INFO - Requesting code for violin plot visualization of exam_score by extracurricular_participation
+2025-05-22 10:55:33,714 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:55:33,714 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 10:55:40,987 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:55:41,031 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:55:41,032 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 10:55:54,508 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:55:54,513 - newviz - INFO - Received code generation response from LLM
+2025-05-22 10:55:54,513 - newviz - INFO - Extracted plotting code of length 1964
+2025-05-22 10:55:54,570 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 10:55:54,570 - newviz - ERROR - Error executing generated code: name 'datetime' is not defined
+2025-05-22 10:55:54,571 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 394, in create_visualization
+    f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
+                          ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'
+
+2025-05-22 10:55:54,588 - newviz - INFO - Completed creation of 59 visualizations
+2025-05-22 10:55:54,622 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 10:55:54,622 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 42.000000 seconds
+2025-05-22 10:56:43,817 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 10:56:43,821 - newviz - INFO - Analysis workflow completed in 686.42 seconds
+2025-05-22 10:56:43,821 - newviz - INFO - Result contains 59 visualizations
+2025-05-22 10:56:43,821 - newviz - INFO - LLM feedback was generated
+2025-05-22 11:16:56,912 - newviz - INFO - Initializing DataAnalystAgent
+2025-05-22 11:19:21,509 - newviz - INFO - Initializing DataAnalystAgent
+2025-05-22 11:19:21,615 - newviz - INFO - Initialized LLM with model: llama3-70b-8192
+2025-05-22 11:19:21,623 - newviz - INFO - Created workflow graph
+2025-05-22 11:19:21,623 - newviz - INFO - Starting analysis workflow
+2025-05-22 11:19:21,623 - newviz - INFO - Input data shape: (1000, 16)
+2025-05-22 11:19:21,623 - newviz - INFO - Invoking workflow graph
+2025-05-22 11:19:21,625 - newviz - INFO - Starting data preview preparation
+2025-05-22 11:19:21,625 - newviz - INFO - DataFrame shape: (1000, 16)
+2025-05-22 11:19:21,625 - newviz - INFO - DataFrame columns: ['student_id', 'age', 'gender', 'study_hours_per_day', 'social_media_hours', 'netflix_hours', 'part_time_job', 'attendance_percentage', 'sleep_hours', 'diet_quality', 'exercise_frequency', 'parental_education_level', 'internet_quality', 'mental_health_rating', 'extracurricular_participation', 'exam_score']
+2025-05-22 11:19:21,636 - newviz - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-22 11:19:21,637 - newviz - INFO - Starting data type analysis
+2025-05-22 11:19:21,637 - newviz - INFO - Analyzing data types for 16 columns
+2025-05-22 11:19:21,637 - newviz - INFO - Sending analyze_data_types prompt to LLM
+2025-05-22 11:19:24,378 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:19:24,383 - newviz - INFO - Received response from LLM for data type analysis
+2025-05-22 11:19:24,383 - newviz - ERROR - Error parsing column types: unterminated string literal (detected at line 10) (<string>, line 10)
+2025-05-22 11:19:24,383 - newviz - ERROR - Raw LLM response: <think>
+Okay, I need to categorize each column in the dataset into numerical (continuous or discrete), categorical (ordinal or nominal), or temporal. Let me go through each column one by one.
+
+Starting with 'student_id'. It's an object type, so it's likely a string identifier. Since it's unique for each student and doesn't have any inherent order, this should be nominal categorical.
+
+Next, 'age' is an integer. It's a count of years, so it's discrete numerical.
+
+'gender' is an object, which typically refers to categories like male, female, etc. This is a nominal categorical variable.
+
+'study_hours_per_day' is a float. It represents a continuous measure of time spent studying, so it's continuous numerical.
+
+'social_media_hours' and 'netflix_hours' are also floats, measuring time spent on social media and Netflix respectively. These are continuous numerical variables.
+
+'part_time_job' is an object, likely indicating yes or no. This is a binary nominal categorical variable.
+
+'attendance_percentage' is a float, showing a percentage which is a continuous measure, so continuous numerical.
+
+'sleep_hours' is a float, indicating the number of hours slept, which is continuous numerical.
+
+'diet_quality' is an object. If it's something like 'poor', 'fair', 'good', it's an ordinal categorical variable because it has a natural order.
+
+'exercise_frequency' is an integer, probably representing how often someone exercises, like days per week. This is discrete numerical.
+
+'parental_education_level' is an object. If it's categories like 'high school', 'master', etc., it's ordinal because higher levels are better.
+
+'internet_quality' is an object. If it's categories like 'poor', 'average', 'good', it's ordinal.
+
+'mental_health_rating' is an integer, likely on a scale, so it's ordinal categorical.
+
+'extracurricular_participation' is an object, probably yes or no, making it nominal categorical.
+
+Finally, 'exam_score' is a float, which is a continuous measure of exam performance, so continuous numerical.
+
+I don't see any temporal variables in this dataset, so none of the columns fall into that category.
+</think>
+
+{
+    "student_id": "categorical_nominal",
+    "age": "numerical_discrete",
+    "gender": "categorical_nominal",
+    "study_hours_per_day": "numerical_continuous",
+    "social_media_hours": "numerical_continuous",
+    "netflix_hours": "numerical_continuous",
+    "part_time_job": "categorical_nominal",
+    "attendance_percentage": "numerical_continuous",
+    "sleep_hours": "numerical_continuous",
+    "diet_quality": "categorical_ordinal",
+    "exercise_frequency": "numerical_discrete",
+    "parental_education_level": "categorical_ordinal",
+    "internet_quality": "categorical_ordinal",
+    "mental_health_rating": "categorical_ordinal",
+    "extracurricular_participation": "categorical_nominal",
+    "exam_score": "numerical_continuous"
+}
+2025-05-22 11:19:24,384 - newviz - INFO - Using fallback column types: {'student_id': 'categorical', 'age': 'numerical', 'gender': 'categorical', 'study_hours_per_day': 'numerical', 'social_media_hours': 'numerical', 'netflix_hours': 'numerical', 'part_time_job': 'categorical', 'attendance_percentage': 'numerical', 'sleep_hours': 'numerical', 'diet_quality': 'categorical', 'exercise_frequency': 'numerical', 'parental_education_level': 'categorical', 'internet_quality': 'categorical', 'mental_health_rating': 'numerical', 'extracurricular_participation': 'categorical', 'exam_score': 'numerical'}
+2025-05-22 11:19:24,384 - newviz - INFO - Completed data type analysis in 2.75 seconds
+2025-05-22 11:19:24,385 - newviz - INFO - Starting relationship identification
+2025-05-22 11:19:24,385 - newviz - INFO - Sending identify_relationships prompt to LLM
+2025-05-22 11:19:29,575 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:19:29,576 - newviz - INFO - Received response from LLM for relationship identification
+2025-05-22 11:19:29,577 - newviz - INFO - Identified 13 potential relationships
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 1: ['study_hours_per_day', 'social_media_hours', 'netflix_hours', 'exam_score'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 2: ['attendance_percentage', 'exam_score'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 3: ['sleep_hours', 'exam_score'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 4: ['diet_quality', 'exam_score'] - comparison
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 5: ['exercise_frequency', 'exam_score'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 6: ['mental_health_rating', 'exam_score'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 7: ['gender', 'study_hours_per_day', 'social_media_hours', 'netflix_hours'] - comparison
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 8: ['parental_education_level', 'exam_score'] - comparison
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 9: ['internet_quality', 'study_hours_per_day'] - comparison
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 10: ['diet_quality', 'sleep_hours'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 11: ['extracurricular_participation', 'exam_score'] - comparison
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 12: ['part_time_job', 'study_hours_per_day', 'attendance_percentage'] - comparison
+2025-05-22 11:19:29,577 - newviz - INFO - Relationship 13: ['study_hours_per_day', 'social_media_hours', 'netflix_hours'] - correlation
+2025-05-22 11:19:29,577 - newviz - INFO - Completed relationship identification in 5.19 seconds
+2025-05-22 11:19:29,605 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:19:29,605 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 2.000000 seconds
+2025-05-22 11:19:36,625 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:19:36,627 - newviz - INFO - Starting dynamic LLM-based visualization creation
+2025-05-22 11:19:36,632 - newviz - INFO - Created data summary for LLM with 16 columns
+2025-05-22 11:19:36,632 - newviz - INFO - Requesting code for histogram visualization of ['study_hours_per_day']
+2025-05-22 11:19:36,683 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:19:36,684 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:19:48,266 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:19:48,308 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:19:48,308 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 11:20:02,516 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:20:02,520 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:20:02,520 - newviz - INFO - Extracted plotting code of length 1630
+2025-05-22 11:20:02,712 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:20:02,712 - newviz - INFO - Requesting code for boxplot visualization of ['exam_score']
+2025-05-22 11:20:02,742 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:20:02,742 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 11:20:11,447 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:20:11,492 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:20:11,492 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:20:23,574 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:20:23,576 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:20:23,577 - newviz - INFO - Extracted plotting code of length 1349
+2025-05-22 11:20:23,650 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:20:23,651 - newviz - INFO - Requesting code for bar chart visualization of ['gender']
+2025-05-22 11:20:23,682 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:20:23,683 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:20:30,769 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:20:30,809 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:20:30,810 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:20:41,911 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:20:41,914 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:20:41,914 - newviz - INFO - Extracted plotting code of length 1277
+2025-05-22 11:20:41,980 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:20:41,981 - newviz - INFO - Requesting code for scatter plot visualization of ['study_hours_per_day', 'exam_score']
+2025-05-22 11:20:42,040 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:20:42,040 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 11:20:49,723 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:20:49,756 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:20:49,756 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:21:01,947 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:21:01,948 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:21:01,948 - newviz - INFO - Extracted plotting code of length 2227
+2025-05-22 11:21:02,029 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:21:02,029 - newviz - INFO - Requesting code for box plot visualization of ['exam_score', 'gender']
+2025-05-22 11:21:02,074 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:21:02,074 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-22 11:21:10,986 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:21:11,028 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:21:11,029 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:21:23,087 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:21:23,092 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:21:23,092 - newviz - INFO - Extracted plotting code of length 1690
+2025-05-22 11:21:23,161 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:21:23,162 - newviz - INFO - Requesting code for histogram visualization of ['social_media_hours']
+2025-05-22 11:21:23,634 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:21:23,634 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:21:30,598 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:21:30,683 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:21:30,684 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:21:41,479 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:21:41,481 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:21:41,482 - newviz - INFO - Extracted plotting code of length 1805
+2025-05-22 11:21:41,575 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:21:41,576 - newviz - INFO - Requesting code for bar chart visualization of ['diet_quality']
+2025-05-22 11:21:41,607 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:21:41,607 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 4.000000 seconds
+2025-05-22 11:21:47,616 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:21:47,670 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:21:47,670 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:22:00,396 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:22:00,401 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:22:00,401 - newviz - INFO - Extracted plotting code of length 1838
+2025-05-22 11:22:00,452 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:22:00,453 - newviz - INFO - Requesting code for scatter plot visualization of ['sleep_hours', 'exam_score']
+2025-05-22 11:22:00,547 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:22:00,547 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 11:22:09,259 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:22:09,295 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:22:09,296 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:22:21,505 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:22:21,508 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:22:21,508 - newviz - INFO - Extracted plotting code of length 1335
+2025-05-22 11:22:21,560 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:22:21,560 - newviz - INFO - Requesting code for box plot visualization of ['exam_score', 'parental_education_level']
+2025-05-22 11:22:21,586 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:22:21,586 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 11:22:30,106 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:22:30,147 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:22:30,148 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 11:22:43,454 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:22:43,457 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:22:43,458 - newviz - INFO - Extracted plotting code of length 1500
+2025-05-22 11:22:43,516 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:22:43,517 - newviz - INFO - Requesting code for histogram visualization of ['netflix_hours']
+2025-05-22 11:22:43,558 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:22:43,559 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:22:50,759 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:22:50,798 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:22:50,800 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:23:03,281 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:23:03,282 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:23:03,282 - newviz - INFO - Extracted plotting code of length 2211
+2025-05-22 11:23:03,328 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:23:03,328 - newviz - INFO - Requesting code for bar chart visualization of ['extracurricular_participation']
+2025-05-22 11:23:03,359 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:23:03,359 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 11:23:11,550 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:23:11,591 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:23:11,591 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:23:23,739 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:23:23,744 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:23:23,744 - newviz - INFO - Extracted plotting code of length 1823
+2025-05-22 11:23:23,826 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:23:23,827 - newviz - INFO - Requesting code for scatter plot visualization of ['study_hours_per_day', 'social_media_hours']
+2025-05-22 11:23:23,859 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:23:23,860 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:23:30,497 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:23:30,534 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:23:30,534 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:23:42,755 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:23:42,778 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:23:42,778 - newviz - INFO - Extracted plotting code of length 2062
+2025-05-22 11:23:42,871 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:23:42,871 - newviz - INFO - Requesting code for box plot visualization of ['exam_score', 'part_time_job']
+2025-05-22 11:23:42,909 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:23:42,910 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-22 11:23:52,184 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:23:52,218 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:23:52,218 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:24:04,619 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:24:04,621 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:24:04,621 - newviz - INFO - Extracted plotting code of length 1853
+2025-05-22 11:24:04,696 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:24:04,696 - newviz - INFO - Requesting code for histogram visualization of ['attendance_percentage']
+2025-05-22 11:24:04,727 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:24:04,727 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-22 11:24:12,492 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:24:12,540 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:24:12,541 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:24:23,579 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:24:23,583 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:24:23,583 - newviz - INFO - Extracted plotting code of length 1791
+2025-05-22 11:24:23,655 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:24:23,656 - newviz - INFO - Requesting code for bar chart visualization of ['internet_quality']
+2025-05-22 11:24:23,705 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:24:23,705 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:24:30,736 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:24:30,777 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:24:30,777 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:24:41,661 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:24:41,664 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:24:41,664 - newviz - INFO - Extracted plotting code of length 1485
+2025-05-22 11:24:41,708 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:24:41,709 - newviz - INFO - Requesting code for scatter plot visualization of ['mental_health_rating', 'exam_score']
+2025-05-22 11:24:41,759 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:24:41,760 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:24:49,262 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:24:49,301 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:24:49,302 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:25:01,908 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:25:01,909 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:25:01,909 - newviz - INFO - Extracted plotting code of length 1829
+2025-05-22 11:25:01,974 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:25:01,974 - newviz - INFO - Requesting code for box plot visualization of ['exam_score', 'diet_quality']
+2025-05-22 11:25:02,010 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:25:02,010 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-22 11:25:11,268 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:25:11,330 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:25:11,331 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 11:25:23,472 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:25:23,474 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:25:23,475 - newviz - INFO - Extracted plotting code of length 1740
+2025-05-22 11:25:23,524 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 11:25:23,525 - newviz - WARNING - Code executed but reported failure: Error generating plot: module 'pandas.core.dtypes.base' has no attribute 'StringDtype'
+2025-05-22 11:25:23,544 - newviz - INFO - Requesting code for histogram visualization of ['exercise_frequency']
+2025-05-22 11:25:23,611 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:25:23,612 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 5.000000 seconds
+2025-05-22 11:25:30,722 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:25:30,914 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:25:30,915 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 11:25:41,442 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:25:41,444 - newviz - INFO - Received code generation response from LLM
+2025-05-22 11:25:41,445 - newviz - INFO - Extracted plotting code of length 1336
+2025-05-22 11:25:41,510 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 11:25:41,511 - newviz - INFO - Completed creation of 18 visualizations
+2025-05-22 11:25:41,551 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 11:25:41,552 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 30.000000 seconds
+2025-05-22 11:26:17,239 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 11:26:17,243 - newviz - INFO - Analysis workflow completed in 415.62 seconds
+2025-05-22 11:26:17,244 - newviz - INFO - Result contains 18 visualizations
+2025-05-22 11:26:17,244 - newviz - INFO - LLM feedback was generated

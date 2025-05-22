@@ -21,7 +21,7 @@ class DataAnalystAgent:
     def __init__(self ,groq_api_key: str):# Initialize with Groq's LLM (using Mixtral model)
         self.llm = ChatGroq(
             api_key=groq_api_key,
-            model_name="llama3-8b-8192",  # or "llama2-70b-4096"
+            model_name="llama3-70b-8192",  # or "llama2-70b-4096"
             temperature=0.1
         )
         self.graph = self._create_workflow()
