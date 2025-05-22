@@ -20,7 +20,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("data_analysis_agent.log"),
+        logging.FileHandler("logs/data_analysis_agent.log"),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -66,7 +66,7 @@ class DataAnalystAgent:
             
             # Capture DataFrame.head()
             buffer.write("## Data Preview (First 5 rows)\n")
-            buffer.write(state.data.head().to_string())
+            buffer.write(state.data.head(15).to_string())
             buffer.write("\n\n")
             
             # Capture DataFrame.info() 
@@ -296,7 +296,7 @@ class DataAnalystAgent:
             """
             explanation_resp = self.llm.invoke([HumanMessage(content=explain_prompt)])
             explanation = explanation_resp.content.strip()
-            log_path = "explanations.log"   # or wherever you want the file
+            log_path = "logs/explanations.log"   # or wherever you want the file
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write("=== New Explanation ===\n")
                 f.write("Prompt:\n")
@@ -390,7 +390,7 @@ class DataAnalystAgent:
                         })
                     
                         # Now: append prompt, raw LLM response, and final sanitized code to a log file
-                        log_path = "generated_plot_code.log"
+                        log_path = "logs/generated_plot_code.log"
                         with open(log_path, "a", encoding="utf-8") as f:
                             f.write("=== New Code Generation Entry ===\n")
                             f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n\n")
