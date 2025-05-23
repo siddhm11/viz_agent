@@ -43,7 +43,6 @@ class DataAnalystAgent:
     def __init__(self, groq_api_key: str):
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing DataAnalystAgent")
-        
         self.llm = ChatGroq(
             api_key=groq_api_key,
             model_name="deepseek-r1-distill-llama-70b",
@@ -360,56 +359,731 @@ class DataAnalystAgent:
             self.logger.error(f"Error in suggest_visualizations: {str(e)}")
             self.logger.error(traceback.format_exc())
             raise
+    
+
 
     def create_visualization(self, state: DataAnalysisState) -> DataAnalysisState:
         """Create visualizations by having the LLM dynamically generate the plotting code"""
-        self.logger.info("Starting dynamic LLM-based visualization creation")
+        self.logger.info("="*60)
+        self.logger.info("STARTING DYNAMIC LLM-BASED VISUALIZATION CREATION")
+        self.logger.info("="*60)
+        
         state.visualization_outputs = []
 
-        # First, create a data summary that the LLM can use
-        data_summary = {
-            "shape": state.data.shape,
-            "columns": list(state.data.columns),
-            "dtypes": {col: str(dtype) for col, dtype in state.data.dtypes.items()},
-            "sample_values": {col: state.data[col].dropna().sample(min(3, len(state.data))).tolist() 
-                            for col in state.data.columns if not state.data[col].empty},
-            "column_types": state.column_types
-        }
+        # First, create a comprehensive data summary
+        try:
+            self.logger.info("Creating comprehensive data summary...")
+            data_summary = self._create_enhanced_data_summary(state.data, state.column_types)
+            self.logger.info(f"Data summary created successfully with {len(data_summary['columns'])} columns")
+            self.logger.debug(f"Data summary: {data_summary}")
+        except Exception as e:
+            self.logger.error(f"Failed to create data summary: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            return state
+
+        self.logger.info(f"Processing {len(state.suggested_visualizations)} suggested visualizations")
         
-        self.logger.info(f"Created data summary for LLM with {len(data_summary['columns'])} columns")
+        for viz_idx, viz in enumerate(state.suggested_visualizations):
+            self.logger.info("-" * 50)
+            self.logger.info(f"PROCESSING VISUALIZATION {viz_idx + 1}/{len(state.suggested_visualizations)}")
+            self.logger.info("-" * 50)
+            
+            chart_type = viz.get('chart_type', 'unknown').lower()
+            variables = viz.get('variables_to_use', [])
+            reasoning = viz.get('reasoning', 'No reasoning provided')
+            priority = viz.get('priority', 'unknown')
+            
+            self.logger.info(f"Chart Type: {chart_type}")
+            self.logger.info(f"Variables: {variables}")
+            self.logger.info(f"Priority: {priority}")
+            self.logger.info(f"Reasoning: {reasoning}")
+            
+            # Validate variables exist in dataset
+            missing_vars = [var for var in variables if var not in state.data.columns]
+            if missing_vars:
+                self.logger.error(f"Missing variables in dataset: {missing_vars}")
+                self.logger.error(f"Available columns: {list(state.data.columns)}")
+                error_result = self._create_error_result(
+                    f"Variables {missing_vars} not found in dataset", 
+                    chart_type, variables
+                )
+                state.visualization_outputs.append(error_result)
+                continue
 
-        for viz in state.suggested_visualizations:
-            chart_type = viz['chart_type'].lower()
-            variables = viz['variables_to_use']
-            reasoning = viz.get('reasoning', '')
-            
-            self.logger.info(f"Requesting code for {chart_type} visualization of {variables}")
+            try:
+                # 1. Get visualization explanation
+                self.logger.info("Step 1: Getting visualization explanation...")
+                explanation = self._get_visualization_explanation(chart_type, variables, reasoning)
+                self.logger.info(f"Explanation generated: {explanation[:100]}...")
+                
+                # 2. Generate and execute visualization with healing
+                self.logger.info("Step 2: Generating visualization with self-healing...")
+                result = self._generate_visualization_with_healing(
+                    chart_type, variables, data_summary, state.data, viz_idx
+                )
+                
+                # 3. Compile final result
+                final_result = {
+                    'chart_type': chart_type,
+                    'variables': variables,
+                    'reasoning': reasoning,
+                    'priority': priority,
+                    'explanation': explanation,
+                    'insights': result.get('insights', 'No insights generated'),
+                    'image_base64': result.get('image_base64'),
+                    'generated_code': result.get('final_code'),
+                    'healing_history': result.get('healing_history', []),
+                    'success': result.get('success', False),
+                    'generation_stats': result.get('stats', {}),
+                    'viz_index': viz_idx + 1
+                }
+                
+                state.visualization_outputs.append(final_result)
+                
+                # Log success/failure
+                if final_result['success']:
+                    self.logger.info(f"✅ Visualization {viz_idx + 1} completed successfully")
+                    if final_result['healing_history']:
+                        self.logger.info(f"⚕️  Required {len(final_result['healing_history'])} healing attempts")
+                else:
+                    self.logger.error(f"❌ Visualization {viz_idx + 1} failed")
+                    self.logger.error(f"Final error: {final_result['insights']}")
+                    
+            except Exception as e:
+                self.logger.error(f"💥 Critical error processing visualization {viz_idx + 1}: {str(e)}")
+                self.logger.error(traceback.format_exc())
+                
+                error_result = self._create_error_result(
+                    f"Critical error: {str(e)}", chart_type, variables
+                )
+                error_result.update({
+                    'viz_index': viz_idx + 1,
+                    'priority': priority,
+                    'reasoning': reasoning
+                })
+                state.visualization_outputs.append(error_result)
 
-            # 1. First ask LLM to explain visualization purpose
-            explanation = self._get_visualization_explanation(chart_type, variables, reasoning)
-            
-            # 2. Generate the plotting code with self-healing
-            result = self._generate_visualization_with_healing(chart_type, variables, data_summary, state.data)
-            
-            # Store the visualization output
-            state.visualization_outputs.append({
-                'chart_type': chart_type,
-                'variables': variables,
-                'reasoning': reasoning,
-                'explanation': explanation,
-                'insights': result['insights'],
-                'image_base64': result['image_base64'],
-                'generated_code': result['final_code'],
-                'healing_history': result['healing_history'],
-                'success': result['success']
-            })
-            
-            # Log the healing process for analysis
-            if result['healing_history']:
-                self._log_healing_process(chart_type, result['healing_history'])
-
+        # Final summary
+        successful = sum(1 for viz in state.visualization_outputs if viz.get('success', False))
+        total = len(state.visualization_outputs)
+        
+        self.logger.info("="*60)
+        self.logger.info("VISUALIZATION CREATION SUMMARY")
+        self.logger.info("="*60)
+        self.logger.info(f"Total visualizations processed: {total}")
+        self.logger.info(f"Successful visualizations: {successful}")
+        self.logger.info(f"Failed visualizations: {total - successful}")
+        self.logger.info(f"Success rate: {(successful/total*100):.1f}%" if total > 0 else "0%")
+        
         return state
 
+    def _create_enhanced_data_summary(self, data, column_types):
+        """Create a comprehensive data summary for the LLM"""
+        self.logger.info("Creating enhanced data summary...")
+        
+        try:
+            summary = {
+                "shape": data.shape,
+                "columns": list(data.columns),
+                "dtypes": {col: str(dtype) for col, dtype in data.dtypes.items()},
+                "column_types": column_types,
+                "memory_usage": data.memory_usage(deep=True).sum(),
+                "missing_data": data.isnull().sum().to_dict(),
+                "sample_values": {},
+                "unique_counts": {},
+                "numeric_ranges": {},
+                "categorical_info": {}
+            }
+            
+            # Enhanced sample values and statistics
+            for col in data.columns:
+                try:
+                    col_data = data[col].dropna()
+                    
+                    if len(col_data) == 0:
+                        summary["sample_values"][col] = []
+                        summary["unique_counts"][col] = 0
+                        continue
+                        
+                    # Sample values
+                    sample_size = min(5, len(col_data))
+                    summary["sample_values"][col] = col_data.sample(sample_size).tolist()
+                    summary["unique_counts"][col] = col_data.nunique()
+                    
+                    # Type-specific information
+                    if pd.api.types.is_numeric_dtype(col_data):
+                        summary["numeric_ranges"][col] = {
+                            "min": float(col_data.min()),
+                            "max": float(col_data.max()),
+                            "mean": float(col_data.mean()),
+                            "std": float(col_data.std()) if len(col_data) > 1 else 0
+                        }
+                    elif pd.api.types.is_categorical_dtype(col_data) or col_data.dtype == 'object':
+                        value_counts = col_data.value_counts().head(10)
+                        summary["categorical_info"][col] = {
+                            "top_values": value_counts.to_dict(),
+                            "unique_count": col_data.nunique()
+                        }
+                        
+                except Exception as e:
+                    self.logger.warning(f"Error processing column {col}: {str(e)}")
+                    summary["sample_values"][col] = ["Error getting samples"]
+                    summary["unique_counts"][col] = -1
+            
+            self.logger.info(f"Enhanced data summary created with {len(summary)} main sections")
+            return summary
+            
+        except Exception as e:
+            self.logger.error(f"Error creating enhanced data summary: {str(e)}")
+            # Fallback to basic summary
+            return {
+                "shape": data.shape,
+                "columns": list(data.columns),
+                "dtypes": {col: str(dtype) for col, dtype in data.dtypes.items()},
+                "column_types": column_types
+            }
+
+    def _generate_visualization_with_healing(self, chart_type, variables, data_summary, data, viz_index):
+        """Generate visualization with comprehensive self-healing capabilities"""
+        self.logger.info(f"Starting visualization generation with healing for {chart_type}")
+        
+        generation_start_time = time.time()
+        stats = {
+            "attempts": 0,
+            "healing_attempts": 0,
+            "total_time": 0,
+            "code_generation_time": 0,
+            "execution_time": 0
+        }
+        
+        # Generate initial code with detailed logging
+        self.logger.info("Phase 1: Generating initial plotting code...")
+        code_gen_start = time.time()
+        
+        initial_code = self._generate_plotting_code_with_logging(
+            chart_type, variables, data_summary, viz_index
+        )
+        
+        stats["code_generation_time"] = time.time() - code_gen_start
+        
+        if not initial_code:
+            self.logger.error("❌ Failed to generate initial plotting code")
+            stats["total_time"] = time.time() - generation_start_time
+            return self._create_error_result(
+                "Failed to generate initial plotting code", 
+                chart_type, variables, stats
+            )
+        
+        self.logger.info("✅ Initial code generated successfully")
+        self.logger.debug(f"Generated code length: {len(initial_code)} characters")
+        
+        # Execute with healing
+        self.logger.info("Phase 2: Executing code with self-healing...")
+        exec_start = time.time()
+        
+        result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+        
+        stats["execution_time"] = time.time() - exec_start
+        stats["total_time"] = time.time() - generation_start_time
+        
+        result["stats"] = stats
+        
+        self.logger.info(f"Visualization generation completed in {stats['total_time']:.2f}s")
+        self.logger.info(f"Total attempts: {stats['attempts']}, Healing attempts: {stats['healing_attempts']}")
+        
+        return result
+
+    def _generate_plotting_code_with_logging(self, chart_type, variables, data_summary, viz_index):
+        """Generate initial plotting code with detailed logging"""
+        self.logger.info(f"Generating code for {chart_type} visualization of {variables}")
+        
+        # Log data context for the LLM
+        self.logger.debug("Data context for LLM:")
+        self.logger.debug(f"  - Data shape: {data_summary['shape']}")
+        self.logger.debug(f"  - Variables to plot: {variables}")
+        self.logger.debug(f"  - Variable types: {[data_summary['column_types'].get(var) for var in variables]}")
+        self.logger.debug(f"  - Missing data: {[data_summary['missing_data'].get(var, 0) for var in variables]}")
+        
+        code_prompt = self._create_enhanced_code_prompt(chart_type, variables, data_summary)
+        
+        try:
+            self.logger.info("Sending code generation prompt to LLM...")
+            
+            # Log the prompt for debugging
+            log_file = f"logs/code_prompts_viz_{viz_index}.log"
+            with open(log_file, "w", encoding="utf-8") as f:
+                f.write("=== CODE GENERATION PROMPT ===\n")
+                f.write(f"Chart Type: {chart_type}\n")
+                f.write(f"Variables: {variables}\n")
+                f.write(f"Timestamp: {datetime.datetime.now().isoformat()}\n\n")
+                f.write("PROMPT:\n")
+                f.write(code_prompt)
+                f.write("\n\n")
+            
+            response = self.llm.invoke([HumanMessage(content=code_prompt)])
+            
+            # Log the response
+            with open(log_file, "a", encoding="utf-8") as f:
+                f.write("=== LLM RESPONSE ===\n")
+                f.write(response.content)
+                f.write("\n\n")
+            
+            self.logger.info("✅ Received response from LLM")
+            
+            extracted_code = self._extract_code_from_response(response.content)
+            
+            if extracted_code:
+                # Log the extracted code
+                with open(log_file, "a", encoding="utf-8") as f:
+                    f.write("=== EXTRACTED CODE ===\n")
+                    f.write(extracted_code)
+                    f.write("\n\n")
+                
+                self.logger.info("✅ Successfully extracted code from LLM response")
+                self.logger.debug(f"Code preview: {extracted_code[:200]}...")
+                return extracted_code
+            else:
+                self.logger.error("❌ Failed to extract code from LLM response")
+                self.logger.debug(f"Raw response: {response.content[:500]}...")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"❌ Error generating code: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            return None
+
+    def _create_enhanced_code_prompt(self, chart_type, variables, data_summary):
+        """Create a comprehensive code generation prompt"""
+        
+        # Get variable-specific information
+        var_info = []
+        for var in variables:
+            info = {
+                "name": var,
+                "type": data_summary['column_types'].get(var, 'unknown'),
+                "dtype": data_summary['dtypes'].get(var, 'unknown'),
+                "missing": data_summary['missing_data'].get(var, 0),
+                "unique": data_summary['unique_counts'].get(var, 0),
+                "samples": data_summary['sample_values'].get(var, [])
+            }
+            
+            if var in data_summary.get('numeric_ranges', {}):
+                info.update(data_summary['numeric_ranges'][var])
+            elif var in data_summary.get('categorical_info', {}):
+                info.update(data_summary['categorical_info'][var])
+                
+            var_info.append(info)
+        
+        prompt = f"""<thinking>
+    I need to generate robust, error-free Python code for a {chart_type} visualization.
+
+    Dataset Context:
+    - Shape: {data_summary['shape']}
+    - Total columns: {len(data_summary['columns'])}
+
+    Variables to visualize: {variables}
+    Variable details:
+    {chr(10).join([f"  - {var['name']}: {var['type']} ({var['dtype']}) - {var['missing']} missing, {var['unique']} unique" for var in var_info])}
+
+    Sample values:
+    {chr(10).join([f"  - {var['name']}: {var['samples']}" for var in var_info])}
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+    Chart-specific considerations for {chart_type}:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a {chart_type} visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: {variables}
+    Data types: {[var['dtype'] for var in var_info]}
+    Column types: {[var['type'] for var in var_info]}
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = {variables}
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {{missing_cols}}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {{str(e)}}\\nTraceback: {{traceback.format_exc()}}"
+            return None, error_details, False
+    ```"""
+        
+        return prompt
+
+    def _execute_with_enhanced_healing(self, code, data, chart_type, stats, max_attempts=4):
+        """Execute code with enhanced self-healing capabilities"""
+        self.logger.info(f"Starting enhanced healing execution (max {max_attempts} attempts)")
+        
+        healing_history = []
+        current_code = code
+        
+        for attempt in range(max_attempts):
+            stats["attempts"] += 1
+            attempt_start = time.time()
+            
+            self.logger.info(f"🔄 Attempt {attempt + 1}/{max_attempts} for {chart_type}")
+            
+            try:
+                # Execute the code with detailed logging
+                result = self._safe_execute_code_with_logging(current_code, data, attempt + 1)
+                
+                attempt_time = time.time() - attempt_start
+                self.logger.info(f"⏱️ Attempt {attempt + 1} completed in {attempt_time:.2f}s")
+                
+                if result['success']:
+                    self.logger.info(f"✅ SUCCESS on attempt {attempt + 1}")
+                    return {
+                        'image_base64': result['image_base64'],
+                        'insights': result['insights'],
+                        'success': True,
+                        'final_code': current_code,
+                        'healing_history': healing_history
+                    }
+                else:
+                    # Code executed but reported failure
+                    error_msg = result['error']
+                    self.logger.warning(f"⚠️ Code executed but reported failure: {error_msg}")
+                    
+            except Exception as e:
+                error_msg = f"{type(e).__name__}: {str(e)}"
+                traceback_str = traceback.format_exc()
+                
+                self.logger.error(f"💥 Exception on attempt {attempt + 1}: {error_msg}")
+                self.logger.debug(f"Full traceback:\n{traceback_str}")
+                
+            # If we're not on the last attempt, try healing
+            if attempt < max_attempts - 1:
+                stats["healing_attempts"] += 1
+                
+                self.logger.info(f"🔧 Starting healing attempt {stats['healing_attempts']}...")
+                
+                # Record healing attempt
+                healing_entry = {
+                    'attempt': attempt + 1,
+                    'error': error_msg,
+                    'traceback': traceback_str if 'traceback_str' in locals() else "No traceback",
+                    'code_before': current_code,
+                    'healing_start_time': time.time()
+                }
+                
+                # Generate corrected code
+                corrected_code = self._get_corrected_code_with_logging(
+                    current_code, error_msg, 
+                    traceback_str if 'traceback_str' in locals() else None,
+                    attempt + 1
+                )
+                
+                healing_entry['healing_time'] = time.time() - healing_entry['healing_start_time']
+                
+                if corrected_code and corrected_code != current_code:
+                    current_code = corrected_code
+                    healing_entry['code_after'] = current_code
+                    healing_entry['healing_success'] = True
+                    healing_history.append(healing_entry)
+                    
+                    self.logger.info(f"✅ Generated corrected code (healing attempt {stats['healing_attempts']})")
+                    self.logger.debug(f"Code diff length: {abs(len(corrected_code) - len(healing_entry['code_before']))}")
+                else:
+                    healing_entry['healing_success'] = False
+                    healing_history.append(healing_entry)
+                    
+                    self.logger.error(f"❌ Failed to generate corrected code (healing attempt {stats['healing_attempts']})")
+                    break
+        
+        # If we've reached max attempts without success
+        self.logger.error(f"❌ Failed to create {chart_type} visualization after {max_attempts} attempts")
+        self.logger.error(f"Total healing attempts: {stats['healing_attempts']}")
+        
+        return self._create_error_result(
+            f"Failed after {max_attempts} attempts and {stats['healing_attempts']} healing attempts", 
+            chart_type, variables, stats, healing_history
+        )
+
+    def _safe_execute_code_with_logging(self, code, data, attempt_num):
+        """Safely execute the plotting code with comprehensive logging"""
+        self.logger.debug(f"Executing code for attempt {attempt_num}")
+        
+        try:
+            # Create isolated namespace with comprehensive imports
+            namespace = {
+                '__builtins__': __builtins__,
+                'matplotlib': __import__('matplotlib'),
+                'plt': plt,
+                'sns': sns,
+                'pd': pd,
+                'np': __import__('numpy'),
+                'io': io,
+                'base64': base64,
+                'warnings': __import__('warnings'),
+                'traceback': traceback,
+                'datetime': datetime
+            }
+            
+            # Execute the function definition
+            self.logger.debug("Executing function definition...")
+            exec(code, namespace)
+            
+            # Validate function exists
+            if 'generate_plot' not in namespace:
+                raise ValueError("Function 'generate_plot' not found in executed code")
+            
+            # Call the function with logging
+            self.logger.debug("Calling generate_plot function...")
+            function_start = time.time()
+            
+            img_str, insights, success = namespace['generate_plot'](data)
+            
+            function_time = time.time() - function_start
+            self.logger.debug(f"Function execution completed in {function_time:.2f}s")
+            
+            # Validate return values
+            if success:
+                if not img_str:
+                    self.logger.warning("Success reported but no image string returned")
+                    success = False
+                elif not isinstance(img_str, str):
+                    self.logger.warning(f"Image string is not a string: {type(img_str)}")
+                    success = False
+                
+                if not insights:
+                    insights = "Visualization created successfully but no insights generated"
+                    self.logger.warning("No insights returned")
+            
+            self.logger.debug(f"Function returned: success={success}, img_len={len(img_str) if img_str else 0}, insights_len={len(insights) if insights else 0}")
+            
+            return {
+                'image_base64': img_str,
+                'insights': insights,
+                'success': success,
+                'error': insights if not success else None,
+                'execution_time': function_time
+            }
+            
+        except Exception as e:
+            error_msg = str(e)
+            self.logger.error(f"Exception during code execution: {error_msg}")
+            self.logger.debug(f"Exception type: {type(e).__name__}")
+            
+            return {
+                'image_base64': None,
+                'insights': None,
+                'success': False,
+                'error': error_msg,
+                'exception_type': type(e).__name__
+            }
+
+    def _get_corrected_code_with_logging(self, code, error_msg, traceback_str, attempt_num):
+        """Get corrected code from LLM with comprehensive logging"""
+        self.logger.info(f"Requesting code correction for attempt {attempt_num}")
+        self.logger.debug(f"Error to fix: {error_msg}")
+        
+        # Create enhanced healing prompt
+        healing_prompt = f"""URGENT: Fix this broken Python visualization code.
+
+    ATTEMPT NUMBER: {attempt_num}
+    ERROR ENCOUNTERED: {error_msg}
+
+    {f'FULL TRACEBACK:\n{traceback_str}\n' if traceback_str else ''}
+
+    PROBLEMATIC CODE:
+    ```python
+    {code}
+    ```
+
+    COMMON FIXES NEEDED:
+    1. Seaborn 'ci' parameter → use 'errorbar=None' instead
+    2. Missing imports → add required imports
+    3. Data type issues → add proper validation and conversion
+    4. Empty data → add data checks
+    5. Column access errors → validate column existence
+    6. Plotting parameter errors → use correct parameter names
+    7. Memory/resource issues → add proper cleanup
+
+    REQUIREMENTS:
+    - Fix the specific error mentioned above
+    - Maintain the same function signature: def generate_plot(data):
+    - Return: (base64_string, insights_text, success_boolean)
+    - Keep all existing functionality that works
+    - Add better error handling
+    - Ensure robust data validation
+
+    RETURN ONLY THE CORRECTED PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        # Fixed code here
+    ```"""
+        
+        try:
+            # Log the healing prompt
+            log_file = f"logs/healing_attempt_{attempt_num}.log"
+            with open(log_file, "w", encoding="utf-8") as f:
+                f.write("=== HEALING PROMPT ===\n")
+                f.write(f"Attempt: {attempt_num}\n")
+                f.write(f"Error: {error_msg}\n")
+                f.write(f"Timestamp: {datetime.datetime.now().isoformat()}\n\n")
+                f.write("PROMPT:\n")
+                f.write(healing_prompt)
+                f.write("\n\n")
+            
+            self.logger.info(f"Sending healing prompt to LLM (attempt {attempt_num})...")
+            response = self.llm.invoke([HumanMessage(content=healing_prompt)])
+            
+            # Log the response
+            with open(log_file, "a", encoding="utf-8") as f:
+                f.write("=== LLM HEALING RESPONSE ===\n")
+                f.write(response.content)
+                f.write("\n\n")
+            
+            corrected_code = self._extract_code_from_response(response.content)
+            
+            if corrected_code:
+                # Log the corrected code
+                with open(log_file, "a", encoding="utf-8") as f:
+                    f.write("=== CORRECTED CODE ===\n")
+                    f.write(corrected_code)
+                    f.write("\n\n")
+                
+                self.logger.info(f"✅ Successfully generated corrected code (attempt {attempt_num})")
+                return corrected_code
+            else:
+                self.logger.error(f"❌ Failed to extract corrected code (attempt {attempt_num})")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"❌ Error getting corrected code (attempt {attempt_num}): {str(e)}")
+            self.logger.error(traceback.format_exc())
+            return None
+
+    def _create_error_result(self, error_message, chart_type, variables, stats=None, healing_history=None):
+        """Create comprehensive error result with visualization"""
+        self.logger.info(f"Creating error result: {error_message}")
+        
+        try:
+            # Create informative error visualization
+            fig, ax = plt.subplots(figsize=(12, 8))
+            
+            # Error message
+            ax.text(0.5, 0.7, "Visualization Generation Failed", 
+                    horizontalalignment='center', verticalalignment='center',
+                    fontsize=20, fontweight='bold', color='darkred',
+                    transform=ax.transAxes)
+            
+            ax.text(0.5, 0.5, f"Chart Type: {chart_type}\nVariables: {', '.join(variables)}", 
+                    horizontalalignment='center', verticalalignment='center',
+                    fontsize=14, color='black',
+                    transform=ax.transAxes)
+            
+            ax.text(0.5, 0.3, f"Error: {error_message}", 
+                    horizontalalignment='center', verticalalignment='center',
+                    fontsize=12, color='red', wrap=True,
+                    transform=ax.transAxes)
+            
+            if stats:
+                stats_text = f"Attempts: {stats.get('attempts', 0)} | Healing: {stats.get('healing_attempts', 0)} | Time: {stats.get('total_time', 0):.1f}s"
+                ax.text(0.5, 0.1, stats_text, 
+                        horizontalalignment='center', verticalalignment='center',
+                        fontsize=10, color='gray',
+                        transform=ax.transAxes)
+            
+            ax.set_xlim(0, 1)
+            ax.set_ylim(0, 1)
+            ax.axis('off')
+            
+            # Save as base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return {
+                'image_base64': img_str,
+                'insights': f"Error: {error_message}",
+                'success': False,
+                'final_code': None,
+                'healing_history': healing_history or [],
+                'stats': stats or {},
+                'chart_type': chart_type,
+                'variables': variables
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error creating error visualization: {str(e)}")
+            return {
+                'image_base64': None,
+                'insights': f"Critical Error: {error_message}",
+                'success': False,
+                'final_code': None,
+                'healing_history': healing_history or [],
+                'stats': stats or {},
+                'chart_type': chart_type,
+                'variables': variables
+            }
+
+            
     def _get_visualization_explanation(self, chart_type, variables, reasoning):
         """Get explanation of visualization purpose from LLM"""
         explain_prompt = f"""
@@ -457,94 +1131,6 @@ class DataAnalystAgent:
             self.logger.error(f"Error getting explanation: {str(e)}")
             return f"This {chart_type} visualization shows relationships between {', '.join(variables)}."
 
-    def _generate_visualization_with_healing(self, chart_type, variables, data_summary, data):
-        """Generate visualization with self-healing capabilities"""
-        # Generate initial code
-        initial_code = self._generate_plotting_code(chart_type, variables, data_summary)
-        
-        if not initial_code:
-            return self._create_error_result("Failed to generate initial plotting code")
-        
-        # Execute with healing
-        return self._execute_with_healing(initial_code, data, chart_type)
-
-    def _generate_plotting_code(self, chart_type, variables, data_summary):
-        """Generate initial plotting code from LLM"""
-        code_prompt = f"""
-        <thinking>
-        I need to generate robust Python code for a {chart_type} visualization of {variables}.
-
-        Dataset characteristics:
-        - Shape: {data_summary['shape']}
-        - Column types: {data_summary['column_types']}
-        - Data types: {data_summary['dtypes']}
-        - Sample values: {data_summary.get('sample_values', {})}
-
-        Code requirements:
-        1. Handle missing values appropriately
-        2. Check data types and convert if needed
-        3. Apply appropriate statistical transformations
-        4. Create clear, publication-ready visualization
-        5. Include meaningful insights detection
-        6. Robust error handling for edge cases
-        7. Use only commonly available libraries (no sklearn, no advanced stats unless necessary)
-        8. For seaborn plots, avoid deprecated parameters like 'ci' (use 'errorbar' instead)
-        </thinking>
-
-        Generate a complete Python function that creates a {chart_type} visualization.
-
-        Requirements:
-        - Function signature: def generate_plot(data):
-        - Return: (base64_image_string, insights_text, success_boolean)
-        - Handle all edge cases (empty data, wrong types, etc.)
-        - Include statistical insights where relevant
-        - Use modern matplotlib/seaborn styling
-        - Appropriate figure size and DPI for clarity
-        - IMPORTANT: Only use standard libraries (matplotlib, seaborn, pandas, numpy, scipy)
-        - IMPORTANT: Avoid deprecated parameters (use 'errorbar=None' instead of 'ci=None' in seaborn)
-
-        Variables to visualize: {variables}
-        Data types: {data_summary['dtypes']}
-
-        Return ONLY the complete Python function code:
-
-        ```python
-        def generate_plot(data):
-            import matplotlib.pyplot as plt
-            import seaborn as sns
-            import pandas as pd
-            import numpy as np
-            import io
-            import base64
-            import warnings
-            warnings.filterwarnings('ignore')
-            
-            try:
-                # Your complete implementation here
-                # Include data validation, cleaning, plotting, and insight generation
-                
-                # Example structure:
-                # 1. Validate input data
-                # 2. Clean and prepare data
-                # 3. Create the plot
-                # 4. Generate insights
-                # 5. Convert to base64
-                # 6. Return results
-                
-                return base64_string, insights_text, True
-                
-            except Exception as e:
-                return None, f"Error: {{str(e)}}", False
-        ```
-        """
-        
-        try:
-            response = self.llm.invoke([HumanMessage(content=code_prompt)])
-            return self._extract_code_from_response(response.content)
-        except Exception as e:
-            self.logger.error(f"Error generating initial code: {str(e)}")
-            return None
-
     def _extract_code_from_response(self, response_content):
         """Extract Python code from LLM response"""
         import re
@@ -578,10 +1164,10 @@ class DataAnalystAgent:
         
         return None
 
-    def _execute_with_healing(self, code, data, chart_type, max_attempts=3):
+    def _execute_with_healing(self, initial_code, data, chart_type, max_attempts=3):
         """Execute code with self-healing capabilities"""
         healing_history = []
-        current_code = code
+        current_code = initial_code
         
         for attempt in range(max_attempts):
             try:
@@ -649,6 +1235,9 @@ class DataAnalystAgent:
                 'warnings': __import__('warnings')
             }
             
+            # Log the code that is about to be executed
+            self.logger.debug(f"Attempting to execute code:\n{code}")
+            
             # Execute the function definition
             exec(code, namespace)
             
@@ -663,6 +1252,8 @@ class DataAnalystAgent:
             }
             
         except Exception as e:
+            # Log the code that caused the exception
+            self.logger.error(f"Exception during _safe_execute_code. Error: {str(e)}. Problematic code:\n{code}")
             return {
                 'image_base64': None,
                 'insights': None,
@@ -686,7 +1277,7 @@ class DataAnalystAgent:
         
         Common fixes needed:
         1. For 'ci' parameter errors: Replace 'ci=None' with 'errorbar=None' in seaborn plots
-        2. For import errors: Remove or replace unavailable libraries (like sklearn)
+        2. For import errors: Remove or replace unavailable libraries (like sklearn , I have sklearn now tho )
         3. For data type errors: Add proper type checking and conversion
         4. For empty data errors: Add data validation checks
         5. For 'PathCollection.set()' errors: This usually means passing wrong parameters to scatter plots
@@ -705,41 +1296,6 @@ class DataAnalystAgent:
         except Exception as e:
             self.logger.error(f"Error getting corrected code: {str(e)}")
             return None
-
-    def _create_error_result(self, error_message, healing_history=None):
-        """Create error result with visualization"""
-        try:
-            # Create error visualization
-            plt.figure(figsize=(10, 4))
-            plt.text(0.5, 0.5, f"Visualization Error:\n{error_message}", 
-                    horizontalalignment='center', verticalalignment='center',
-                    fontsize=12, color='red', wrap=True)
-            plt.axis('off')
-            plt.title("Visualization Generation Failed", fontsize=14, color='darkred')
-            
-            buf = io.BytesIO()
-            plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
-            buf.seek(0)
-            img_str = base64.b64encode(buf.read()).decode()
-            buf.close()
-            plt.close()
-            
-            return {
-                'image_base64': img_str,
-                'insights': f"Error: {error_message}",
-                'success': False,
-                'final_code': None,
-                'healing_history': healing_history or []
-            }
-        except Exception as e:
-            self.logger.error(f"Error creating error visualization: {str(e)}")
-            return {
-                'image_base64': None,
-                'insights': f"Critical Error: {error_message}",
-                'success': False,
-                'final_code': None,
-                'healing_history': healing_history or []
-            }
 
     def _log_healing_process(self, chart_type, healing_history):
         """Log the healing process for analysis"""
