@@ -1,0 +1,907 @@
+from langgraph.graph import StateGraph, END, START
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain_groq import ChatGroq
+from typing import Dict, List, TypedDict, Optional
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from dataclasses import dataclass
+import io
+import base64
+import logging
+import sys
+import traceback
+import time
+import datetime
+import os
+
+
+# Set up logging configuration
+os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/data_analysis_agent1.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+@dataclass
+class DataAnalysisState:
+    data: pd.DataFrame
+    data_preview: str
+    column_types: Dict[str, str]
+    variable_relationships: List[Dict]
+    suggested_visualizations: List[Dict]
+    messages: List
+    current_step: str
+    visualization_outputs: List[Dict]
+    feedback: Optional[str] = None
+
+class DataAnalystAgent:
+    def __init__(self, groq_api_key: str):
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Initializing DataAnalystAgent")
+        
+        self.llm = ChatGroq(
+            api_key=groq_api_key,
+            model_name="deepseek-r1-distill-llama-70b",
+            temperature=0.1
+        )
+        self.logger.info(f"Initialized LLM with model: deepseek-r1-distill-llama-70b")
+        
+        self.graph = self._create_workflow()
+        self.logger.info("Created workflow graph")
+    
+    def prepare_data_preview(self, state: DataAnalysisState) -> DataAnalysisState:
+        """Generate a preview of the data including head() and info()"""
+        try:
+            self.logger.info("Starting data preview preparation")
+            start_time = time.time()
+            
+            buffer = io.StringIO()
+            
+            # Log basic DataFrame info
+            self.logger.info(f"DataFrame shape: {state.data.shape}")
+            self.logger.info(f"DataFrame columns: {list(state.data.columns)}")
+            
+            # Capture DataFrame.head()
+            buffer.write("## Data Preview (First 15 rows)\n")
+            buffer.write(state.data.head(15).to_string())
+            buffer.write("\n\n")
+            
+            # Capture DataFrame.info() 
+            buffer.write("## Data Information\n")
+            buffer.write("Shape: " + str(state.data.shape) + "\n")
+            buffer.write("Columns: " + str(list(state.data.columns)) + "\n")
+            buffer.write("Data types:\n")
+            for col, dtype in state.data.dtypes.items():
+                buffer.write(f"- {col}: {dtype}\n")
+            
+            # Add basic statistics
+            buffer.write("\n## Basic Statistics\n")
+            buffer.write(state.data.describe().to_string())
+            
+            # Store the preview in the state
+            state.data_preview = buffer.getvalue()
+            
+            elapsed_time = time.time() - start_time
+            self.logger.info(f"Completed data preview preparation in {elapsed_time:.2f} seconds")
+            return state
+            
+        except Exception as e:
+            self.logger.error(f"Error in prepare_data_preview: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            raise
+        
+    def analyze_data_types(self, state: DataAnalysisState) -> DataAnalysisState:
+        """Analyze and categorize data types of each column"""
+        try:
+            self.logger.info("Starting data type analysis")
+            start_time = time.time()
+            
+            df = state.data
+            self.logger.info(f"Analyzing data types for {len(df.columns)} columns")
+            
+            analysis_prompt = f"""
+            <thinking>
+            You are a data analysis expert analyzing a dataset to categorize column types.
+
+            First, examine the dataset preview and data types:
+            Dataset Preview:
+            {state.data_preview}
+
+            Pandas Data Types:
+            {df.dtypes.to_dict()}
+
+            Now, analyze each column systematically:
+            1. Look at the pandas dtype
+            2. Examine sample values in the preview
+            3. Consider the column name for context
+            4. Determine the most appropriate category
+
+            Categories to use:
+            - "numerical_continuous": Float values, measurements, ratios
+            - "numerical_discrete": Integer counts, rankings, IDs
+            - "categorical_nominal": Unordered categories (colors, names, types)
+            - "categorical_ordinal": Ordered categories (ratings, grades, sizes)
+            - "temporal": Dates, times, timestamps
+            - "text": Free-form text data
+            - "boolean": True/False, Yes/No, binary values
+            </thinking>
+
+            Based on your analysis, return ONLY a Python dictionary mapping each column name to its category.
+            Example format: {{"column1": "numerical_continuous", "column2": "categorical_nominal"}}
+
+            Dictionary:
+            """
+            
+            self.logger.info("Sending analyze_data_types prompt to LLM")
+            response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+            self.logger.info("Received response from LLM for data type analysis")
+            
+            try:
+                # More robust parsing
+                import re
+                import ast
+                
+                # Try to extract dictionary from response
+                dict_pattern = r'\{[^{}]*\}'
+                dict_match = re.search(dict_pattern, response.content)
+                
+                if dict_match:
+                    dict_str = dict_match.group(0)
+                    state.column_types = ast.literal_eval(dict_str)
+                    self.logger.info(f"Parsed column types: {state.column_types}")
+                else:
+                    raise ValueError("No dictionary found in response")
+                    
+            except Exception as parse_error:
+                self.logger.error(f"Error parsing column types: {str(parse_error)}")
+                self.logger.error(f"Raw LLM response: {response.content}")
+                # Create a basic fallback categorization
+                state.column_types = {}
+                for col, dtype in df.dtypes.items():
+                    if 'int' in str(dtype) or 'float' in str(dtype):
+                        state.column_types[col] = 'numerical_continuous'
+                    elif 'datetime' in str(dtype):
+                        state.column_types[col] = 'temporal'
+                    else:
+                        state.column_types[col] = 'categorical_nominal'
+                self.logger.info(f"Using fallback column types: {state.column_types}")
+            
+            elapsed_time = time.time() - start_time
+            self.logger.info(f"Completed data type analysis in {elapsed_time:.2f} seconds")
+            return state
+            
+        except Exception as e:
+            self.logger.error(f"Error in analyze_data_types: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            raise
+    
+    def identify_relationships(self, state: DataAnalysisState) -> DataAnalysisState:
+        """Identify potential relationships between variables"""
+        try:
+            self.logger.info("Starting relationship identification")
+            start_time = time.time()
+            
+            relationship_prompt = f"""
+            <thinking>
+            As a data analysis expert, I need to identify meaningful relationships in this dataset.
+
+            Dataset Information:
+            {state.data_preview}
+
+            Column Types:
+            {state.column_types}
+
+            Let me systematically identify relationships:
+
+            1. Numerical-Numerical correlations: Look for pairs that might be correlated
+            2. Categorical-Numerical comparisons: Categories that might explain numerical variations
+            3. Temporal patterns: Time-based trends or seasonal effects
+            4. Grouping effects: How categories might segment the data
+            5. Causal relationships: Variables that might influence others
+
+            For each potential relationship, I'll consider:
+            - Statistical significance likelihood
+            - Business/domain logic
+            - Data exploration value
+            </thinking>
+
+            Return a JSON list of relationship dictionaries. Each should have:
+            - "variables": [list of 2-3 column names]
+            - "relationship_type": one of ["correlation", "comparison", "temporal_trend", "grouping", "distribution_analysis"]
+            - "hypothesis": concise explanation of expected relationship
+            - "priority": "high", "medium", or "low" based on likely insights
+
+            JSON Array:
+            """
+            
+            self.logger.info("Sending identify_relationships prompt to LLM")
+            response = self.llm.invoke([HumanMessage(content=relationship_prompt)])
+            self.logger.info("Received response from LLM for relationship identification")
+            
+            # Extract the list from the response
+            import re
+            import json
+            
+            try:
+                # Try to find list content in the response
+                list_match = re.search(r'\[\s*\{.*\}\s*\]', response.content, re.DOTALL)
+                if list_match:
+                    state.variable_relationships = json.loads(list_match.group(0))
+                    self.logger.info(f"Identified {len(state.variable_relationships)} potential relationships")
+                else:
+                    # Fallback if parsing fails
+                    self.logger.warning("Could not extract relationships list from LLM response. Using empty list.")
+                    self.logger.debug(f"Raw LLM response: {response.content}")
+                    state.variable_relationships = []
+            except Exception as parse_error:
+                self.logger.error(f"Error parsing relationships: {str(parse_error)}")
+                self.logger.error(f"Raw LLM response: {response.content}")
+                state.variable_relationships = []
+            
+            # Log identified relationships
+            for i, rel in enumerate(state.variable_relationships):
+                self.logger.info(f"Relationship {i+1}: {rel.get('variables', [])} - {rel.get('relationship_type', 'unknown')}")
+                
+            elapsed_time = time.time() - start_time
+            self.logger.info(f"Completed relationship identification in {elapsed_time:.2f} seconds")
+            return state
+            
+        except Exception as e:
+            self.logger.error(f"Error in identify_relationships: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            raise
+    
+    def suggest_visualizations(self, state: DataAnalysisState) -> DataAnalysisState:
+        """Suggest appropriate visualizations based on data types and relationships"""
+        try:
+            self.logger.info("Starting visualization suggestions")
+            start_time = time.time()
+            
+            viz_prompt = f"""
+            <thinking>
+            I need to suggest optimal visualizations based on the data characteristics.
+
+            Data Preview:
+            {state.data_preview}
+
+            Column Types: {state.column_types}
+            Identified Relationships: {state.variable_relationships}
+
+            Let me apply visualization selection logic:
+
+            For each variable type combination:
+            - Single numerical → histogram (distribution), boxplot (outliers), density plot
+            - Single categorical → bar chart (frequency), pie chart (if <8 categories)
+            - Numerical vs Numerical → scatter plot (correlation), line plot (if temporal)
+            - Numerical vs Categorical → box plot (distributions), violin plot (detailed distributions)
+            - Categorical vs Categorical → stacked bar chart, heatmap (if not too sparse)
+            - Temporal data → time series plot, seasonal decomposition
+
+            Priority factors:
+            1. Data size and complexity
+            2. Likely insights from relationships identified
+            3. Statistical appropriateness
+            4. Visual clarity
+            </thinking>
+
+            Return a JSON array of visualization suggestions:
+            [
+            {{
+                "chart_type": "specific_chart_name",
+                "variables_to_use": ["column1", "column2"],
+                "reasoning": "why this chart reveals important insights",
+                "priority": "high/medium/low",
+                "expected_insight": "what pattern or relationship we expect to see"
+            }}
+            ]
+
+            JSON Array:
+            """
+
+            response = self.llm.invoke([HumanMessage(content=viz_prompt)])
+            
+            # Parse the response to extract valid JSON
+            try:
+                import re
+                import json
+                json_match = re.search(r'\[\s*\{.*\}\s*\]', response.content, re.DOTALL)
+                if json_match:
+                    state.suggested_visualizations = json.loads(json_match.group(0))
+                    self.logger.info(f"Generated {len(state.suggested_visualizations)} visualization suggestions")
+                else:
+                    # Fallback to a simple visualization if parsing fails
+                    numerical_cols = [col for col, dtype in state.column_types.items() 
+                                    if 'numerical' in dtype]
+                    categorical_cols = [col for col, dtype in state.column_types.items() 
+                                      if 'categorical' in dtype]
+                    
+                    fallback_viz = []
+                    if numerical_cols:
+                        fallback_viz.append({
+                            "chart_type": "histogram",
+                            "variables_to_use": [numerical_cols[0]],
+                            "reasoning": "Fallback visualization - distribution analysis",
+                            "priority": "medium"
+                        })
+                    if categorical_cols:
+                        fallback_viz.append({
+                            "chart_type": "bar_chart",
+                            "variables_to_use": [categorical_cols[0]],
+                            "reasoning": "Fallback visualization - frequency analysis",
+                            "priority": "medium"
+                        })
+                    
+                    state.suggested_visualizations = fallback_viz or [{
+                        "chart_type": "histogram",
+                        "variables_to_use": [list(state.data.columns)[0]],
+                        "reasoning": "Fallback visualization due to parsing error",
+                        "priority": "low"
+                    }]
+                    
+            except Exception as e:
+                self.logger.error(f"Error parsing visualization suggestions: {e}")
+                state.suggested_visualizations = [{
+                    "chart_type": "histogram",
+                    "variables_to_use": [list(state.data.columns)[0]],
+                    "reasoning": "Fallback visualization due to parsing error",
+                    "priority": "low"
+                }]
+            
+            elapsed_time = time.time() - start_time
+            self.logger.info(f"Completed visualization suggestions in {elapsed_time:.2f} seconds")
+            return state
+            
+        except Exception as e:
+            self.logger.error(f"Error in suggest_visualizations: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            raise
+
+    def create_visualization(self, state: DataAnalysisState) -> DataAnalysisState:
+        """Create visualizations by having the LLM dynamically generate the plotting code"""
+        self.logger.info("Starting dynamic LLM-based visualization creation")
+        state.visualization_outputs = []
+
+        # First, create a data summary that the LLM can use
+        data_summary = {
+            "shape": state.data.shape,
+            "columns": list(state.data.columns),
+            "dtypes": {col: str(dtype) for col, dtype in state.data.dtypes.items()},
+            "sample_values": {col: state.data[col].dropna().sample(min(3, len(state.data))).tolist() 
+                            for col in state.data.columns if not state.data[col].empty},
+            "column_types": state.column_types
+        }
+        
+        self.logger.info(f"Created data summary for LLM with {len(data_summary['columns'])} columns")
+
+        for viz in state.suggested_visualizations:
+            chart_type = viz['chart_type'].lower()
+            variables = viz['variables_to_use']
+            reasoning = viz.get('reasoning', '')
+            
+            self.logger.info(f"Requesting code for {chart_type} visualization of {variables}")
+
+            # 1. First ask LLM to explain visualization purpose
+            explanation = self._get_visualization_explanation(chart_type, variables, reasoning)
+            
+            # 2. Generate the plotting code with self-healing
+            result = self._generate_visualization_with_healing(chart_type, variables, data_summary, state.data)
+            
+            # Store the visualization output
+            state.visualization_outputs.append({
+                'chart_type': chart_type,
+                'variables': variables,
+                'reasoning': reasoning,
+                'explanation': explanation,
+                'insights': result['insights'],
+                'image_base64': result['image_base64'],
+                'generated_code': result['final_code'],
+                'healing_history': result['healing_history'],
+                'success': result['success']
+            })
+            
+            # Log the healing process for analysis
+            if result['healing_history']:
+                self._log_healing_process(chart_type, result['healing_history'])
+
+        return state
+
+    def _get_visualization_explanation(self, chart_type, variables, reasoning):
+        """Get explanation of visualization purpose from LLM"""
+        explain_prompt = f"""
+        <thinking>
+        I need to explain the analytical purpose of this {chart_type} visualization using variables {variables}.
+
+        Context:
+        - Chart type: {chart_type}
+        - Variables: {variables}
+        - Reasoning: {reasoning}
+
+        What insights can this visualization provide:
+        1. What patterns might be visible?
+        2. What questions does it answer?
+        3. What business/analytical value does it offer?
+        4. What should viewers focus on?
+        </thinking>
+
+        As a data visualization expert, explain the analytical purpose of this {chart_type} chart using {variables}.
+
+        Address:
+        1. What specific insights this visualization reveals
+        2. What patterns or relationships viewers should look for
+        3. How this contributes to overall data understanding
+
+        Keep response to 2-3 clear, actionable sentences focused on analytical value.
+
+        Explanation:
+        """
+        try:
+            explanation_resp = self.llm.invoke([HumanMessage(content=explain_prompt)])
+            explanation = explanation_resp.content.strip()
+            
+            # Log explanation
+            log_path = "logs/explanations.log"
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write("=== New Explanation ===\n")
+                f.write("Prompt:\n")
+                f.write(explain_prompt.strip() + "\n\n")
+                f.write("Explanation:\n")
+                f.write(explanation + "\n\n")
+            
+            return explanation
+        except Exception as e:
+            self.logger.error(f"Error getting explanation: {str(e)}")
+            return f"This {chart_type} visualization shows relationships between {', '.join(variables)}."
+
+    def _generate_visualization_with_healing(self, chart_type, variables, data_summary, data):
+        """Generate visualization with self-healing capabilities"""
+        # Generate initial code
+        initial_code = self._generate_plotting_code(chart_type, variables, data_summary)
+        
+        if not initial_code:
+            return self._create_error_result("Failed to generate initial plotting code")
+        
+        # Execute with healing
+        return self._execute_with_healing(initial_code, data, chart_type)
+
+    def _generate_plotting_code(self, chart_type, variables, data_summary):
+        """Generate initial plotting code from LLM"""
+        code_prompt = f"""
+        <thinking>
+        I need to generate robust Python code for a {chart_type} visualization of {variables}.
+
+        Dataset characteristics:
+        - Shape: {data_summary['shape']}
+        - Column types: {data_summary['column_types']}
+        - Data types: {data_summary['dtypes']}
+        - Sample values: {data_summary.get('sample_values', {})}
+
+        Code requirements:
+        1. Handle missing values appropriately
+        2. Check data types and convert if needed
+        3. Apply appropriate statistical transformations
+        4. Create clear, publication-ready visualization
+        5. Include meaningful insights detection
+        6. Robust error handling for edge cases
+        7. Use only commonly available libraries (no sklearn, no advanced stats unless necessary)
+        8. For seaborn plots, avoid deprecated parameters like 'ci' (use 'errorbar' instead)
+        </thinking>
+
+        Generate a complete Python function that creates a {chart_type} visualization.
+
+        Requirements:
+        - Function signature: def generate_plot(data):
+        - Return: (base64_image_string, insights_text, success_boolean)
+        - Handle all edge cases (empty data, wrong types, etc.)
+        - Include statistical insights where relevant
+        - Use modern matplotlib/seaborn styling
+        - Appropriate figure size and DPI for clarity
+        - IMPORTANT: Only use standard libraries (matplotlib, seaborn, pandas, numpy, scipy)
+        - IMPORTANT: Avoid deprecated parameters (use 'errorbar=None' instead of 'ci=None' in seaborn)
+
+        Variables to visualize: {variables}
+        Data types: {data_summary['dtypes']}
+
+        Return ONLY the complete Python function code:
+
+        ```python
+        def generate_plot(data):
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+            import pandas as pd
+            import numpy as np
+            import io
+            import base64
+            import warnings
+            warnings.filterwarnings('ignore')
+            
+            try:
+                # Your complete implementation here
+                # Include data validation, cleaning, plotting, and insight generation
+                
+                # Example structure:
+                # 1. Validate input data
+                # 2. Clean and prepare data
+                # 3. Create the plot
+                # 4. Generate insights
+                # 5. Convert to base64
+                # 6. Return results
+                
+                return base64_string, insights_text, True
+                
+            except Exception as e:
+                return None, f"Error: {{str(e)}}", False
+        ```
+        """
+        
+        try:
+            response = self.llm.invoke([HumanMessage(content=code_prompt)])
+            return self._extract_code_from_response(response.content)
+        except Exception as e:
+            self.logger.error(f"Error generating initial code: {str(e)}")
+            return None
+
+    def _extract_code_from_response(self, response_content):
+        """Extract Python code from LLM response"""
+        import re
+        
+        # Try to find code block
+        patterns = [
+            r'```python\s*(.*?)\s*```',
+            r'```\s*(def generate_plot.*?)\s*```',
+            r'(def generate_plot\(data\):.*?)(?=\n\n|\n```|\Z)'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, response_content, re.DOTALL)
+            if match:
+                code = match.group(1).strip()
+                
+                # Ensure function definition is present
+                if not code.startswith("def generate_plot"):
+                    code = "def generate_plot(data):\n" + code
+                
+                return code
+        
+        # If no pattern matches, try to extract everything after "def generate_plot"
+        if "def generate_plot" in response_content:
+            start_idx = response_content.find("def generate_plot")
+            code = response_content[start_idx:].strip()
+            
+            # Clean up common artifacts
+            code = re.sub(r'```.*$', '', code, flags=re.MULTILINE).strip()
+            return code
+        
+        return None
+
+    def _execute_with_healing(self, code, data, chart_type, max_attempts=3):
+        """Execute code with self-healing capabilities"""
+        healing_history = []
+        current_code = code
+        
+        for attempt in range(max_attempts):
+            try:
+                self.logger.info(f"Attempt {attempt + 1} for {chart_type} visualization")
+                
+                # Execute the code
+                result = self._safe_execute_code(current_code, data)
+                
+                if result['success']:
+                    return {
+                        'image_base64': result['image_base64'],
+                        'insights': result['insights'],
+                        'success': True,
+                        'final_code': current_code,
+                        'healing_history': healing_history
+                    }
+                else:
+                    # Code executed but reported failure
+                    error_msg = result['error']
+                    self.logger.warning(f"Code reported failure on attempt {attempt + 1}: {error_msg}")
+                    
+            except Exception as e:
+                error_msg = f"{type(e).__name__}: {str(e)}"
+                traceback_str = traceback.format_exc()
+                self.logger.error(f"Exception on attempt {attempt + 1}: {error_msg}")
+                
+                # Record healing attempt
+                healing_entry = {
+                    'attempt': attempt + 1,
+                    'error': error_msg,
+                    'traceback': traceback_str,
+                    'code_before': current_code
+                }
+                
+                # Generate corrected code
+                corrected_code = self._get_corrected_code(current_code, error_msg, traceback_str)
+                
+                if corrected_code:
+                    current_code = corrected_code
+                    healing_entry['code_after'] = current_code
+                    healing_history.append(healing_entry)
+                else:
+                    self.logger.error("Failed to generate corrected code")
+                    break
+        
+        # If we've reached max attempts without success
+        self.logger.error(f"Failed to create {chart_type} visualization after {max_attempts} attempts")
+        return self._create_error_result(f"Failed after {max_attempts} healing attempts", healing_history)
+
+    def _safe_execute_code(self, code, data):
+        """Safely execute the plotting code"""
+        try:
+            # Create isolated namespace
+            import numpy as np
+            
+            namespace = {
+                '__builtins__': __builtins__,
+                'matplotlib': __import__('matplotlib'),
+                'plt': plt,
+                'sns': sns,
+                'pd': pd,
+                'np': np,
+                'io': io,
+                'base64': base64,
+                'warnings': __import__('warnings')
+            }
+            
+            # Execute the function definition
+            exec(code, namespace)
+            
+            # Call the function
+            img_str, insights, success = namespace['generate_plot'](data)
+            
+            return {
+                'image_base64': img_str,
+                'insights': insights,
+                'success': success,
+                'error': insights if not success else None
+            }
+            
+        except Exception as e:
+            return {
+                'image_base64': None,
+                'insights': None,
+                'success': False,
+                'error': str(e)
+            }
+
+    def _get_corrected_code(self, code, error_msg, traceback_str=None):
+        """Get corrected code from LLM based on error"""
+        healing_prompt = f"""
+        Fix this Python visualization code that encountered an error.
+        
+        ERROR: {error_msg}
+        
+        {f'TRACEBACK:\n{traceback_str}\n' if traceback_str else ''}
+        
+        PROBLEMATIC CODE:
+        ```python
+        {code}
+        ```
+        
+        Common fixes needed:
+        1. For 'ci' parameter errors: Replace 'ci=None' with 'errorbar=None' in seaborn plots
+        2. For import errors: Remove or replace unavailable libraries (like sklearn)
+        3. For data type errors: Add proper type checking and conversion
+        4. For empty data errors: Add data validation checks
+        5. For 'PathCollection.set()' errors: This usually means passing wrong parameters to scatter plots
+        
+        Return ONLY the corrected Python function code without explanations:
+        
+        ```python
+        def generate_plot(data):
+            # corrected code here
+        ```
+        """
+        
+        try:
+            response = self.llm.invoke([HumanMessage(content=healing_prompt)])
+            return self._extract_code_from_response(response.content)
+        except Exception as e:
+            self.logger.error(f"Error getting corrected code: {str(e)}")
+            return None
+
+    def _create_error_result(self, error_message, healing_history=None):
+        """Create error result with visualization"""
+        try:
+            # Create error visualization
+            plt.figure(figsize=(10, 4))
+            plt.text(0.5, 0.5, f"Visualization Error:\n{error_message}", 
+                    horizontalalignment='center', verticalalignment='center',
+                    fontsize=12, color='red', wrap=True)
+            plt.axis('off')
+            plt.title("Visualization Generation Failed", fontsize=14, color='darkred')
+            
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return {
+                'image_base64': img_str,
+                'insights': f"Error: {error_message}",
+                'success': False,
+                'final_code': None,
+                'healing_history': healing_history or []
+            }
+        except Exception as e:
+            self.logger.error(f"Error creating error visualization: {str(e)}")
+            return {
+                'image_base64': None,
+                'insights': f"Critical Error: {error_message}",
+                'success': False,
+                'final_code': None,
+                'healing_history': healing_history or []
+            }
+
+    def _log_healing_process(self, chart_type, healing_history):
+        """Log the healing process for analysis"""
+        try:
+            log_path = "logs/code_healing_history.log"
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write("=== New Code Healing Entry ===\n")
+                f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n")
+                f.write(f"Chart Type: {chart_type}\n\n")
+                
+                for i, attempt in enumerate(healing_history):
+                    f.write(f"--- Attempt {attempt['attempt']} ---\n")
+                    f.write(f"Error: {attempt['error']}\n")
+                    if 'traceback' in attempt:
+                        f.write(f"Traceback:\n{attempt['traceback']}\n")
+                    f.write("\nCode Before:\n")
+                    f.write("```python\n")
+                    f.write(attempt['code_before'].strip() + "\n")
+                    f.write("```\n\n")
+                    if 'code_after' in attempt:
+                        f.write("Code After:\n")
+                        f.write("```python\n")
+                        f.write(attempt['code_after'].strip() + "\n")
+                        f.write("```\n\n")
+                f.write("\n" + "="*50 + "\n\n")
+        except Exception as e:
+            self.logger.error(f"Error logging healing process: {str(e)}")
+            
+    def evaluate_results(self, state: DataAnalysisState) -> DataAnalysisState:
+        """Have the LLM evaluate visualization results and suggest improvements"""
+        
+        # Create a description of the visualizations for the LLM
+        viz_descriptions = []
+        for i, viz in enumerate(state.visualization_outputs):
+            desc = f"Visualization {i+1}: {viz['chart_type'].title()} of {', '.join(viz['variables'])}"
+            if 'error' in viz:
+                desc += f" (Error: {viz['error']})"
+            else:
+                desc += f" (Reasoning: {viz['reasoning']})"
+            viz_descriptions.append(desc)
+        
+        evaluation_prompt = f"""
+        <thinking>
+        I need to evaluate the visualization results comprehensively.
+
+        Dataset context:
+        {state.data_preview}
+
+        Column types: {state.column_types}
+        Relationships identified: {state.variable_relationships}
+
+        Visualizations created:
+        {chr(10).join(viz_descriptions)}
+
+        Evaluation framework:
+        1. Coverage: Do visualizations address key data aspects?
+        2. Appropriateness: Are chart types optimal for data types?
+        3. Insights: What patterns are revealed or missed?
+        4. Gaps: What additional analysis would be valuable?
+        5. Quality: Are there technical or interpretive issues?
+        </thinking>
+
+        ## Data Visualization Analysis Report
+
+        ### Executive Summary
+        Provide a 2-3 sentence overview of the visualization quality and key findings.
+
+        ### Visualization Assessment
+        For each visualization created:
+        1. **Effectiveness**: How well does it serve its analytical purpose?
+        2. **Technical Quality**: Any issues with implementation or display?
+        3. **Insights Revealed**: What patterns or relationships are visible?
+
+        ### Gap Analysis
+        1. **Missing Visualizations**: What important aspects weren't covered?
+        2. **Alternative Approaches**: Better ways to reveal the same insights?
+        3. **Additional Recommendations**: Next steps for deeper analysis?
+
+        ### Key Conclusions
+        Summarize the most important findings and actionable insights from the visualizations.
+
+        ### Recommended Actions
+        Suggest 2-3 specific next steps for further analysis.
+
+        Report:
+        """
+        
+        response = self.llm.invoke([HumanMessage(content=evaluation_prompt)])
+        state.feedback = response.content
+        print("LLM Feedback:")
+        print(state.feedback)
+        # Set current_step to complete to end the workflow
+        state.current_step = "complete"
+        return state
+
+    def _create_workflow(self) -> StateGraph:
+        """Create the workflow graph with the improved flow"""
+        # Define the state schema based on DataAnalysisState
+        graph = StateGraph(state_schema=DataAnalysisState)
+        
+        # Add nodes
+        graph.add_node("prepare_preview", self.prepare_data_preview)
+        graph.add_node("analyze", self.analyze_data_types)
+        graph.add_node("identify_relationships", self.identify_relationships)
+        graph.add_node("suggest", self.suggest_visualizations)
+        graph.add_node("visualize", self.create_visualization)
+        graph.add_node("evaluate", self.evaluate_results)
+        
+        # Add edges between nodes
+        graph.add_edge(START, "prepare_preview")
+        graph.add_edge("prepare_preview", "analyze")
+        graph.add_edge("analyze", "identify_relationships")
+        graph.add_edge("identify_relationships", "suggest")
+        graph.add_edge("suggest", "visualize")
+        graph.add_edge("visualize", "evaluate")
+        
+        def should_continue(state):
+            return END if state.current_step == "complete" else "prepare_preview"
+        
+        graph.add_conditional_edges("evaluate", should_continue)
+        
+        return graph.compile()
+        
+
+    def run_analysis(self, data: pd.DataFrame):
+        """Run the complete analysis workflow"""
+        self.logger.info("Starting analysis workflow")
+        start_time = time.time()
+        
+        try:
+            self.logger.info(f"Input data shape: {data.shape}")
+            
+            initial_state = DataAnalysisState(
+                data=data,
+                data_preview="",  # Will be populated in the workflow
+                column_types={},
+                variable_relationships=[],
+                suggested_visualizations=[],
+                visualization_outputs=[],
+                messages=[],
+                current_step="start",
+                feedback=None
+            )
+            
+            self.logger.info("Invoking workflow graph")
+            result = self.graph.invoke(initial_state)
+            
+            elapsed_time = time.time() - start_time
+            self.logger.info(f"Analysis workflow completed in {elapsed_time:.2f} seconds")
+            
+            # Access result attributes using dictionary-style access
+            if 'visualization_outputs' in result:
+                self.logger.info(f"Result contains {len(result['visualization_outputs'])} visualizations")
+            else:
+                self.logger.info("No visualization outputs found in result")
+                
+            if 'feedback' in result and result['feedback']:
+                self.logger.info("LLM feedback was generated")
+            
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"Error in run_analysis: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            raise
