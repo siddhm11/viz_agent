@@ -1,0 +1,341 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: histogram
+Variables: ['Store_Sales']
+Timestamp: 2025-05-23T12:58:56.539684
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a histogram visualization.
+
+    Dataset Context:
+    - Shape: (896, 5)
+    - Total columns: 5
+
+    Variables to visualize: ['Store_Sales']
+    Variable details:
+      - Store_Sales: numerical_continuous (int64) - 0 missing, 816 unique
+
+    Sample values:
+      - Store_Sales: [92300, 71570, 67100, 41540, 63600]
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+    Chart-specific considerations for histogram:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a histogram visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['Store_Sales']
+    Data types: ['int64']
+    Column types: ['numerical_continuous']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['Store_Sales']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for creating a histogram visualization. The user has provided a detailed set of requirements, so I should make sure to address each one carefully.
+
+First, I'll start by understanding the problem. The function is called generate_plot and takes data as input. It should return a base64 encoded image string, some insights text, and a success boolean. The data is a DataFrame with a specific structure, and the target variable is 'Store_Sales', which is numerical and continuous.
+
+I notice that the user has already provided a skeleton of the function, so I'll need to fill in the gaps. The function should handle all edge cases, use only standard libraries, avoid deprecated parameters, and include proper data validation and error handling.
+
+Looking at the data validation section, the function checks for missing columns. That's a good start. But I should also ensure that the data in 'Store_Sales' is indeed numerical. So, I'll add checks to confirm that the data type is either int or float. If it's not, I'll try to convert it, but if that fails, I'll handle it as an error.
+
+Next, I need to handle edge cases like empty data or missing values. The user mentioned that 'Store_Sales' has 0 missing values, but I should still check if the data is empty after any preprocessing steps. If it is, I'll return an error.
+
+For the visualization, I'll use seaborn's distplot for a histogram because it provides a smooth curve which can give better insights. I'll set up the plot with appropriate styling, using a modern seaborn theme and a figure size that's suitable for publications. I'll also add labels and a title to make the plot clear.
+
+I should also consider the distribution of the data. Calculating summary statistics like mean, median, and standard deviation will help in generating meaningful insights. Additionally, checking for the presence of outliers using the IQR method will add value to the insights.
+
+Error handling is crucial. The function should catch any exceptions and return a detailed error message. I'll make sure that all steps are wrapped in a try-except block to handle any unexpected issues.
+
+Finally, I'll convert the plot to a base64 string so it can be easily returned without saving the image. I'll also make sure to close the plot after saving to avoid memory issues.
+
+Putting it all together, I'll structure the function step by step, ensuring each part is robust and handles potential issues gracefully. This includes data validation, plot creation, insight generation, and proper cleanup.
+</think>
+
+Here's a complete, robust implementation of the `generate_plot` function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Store_Sales']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        if not isinstance(data, pd.DataFrame):
+            return None, "Input data must be a pandas DataFrame", False
+        
+        # Validate that Store_Sales is numeric
+        store_sales = data['Store_Sales']
+        if not pd.api.types.is_numeric_dtype(store_sales):
+            try:
+                # Attempt to convert to numeric
+                data['Store_Sales'] = pd.to_numeric(store_sales)
+            except ValueError:
+                return None, "Store_Sales column cannot be converted to numeric", False
+        
+        # Drop any rows with missing values (though user says there are 0 missing)
+        data = data.dropna(subset=['Store_Sales'])
+        
+        if len(data) == 0:
+            return None, "No valid data available for visualization", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_theme(style="whitegrid", palette="husl")
+        
+        # Create histogram with density curve
+        sns.histplot(data['Store_Sales'], 
+                     bins='auto', 
+                     kde=True, 
+                     color='skyblue',
+                     line_kws={'color': 'navy', 'lw': 2})
+        
+        # Customize plot appearance
+        plt.title('Distribution of Store Sales', fontsize=14, fontweight='bold')
+        plt.xlabel('Sales Amount', fontsize=12)
+        plt.ylabel('Frequency', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        
+        # Calculate statistical insights
+        mean_sales = data['Store_Sales'].mean()
+        median_sales = data['Store_Sales'].median()
+        std_dev = data['Store_Sales'].std()
+        
+        # Calculate outliers using IQR method
+        Q1 = data['Store_Sales'].quantile(0.25)
+        Q3 = data['Store_Sales'].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        
+        outlier_count = ((data['Store_Sales'] < lower_bound) | 
+                         (data['Store_Sales'] > upper_bound)).sum()
+        
+        # Generate insights text
+        insights = f"""
+        Mean Sales: ${mean_sales:.2f}
+        Median Sales: ${median_sales:.2f}
+        Standard Deviation: ${std_dev:.2f}
+        Outliers Detected: {outlier_count} ({(outlier_count/len(data))*100:.1f}% of data)
+        
+        The distribution shows a central tendency around ${median_sales:.0f} with a spread of ${std_dev:.0f}. 
+        There are {outlier_count} potential outliers that may warrant further investigation.
+        """
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation and type checking
+2. Robust error handling
+3. Modern visualization styling with seaborn
+4. Meaningful statistical insights including:
+   - Mean, median, and standard deviation
+   - Outlier detection using IQR method
+5. Proper figure sizing and formatting
+6. Base64 encoding of the visualization
+7. Clear, publication-ready styling
+8. Graceful handling of edge cases
+9. Detailed error reporting
+
+The function will return:
+- A base64-encoded PNG image string
+- A formatted string with statistical insights
+- A boolean indicating success/failure
+
+The visualization uses a histogram with a density curve to show the distribution of Store Sales, making it easy to identify patterns, central tendency, and potential outliers.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Store_Sales']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        if not isinstance(data, pd.DataFrame):
+            return None, "Input data must be a pandas DataFrame", False
+        
+        # Validate that Store_Sales is numeric
+        store_sales = data['Store_Sales']
+        if not pd.api.types.is_numeric_dtype(store_sales):
+            try:
+                # Attempt to convert to numeric
+                data['Store_Sales'] = pd.to_numeric(store_sales)
+            except ValueError:
+                return None, "Store_Sales column cannot be converted to numeric", False
+        
+        # Drop any rows with missing values (though user says there are 0 missing)
+        data = data.dropna(subset=['Store_Sales'])
+        
+        if len(data) == 0:
+            return None, "No valid data available for visualization", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_theme(style="whitegrid", palette="husl")
+        
+        # Create histogram with density curve
+        sns.histplot(data['Store_Sales'], 
+                     bins='auto', 
+                     kde=True, 
+                     color='skyblue',
+                     line_kws={'color': 'navy', 'lw': 2})
+        
+        # Customize plot appearance
+        plt.title('Distribution of Store Sales', fontsize=14, fontweight='bold')
+        plt.xlabel('Sales Amount', fontsize=12)
+        plt.ylabel('Frequency', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        
+        # Calculate statistical insights
+        mean_sales = data['Store_Sales'].mean()
+        median_sales = data['Store_Sales'].median()
+        std_dev = data['Store_Sales'].std()
+        
+        # Calculate outliers using IQR method
+        Q1 = data['Store_Sales'].quantile(0.25)
+        Q3 = data['Store_Sales'].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        
+        outlier_count = ((data['Store_Sales'] < lower_bound) | 
+                         (data['Store_Sales'] > upper_bound)).sum()
+        
+        # Generate insights text
+        insights = f"""
+        Mean Sales: ${mean_sales:.2f}
+        Median Sales: ${median_sales:.2f}
+        Standard Deviation: ${std_dev:.2f}
+        Outliers Detected: {outlier_count} ({(outlier_count/len(data))*100:.1f}% of data)
+        
+        The distribution shows a central tendency around ${median_sales:.0f} with a spread of ${std_dev:.0f}. 
+        There are {outlier_count} potential outliers that may warrant further investigation.
+        """
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

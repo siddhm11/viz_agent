@@ -1,0 +1,227 @@
+2025-05-22 15:19:13,938 - newviz - INFO - Initializing DataAnalystAgent
+2025-05-22 15:19:14,066 - newviz - INFO - Initialized LLM with model: llama3-70b-8192
+2025-05-22 15:19:14,074 - newviz - INFO - Created workflow graph
+2025-05-22 15:19:14,074 - newviz - INFO - Starting analysis workflow
+2025-05-22 15:19:14,074 - newviz - INFO - Input data shape: (1000, 16)
+2025-05-22 15:19:14,074 - newviz - INFO - Invoking workflow graph
+2025-05-22 15:19:14,075 - newviz - INFO - Starting data preview preparation
+2025-05-22 15:19:14,075 - newviz - INFO - DataFrame shape: (1000, 16)
+2025-05-22 15:19:14,075 - newviz - INFO - DataFrame columns: ['student_id', 'age', 'gender', 'study_hours_per_day', 'social_media_hours', 'netflix_hours', 'part_time_job', 'attendance_percentage', 'sleep_hours', 'diet_quality', 'exercise_frequency', 'parental_education_level', 'internet_quality', 'mental_health_rating', 'extracurricular_participation', 'exam_score']
+2025-05-22 15:19:14,088 - newviz - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-22 15:19:14,089 - newviz - INFO - Starting data type analysis
+2025-05-22 15:19:14,089 - newviz - INFO - Analyzing data types for 16 columns
+2025-05-22 15:19:14,089 - newviz - INFO - Sending analyze_data_types prompt to LLM
+2025-05-22 15:19:17,910 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:19:17,917 - newviz - INFO - Received response from LLM for data type analysis
+2025-05-22 15:19:17,917 - newviz - ERROR - Error parsing column types: unterminated string literal (detected at line 4) (<string>, line 4)
+2025-05-22 15:19:17,917 - newviz - ERROR - Raw LLM response: <think>
+Okay, so I need to categorize each column in this dataset into one of the specified categories. Let me go through each column one by one, considering the data type, sample values, and the column name to determine the most appropriate category.
+
+Starting with 'student_id'. The dtype is object, and the sample values are like 'S1000', 'S1001', etc. These look like unique identifiers for each student. Since they are not numerical and don't represent any particular order or category, I think this should be 'categorical_nominal'.
+
+Next is 'age'. The dtype is int64, and the values are numbers like 23, 20, 21. Age is a count of years, so it's a numerical value. Since it's an integer, it might be considered 'numerical_discrete', but age can technically be any integer, so it could also be seen as continuous. However, in this context, since it's measured in whole numbers, I'll go with 'numerical_discrete'.
+
+'gender' is an object dtype with values like 'Female' and 'Male'. This is clearly a category without any inherent order, so it's 'categorical_nominal'.
+
+'study_hours_per_day' is a float. The values have decimal points, like 0.0, 6.9, etc. This represents a measurement, so it should be 'numerical_continuous'.
+
+'social_media_hours' and 'netflix_hours' are also floats with decimal values. They measure time spent, so both should be 'numerical_continuous'.
+
+'part_time_job' is an object with values 'Yes' and 'No'. This is a binary value, so it fits into the 'boolean' category.
+
+'attendance_percentage' is a float, but it's a percentage, which is a ratio. So, it's 'numerical_continuous'.
+
+'sleep_hours' is a float, representing hours slept, so it's a measurement and thus 'numerical_continuous'.
+
+'diet_quality' is an object with values like 'Fair', 'Good', 'Poor'. These are categories without a specific order, so it's 'categorical_nominal'.
+
+'exercise_frequency' is an integer, but looking at the sample values, it seems to represent how often someone exercises, like 6, 1, 3. This could be considered 'numerical_discrete' since it's a count, but it might also represent an ordinal scale if the numbers correspond to categories like 'Never', 'Sometimes', etc. However, without explicit labels, it's safer to treat it as 'numerical_discrete'.
+
+'parental_education_level' is an object with values like 'Master', 'High School', etc. These are categories without a specific order, so it's 'categorical_nominal'.
+
+'internet_quality' is an object with values like 'Average', 'Poor', 'Good'. These are categories without a specific order, so 'categorical_nominal'.
+
+'mental_health_rating' is an integer with values like 8, 1, 10. This seems like a rating scale, which implies an order. So, it should be 'categorical_ordinal'.
+
+'extracurricular_participation' is an object with 'Yes' and 'No', which is a binary value, so 'boolean'.
+
+Finally, 'exam_score' is a float, representing a score which is a measurement, so it's 'numerical_continuous'.
+</think>
+
+{"student_id": "categorical_nominal", "age": "numerical_discrete", "gender": "categorical_nominal", "study_hours_per_day": "numerical_continuous", "social_media_hours": "numerical_continuous", "netflix_hours": "numerical_continuous", "part_time_job": "boolean", "attendance_percentage": "numerical_continuous", "sleep_hours": "numerical_continuous", "diet_quality": "categorical_nominal", "exercise_frequency": "numerical_discrete", "parental_education_level": "categorical_nominal", "internet_quality": "categorical_nominal", "mental_health_rating": "categorical_ordinal", "extracurricular_participation": "boolean", "exam_score": "numerical_continuous"}
+2025-05-22 15:19:17,918 - newviz - INFO - Using fallback column types: {'student_id': 'categorical', 'age': 'numerical', 'gender': 'categorical', 'study_hours_per_day': 'numerical', 'social_media_hours': 'numerical', 'netflix_hours': 'numerical', 'part_time_job': 'categorical', 'attendance_percentage': 'numerical', 'sleep_hours': 'numerical', 'diet_quality': 'categorical', 'exercise_frequency': 'numerical', 'parental_education_level': 'categorical', 'internet_quality': 'categorical', 'mental_health_rating': 'numerical', 'extracurricular_participation': 'categorical', 'exam_score': 'numerical'}
+2025-05-22 15:19:17,918 - newviz - INFO - Completed data type analysis in 3.83 seconds
+2025-05-22 15:19:17,918 - newviz - INFO - Starting relationship identification
+2025-05-22 15:19:17,918 - newviz - INFO - Sending identify_relationships prompt to LLM
+2025-05-22 15:19:23,605 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:19:23,606 - newviz - INFO - Received response from LLM for relationship identification
+2025-05-22 15:19:23,606 - newviz - INFO - Identified 13 potential relationships
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 1: ['study_hours_per_day', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 2: ['social_media_hours', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 3: ['netflix_hours', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 4: ['attendance_percentage', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 5: ['gender', 'exam_score'] - comparison
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 6: ['part_time_job', 'exam_score'] - comparison
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 7: ['diet_quality', 'exam_score'] - comparison
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 8: ['parental_education_level', 'exam_score'] - comparison
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 9: ['internet_quality', 'exam_score'] - comparison
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 10: ['mental_health_rating', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 11: ['extracurricular_participation', 'exam_score'] - comparison
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 12: ['sleep_hours', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Relationship 13: ['exercise_frequency', 'exam_score'] - correlation
+2025-05-22 15:19:23,607 - newviz - INFO - Completed relationship identification in 5.69 seconds
+2025-05-22 15:19:23,653 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:19:23,654 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 27.000000 seconds
+2025-05-22 15:19:56,295 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:19:56,298 - newviz - INFO - Starting dynamic LLM-based visualization creation
+2025-05-22 15:19:56,306 - newviz - INFO - Created data summary for LLM with 16 columns
+2025-05-22 15:19:56,306 - newviz - INFO - Requesting code for scatter plot visualization of ['study_hours_per_day', 'exam_score']
+2025-05-22 15:19:56,454 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:19:56,455 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:20:07,824 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:20:07,868 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:20:07,868 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:20:22,574 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:20:22,576 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:20:22,576 - newviz - INFO - Extracted plotting code of length 3510
+2025-05-22 15:20:22,579 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 15:20:22,579 - newviz - WARNING - Code executed but reported failure: Error: isinstance() arg 2 must be a type, a tuple of types, or a union
+2025-05-22 15:20:22,725 - newviz - INFO - Requesting code for scatter plot visualization of ['social_media_hours', 'exam_score']
+2025-05-22 15:20:22,772 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:20:22,772 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:20:36,431 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:20:36,648 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:20:36,649 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 15:20:52,494 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:20:52,496 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:20:52,497 - newviz - INFO - Extracted plotting code of length 3890
+2025-05-22 15:20:52,502 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 15:20:52,502 - newviz - WARNING - Code executed but reported failure: Error: No module named 'sklearn'
+2025-05-22 15:20:52,529 - newviz - INFO - Requesting code for scatter plot visualization of ['netflix_hours', 'exam_score']
+2025-05-22 15:20:52,606 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:20:52,607 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:21:06,823 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:21:06,921 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:21:06,922 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 15:21:23,316 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:21:23,317 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:21:23,317 - newviz - INFO - Extracted plotting code of length 4286
+2025-05-22 15:21:23,564 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:21:23,564 - newviz - INFO - Requesting code for scatter plot visualization of ['attendance_percentage', 'exam_score']
+2025-05-22 15:21:23,641 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:21:23,641 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 13.000000 seconds
+2025-05-22 15:21:39,588 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:21:39,694 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:21:39,695 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:21:53,918 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:21:53,921 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:21:53,922 - newviz - INFO - Extracted plotting code of length 3242
+2025-05-22 15:21:54,098 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:21:54,100 - newviz - INFO - Requesting code for box plot visualization of ['gender', 'exam_score']
+2025-05-22 15:21:54,252 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:21:54,252 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 15:22:07,173 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:22:07,235 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:22:07,235 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:22:23,036 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:22:23,040 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:22:23,040 - newviz - INFO - Extracted plotting code of length 3966
+2025-05-22 15:22:23,182 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:22:23,184 - newviz - INFO - Requesting code for box plot visualization of ['part_time_job', 'exam_score']
+2025-05-22 15:22:23,306 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:22:23,306 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-22 15:22:37,698 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:22:37,783 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:22:37,784 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:22:52,312 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:22:52,313 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:22:52,313 - newviz - INFO - Extracted plotting code of length 2784
+2025-05-22 15:22:52,332 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-22 15:22:52,336 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-22 15:22:52,495 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:22:52,496 - newviz - INFO - Requesting code for bar chart visualization of ['diet_quality', 'exam_score']
+2025-05-22 15:22:52,612 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:22:52,612 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:23:05,345 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:23:05,391 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:23:05,392 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2025-05-22 15:23:18,521 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:23:18,525 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:23:18,525 - newviz - INFO - Extracted plotting code of length 3466
+2025-05-22 15:23:18,603 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:23:18,603 - newviz - INFO - Requesting code for bar chart visualization of ['parental_education_level', 'exam_score']
+2025-05-22 15:23:18,638 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:23:18,639 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:23:32,757 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:23:32,829 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:23:32,830 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 15:23:48,528 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:23:48,532 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:23:48,532 - newviz - INFO - Extracted plotting code of length 3681
+2025-05-22 15:23:48,620 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:23:48,620 - newviz - INFO - Requesting code for violin plot visualization of ['internet_quality', 'exam_score']
+2025-05-22 15:23:48,759 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:23:48,759 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:24:02,151 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:24:02,348 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:24:02,348 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:24:17,021 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:24:17,022 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:24:17,022 - newviz - INFO - Extracted plotting code of length 3899
+2025-05-22 15:24:17,041 - newviz - INFO - Successfully executed plotting code. Success status: False
+2025-05-22 15:24:17,041 - newviz - WARNING - Code executed but reported failure: Error: style must be one of white, dark, whitegrid, darkgrid, ticks
+2025-05-22 15:24:17,060 - newviz - INFO - Requesting code for scatter plot visualization of ['mental_health_rating', 'exam_score']
+2025-05-22 15:24:17,119 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:24:17,119 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:24:30,870 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:24:30,921 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:24:30,921 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-22 15:24:47,141 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:24:47,143 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:24:47,143 - newviz - INFO - Extracted plotting code of length 3947
+2025-05-22 15:24:47,332 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:24:47,332 - newviz - INFO - Requesting code for bar chart visualization of ['extracurricular_participation', 'exam_score']
+2025-05-22 15:24:47,467 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:24:47,467 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-22 15:25:01,568 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:25:01,772 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:25:01,772 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:25:16,116 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:25:16,118 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:25:16,118 - newviz - INFO - Extracted plotting code of length 3547
+2025-05-22 15:25:16,199 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:25:16,201 - newviz - INFO - Requesting code for scatter plot visualization of ['sleep_hours', 'exam_score']
+2025-05-22 15:25:16,249 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:25:16,249 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:25:30,984 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:25:31,051 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:25:31,052 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-22 15:25:48,476 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:25:48,478 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:25:48,479 - newviz - INFO - Extracted plotting code of length 3309
+2025-05-22 15:25:48,769 - newviz - INFO - Successfully executed plotting code. Success status: True
+2025-05-22 15:25:48,770 - newviz - INFO - Requesting code for scatter plot visualization of ['exercise_frequency', 'exam_score']
+2025-05-22 15:25:48,873 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:25:48,873 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-22 15:26:02,807 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:26:02,844 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:26:02,844 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2025-05-22 15:26:17,845 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:26:17,848 - newviz - INFO - Received code generation response from LLM
+2025-05-22 15:26:17,848 - newviz - INFO - Extracted plotting code of length 3744
+2025-05-22 15:26:17,849 - newviz - ERROR - Error executing generated code: positional argument follows keyword argument (<string>, line 67)
+2025-05-22 15:26:17,850 - newviz - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/fyndcodes/viz_agent/newviz.py", line 468, in create_visualization
+    exec(plot_code, local_vars)
+  File "<string>", line 67
+    ha='left', va='top', color='red')
+                                    ^
+SyntaxError: positional argument follows keyword argument
+
+2025-05-22 15:26:17,882 - newviz - INFO - Completed creation of 13 visualizations
+2025-05-22 15:26:17,968 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-22 15:26:17,968 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 43.000000 seconds
+2025-05-22 15:27:07,656 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-22 15:27:07,660 - newviz - INFO - Analysis workflow completed in 473.59 seconds
+2025-05-22 15:27:07,660 - newviz - INFO - Result contains 13 visualizations
+2025-05-22 15:27:07,660 - newviz - INFO - LLM feedback was generated
