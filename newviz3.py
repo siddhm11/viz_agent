@@ -14,6 +14,11 @@ import traceback
 import time
 import datetime
 import os
+import sklearn
+import numpy as np
+from scipy import stats
+import warnings
+warnings.filterwarnings('ignore')
 
 
 # Set up logging configuration
@@ -67,7 +72,7 @@ class DataAnalystAgent:
             
             # Capture DataFrame.head()
             buffer.write("## Data Preview (First 15 rows)\n")
-            buffer.write(state.data.head(15).to_string())
+            buffer.write(state.data.head(2).to_string())
             buffer.write("\n\n")
             
             # Capture DataFrame.info() 

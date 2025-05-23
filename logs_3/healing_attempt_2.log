@@ -1,0 +1,557 @@
+=== HEALING PROMPT ===
+Attempt: 2
+Error: Error: Rectangle.set() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2661, in countplot
+    color = _default_color(ax.bar, hue, color, kwargs, saturation)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/utils.py", line 127, in _default_color
+    scout, = method([np.nan], [np.nan], **kws)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'ci'
+
+Timestamp: 2025-05-23T15:54:30.265463
+
+PROMPT:
+URGENT: Fix this broken Python visualization code.
+
+    ATTEMPT NUMBER: 2
+    ERROR ENCOUNTERED: Error: Rectangle.set() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2661, in countplot
+    color = _default_color(ax.bar, hue, color, kwargs, saturation)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/utils.py", line 127, in _default_color
+    scout, = method([np.nan], [np.nan], **kws)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'ci'
+
+
+    
+
+    PROBLEMATIC CODE:
+    ```python
+    def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['part_time_job']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        df = data.copy()
+        part_time_job = df['part_time_job']
+        
+        # Validate data types
+        if not isinstance(part_time_job, pd.Series):
+            return None, "Error: 'part_time_job' must be a pandas Series", False
+            
+        # Ensure boolean values
+        if not (part_time_job.dtype == bool or part_time_job.dtype == 'object'):
+            return None, "'part_time_job' must be boolean or object type", False
+            
+        if part_time_job.dtype == 'object':
+            # Convert string booleans to actual boolean values
+            df['part_time_job'] = part_time_job.apply(lambda x: True if x == 'Yes' else False)
+        
+        # Validate after conversion
+        if not df['part_time_job'].dtype == bool:
+            return None, "Failed to convert 'part_time_job' to boolean", False
+        
+        # Check for empty data
+        if df.empty:
+            return None, "Data is empty", False
+            
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create count plot with corrected parameter
+        ax = sns.countplot(x='part_time_job', data=df, ci=None)
+        
+        # Customize plot
+        plt.title('Distribution of Part-time Job Responses', fontsize=14, pad=20)
+        plt.xlabel('Part-time Job', fontsize=12)
+        plt.ylabel('Count', fontsize=12)
+        plt.xticks(fontsize=10)
+        plt.yticks(fontsize=10)
+        plt.grid(True, alpha=0.3)
+        
+        # Add value labels
+        for p in ax.patches:
+            height = p.get_height()
+            ax.text(p.get_x() + p.get_width()/2., height + 3,
+                    f'{int(height)}',
+                    ha="center", va="bottom", fontsize=10)
+        
+        # Generate insights
+        counts = df['part_time_job'].value_counts()
+        total = counts.sum()
+        no_count = counts[False]
+        yes_count = counts[True]
+        
+        insights = f"Analysis of Part-time Job Responses:\n"
+        insights += f"Total responses: {total}\n"
+        insights += f"No responses: {no_count} ({no_count/total:.2%})\n"
+        insights += f"Yes responses: {yes_count} ({yes_count/total:.2%})\n"
+        if yes_count > no_count:
+            insights += "The majority of responses indicate having a part-time job."
+        elif no_count > yes_count:
+            insights += "The majority of responses indicate not having a part-time job."
+        else:
+            insights += "The responses are evenly split between having and not having a part-time job."
+            
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+    ```
+
+    COMMON FIXES NEEDED:
+    1. Seaborn 'ci' parameter → use 'errorbar=None' instead
+    2. Missing imports → add required imports
+    3. Data type issues → add proper validation and conversion
+    4. Empty data → add data checks
+    5. Column access errors → validate column existence
+    6. Plotting parameter errors → use correct parameter names
+    7. Memory/resource issues → add proper cleanup
+
+    REQUIREMENTS:
+    - Fix the specific error mentioned above
+    - Maintain the same function signature: def generate_plot(data):
+    - Return: (base64_string, insights_text, success_boolean)
+    - Keep all existing functionality that works
+    - Add better error handling
+    - Ensure robust data validation
+
+    RETURN ONLY THE CORRECTED PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        # Fixed code here
+    ```
+
+=== LLM HEALING RESPONSE ===
+<think>
+Okay, I need to fix this broken Python visualization code. The error encountered is "Rectangle.set() got an unexpected keyword argument 'ci'". Let me look at the code and figure out what's wrong.
+
+First, the error occurs in the countplot function from seaborn. The traceback shows that the error is in the line where ax.bar is called, which is part of the countplot. The problem is with the 'ci' parameter.
+
+I remember that in some versions of seaborn or matplotlib, the 'ci' parameter might not be supported in certain contexts. Wait, in the code, the user set ci=None in the countplot. Oh, right, maybe that's causing the issue because 'ci' isn't a valid argument for the underlying bar plot.
+
+Looking at the common fixes needed, the first point says to replace 'ci' with 'errorbar=None'. So I should change the countplot line to use errorbar instead of ci.
+
+So in the code, the line is:
+ax = sns.countplot(x='part_time_job', data=df, ci=None)
+I should change ci=None to errorbar=None.
+
+Wait, but I'm not sure if that's the correct replacement. Let me check the documentation. Oh right, in some cases, using ci='sd' or similar is possible, but if we want to remove confidence intervals, setting errorbar=None might be the correct approach.
+
+Alternatively, maybe just removing the ci parameter altogether would work, but since the user tried ci=None, perhaps the parameter isn't accepted. So replacing ci with errorbar might fix it.
+
+So I'll modify that line to:
+ax = sns.countplot(x='part_time_job', data=df, errorbar=None)
+
+Wait, but I'm not sure if that's the exact parameter. Let me think again. The error is that Rectangle.set() got an unexpected 'ci' argument. That suggests that when the bar plot is created, the 'ci' keyword is being passed, which isn't valid for the Rectangle.
+
+So perhaps the countplot function is passing 'ci' to the underlying bar function, which doesn't accept it. Therefore, to prevent that, we should set ci=None in the countplot, but maybe that's not the correct way.
+
+Wait, maybe the correct approach is to set ci='sd' or another valid option, but if we don't want confidence intervals, perhaps setting ci=False would be better. But I'm not sure if that's the parameter.
+
+Alternatively, perhaps the 'ci' parameter in countplot is deprecated or changed. Let me check the latest seaborn documentation. Oh, right, in some versions, the 'ci' parameter is still supported, but perhaps in this context, it's causing an issue because it's being passed to a function that doesn't accept it.
+
+Wait, maybe the problem is that when 'ci' is set to None, it's trying to pass that to the bar plot, which doesn't accept 'ci' as a keyword. So perhaps the solution is to avoid using 'ci' in the countplot and instead handle it differently.
+
+Alternatively, perhaps the 'ci' parameter in countplot is for confidence intervals, and setting it to None is correct, but maybe in this case, it's causing an issue because the underlying bar plot doesn't accept 'ci'. So perhaps the solution is to set 'errorbar' instead.
+
+Wait, I'm getting a bit confused. Let me think about the error again. The error is in the Rectangle.set() function, which is called when creating the bar plot. The 'ci' argument is being passed, which isn't a valid parameter for Rectangle.
+
+So the problem is that the countplot is passing 'ci' to the bar function, which then tries to set it on the Rectangle, which doesn't accept 'ci'. Therefore, to fix this, we need to prevent 'ci' from being passed to the bar function.
+
+In the countplot function, the 'ci' parameter is used to specify the confidence interval. So if we set ci=None, it should not add any error bars. But perhaps in this case, the way it's handled is causing the issue.
+
+Wait, maybe the correct fix is to set ci=False instead of ci=None. Let me try that. So in the countplot, change ci=None to ci=False.
+
+Alternatively, perhaps the 'errorbar' parameter is the correct one to use. Let me check the countplot documentation. Oh, I see that in the countplot function, the 'ci' parameter is indeed used, but perhaps in some versions, it's better to use 'errorbar' instead.
+
+Wait, no, the countplot function in seaborn doesn't have an 'errorbar' parameter. So perhaps the correct approach is to set ci=None, but that's causing the underlying bar plot to receive 'ci' as a keyword, which it doesn't accept.
+
+Hmm, maybe the problem is that in the version of matplotlib being used, the Rectangle doesn't accept 'ci' as a parameter. So perhaps the solution is to not pass 'ci' at all, or to set it in a way that doesn't cause it to be passed to the bar function.
+
+Wait, perhaps the countplot function is designed to handle 'ci' internally, and setting it to None should work. But in this case, it's causing an error. So maybe the fix is to remove the 'ci' parameter altogether.
+
+Alternatively, perhaps the 'ci' parameter is not needed because we're not plotting any error bars. So maybe just omitting 'ci=None' would fix the issue.
+
+Wait, let me think. The original code had 'ci=None' in the countplot. If I remove that parameter, would it fix the error? Because then, the countplot wouldn't pass 'ci' to the bar function, thus avoiding the error.
+
+So perhaps the solution is to remove the 'ci=None' part. Let me try that.
+
+So the line would become:
+ax = sns.countplot(x='part_time_job', data=df)
+
+That might solve the problem because it's no longer passing 'ci' to the underlying bar plot.
+
+Alternatively, if the user wants to set 'ci' to None, perhaps they should do it via another method, but in this case, it's causing an error.
+
+So, to fix the error, I'll remove the 'ci=None' parameter from the countplot call.
+
+Wait, but the user might have added 'ci=None' to remove confidence intervals. So perhaps the correct way is to set 'ci' to 'sd' or another valid option, but that's not the case here.
+
+Alternatively, perhaps the 'ci' parameter is not the issue, but the way it's being handled is. Maybe the 'ci' is passed as a keyword argument to the bar function, which doesn't accept it, leading to the error.
+
+So, to prevent that, perhaps the countplot function should not pass 'ci' to the bar function. But how can I control that?
+
+Alternatively, perhaps the 'ci' parameter in countplot is deprecated, and the correct way is to use another approach.
+
+Wait, perhaps the 'ci' parameter in countplot is for the confidence interval, and if set to None, it doesn't draw any. So maybe the error is because in the underlying bar plot, 'ci' is not a valid parameter, so when countplot tries to pass it, it causes an error.
+
+So the solution is to avoid passing 'ci' to the bar function. Therefore, in the countplot, perhaps we can set 'errorbar' instead, but I don't think that's a parameter.
+
+Alternatively, perhaps the correct fix is to set 'ci' to False. Let me try that.
+
+So, in the code, change:
+ax = sns.countplot(x='part_time_job', data=df, ci=None)
+to
+ax = sns.countplot(x='part_time_job', data=df, ci=False)
+
+But I'm not sure if that's the correct approach. Let me check the seaborn documentation. Oh, right, the 'ci' parameter in countplot can be a number, "sd", or None. So setting it to None should disable confidence intervals.
+
+Wait, but in the error, the problem is that 'ci' is being passed to the Rectangle.set() function, which doesn't accept it. So perhaps the countplot is passing 'ci' as a keyword argument to the bar function, which then tries to set it on the Rectangle, which doesn't have that parameter.
+
+So, to fix this, perhaps the countplot should not pass 'ci' to the bar function. But how can I control that?
+
+Alternatively, perhaps the 'ci' parameter is not compatible with certain versions of matplotlib. So, perhaps the solution is to update the code to avoid using 'ci' and instead handle it differently.
+
+Wait, maybe the 'ci' parameter is for the error bars, and if we don't want them, we can just omit 'ci' or set it to None. But in this case, it's causing an error.
+
+So, perhaps the correct fix is to remove the 'ci=None' parameter from the countplot call. Let me try that.
+
+So, the line becomes:
+ax = sns.countplot(x='part_time_job', data=df)
+
+This way, 'ci' isn't passed, and the error should be avoided.
+
+Alternatively, perhaps the 'ci' parameter is being passed as a keyword argument to the bar function, which doesn't accept it. So, to prevent that, we can set 'errorbar=None' in the countplot, but I don't think that's a valid parameter.
+
+Wait, perhaps the 'errorbar' is a parameter in the bar function, but not in countplot. So, maybe the solution is to not use 'ci' in countplot and instead handle error bars in another way.
+
+Alternatively, perhaps the 'ci' parameter is not needed here because we're just doing a simple count plot without any error bars. So, removing 'ci=None' would fix the issue.
+
+So, I'll proceed by removing the 'ci=None' part from the countplot line.
+
+Now, let me check the rest of the code for other potential issues.
+
+Looking at the data validation steps, the code checks if 'part_time_job' is a boolean or object type. If it's object, it converts 'Yes' to True and others to False. That seems okay.
+
+The code also handles empty data and missing columns, which is good.
+
+In the plotting section, after removing 'ci=None', the countplot should work without errors.
+
+Another thing to consider is the 'errorbar' parameter. Wait, perhaps in the bar function, 'errorbar' is a parameter, but in countplot, it's handled via 'ci'. So, perhaps the correct approach is to set 'ci' to None, but that's causing the error.
+
+Wait, maybe the issue is that in the underlying bar function, 'ci' is not a valid parameter. So, perhaps the countplot function should not pass 'ci' to the bar function when it's set to None.
+
+But how can I fix that? Maybe the countplot function is outdated, and in newer versions, this is handled differently.
+
+Alternatively, perhaps the solution is to use a different approach to create the count plot, such as using the bar plot directly instead of countplot.
+
+But that might require more code changes, which I'm not sure I can do right now.
+
+Alternatively, perhaps the 'ci' parameter is not the issue, but the way it's being handled is. Maybe the 'ci' is passed as a keyword argument to the bar function, which doesn't accept it, leading to the error.
+
+So, perhaps the solution is to set 'ci' to a default value or remove it.
+
+Wait, perhaps the correct fix is to set 'errorbar=None' in the countplot, but I don't think that's a valid parameter.
+
+Alternatively, perhaps the 'ci' parameter is being passed to the bar function, which doesn't accept it. So, to prevent that, we can set 'ci' to None in the countplot, but that's what the user did, leading to the error.
+
+Hmm, this is a bit tricky. Let me think of another approach.
+
+Wait, perhaps the 'ci' parameter in countplot is for the confidence interval and is passed to the underlying functions. So, if we set 'ci' to None, it should not compute any confidence intervals, thus not passing 'ci' to the bar function.
+
+But in this case, it's still causing the error, which suggests that 'ci' is being passed regardless.
+
+So, perhaps the solution is to avoid using 'ci' altogether and instead use another method to remove error bars.
+
+Alternatively, perhaps the 'ci' parameter is not the issue, but the way the bar function is being called is. Maybe the 'ci' is being passed as a keyword argument to the bar function, which doesn't accept it.
+
+So, perhaps the correct fix is to modify the countplot function to not pass 'ci' when it's None. But since I can't modify the seaborn code, I need another approach.
+
+Wait, perhaps the 'ci' parameter is not needed here because we're not plotting any error bars. So, removing 'ci=None' would fix the issue.
+
+So, I'll proceed by removing the 'ci=None' parameter from the countplot call.
+
+Let me update the code accordingly.
+
+So, the line becomes:
+ax = sns.countplot(x='part_time_job', data=df)
+
+Now, I'll test this change. If the error is resolved, then the problem is fixed.
+
+Additionally, I should check if there are any other potential issues in the code.
+
+Looking at the data validation steps, everything seems okay. The code checks for the required columns, data types, and handles conversions from object to boolean.
+
+In the plotting section, after removing 'ci=None', the countplot should work without passing 'ci' to the bar function, thus avoiding the error.
+
+Another thing to consider is the 'errorbar' parameter in the bar function. But since we're using countplot, which abstracts that, perhaps it's not necessary.
+
+So, the main fix is to remove the 'ci=None' parameter from the countplot call.
+
+I think that should resolve the error. Now, I'll update the code accordingly.
+</think>
+
+To fix the error, we need to address the issue where the `ci` parameter is causing an unexpected keyword argument error. The solution is to remove the `ci=None` parameter from the `sns.countplot()` function.
+
+Here is the corrected code:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['part_time_job']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        df = data.copy()
+        part_time_job = df['part_time_job']
+        
+        # Validate data types
+        if not isinstance(part_time_job, pd.Series):
+            return None, "Error: 'part_time_job' must be a pandas Series", False
+            
+        # Ensure boolean values
+        if not (part_time_job.dtype == bool or part_time_job.dtype == 'object'):
+            return None, "'part_time_job' must be boolean or object type", False
+            
+        if part_time_job.dtype == 'object':
+            # Convert string booleans to actual boolean values
+            df['part_time_job'] = part_time_job.apply(lambda x: True if x == 'Yes' else False)
+        
+        # Validate after conversion
+        if not df['part_time_job'].dtype == bool:
+            return None, "Failed to convert 'part_time_job' to boolean", False
+        
+        # Check for empty data
+        if df.empty:
+            return None, "Data is empty", False
+            
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create count plot without the problematic 'ci' parameter
+        ax = sns.countplot(x='part_time_job', data=df)
+        
+        # Customize plot
+        plt.title('Distribution of Part-time Job Responses', fontsize=14, pad=20)
+        plt.xlabel('Part-time Job', fontsize=12)
+        plt.ylabel('Count', fontsize=12)
+        plt.xticks(fontsize=10)
+        plt.yticks(fontsize=10)
+        plt.grid(True, alpha=0.3)
+        
+        # Add value labels
+        for p in ax.patches:
+            height = p.get_height()
+            ax.text(p.get_x() + p.get_width()/2., height + 3,
+                    f'{int(height)}',
+                    ha="center", va="bottom", fontsize=10)
+        
+        # Generate insights
+        counts = df['part_time_job'].value_counts()
+        total = counts.sum()
+        no_count = counts[False]
+        yes_count = counts[True]
+        
+        insights = f"Analysis of Part-time Job Responses:\n"
+        insights += f"Total responses: {total}\n"
+        insights += f"No responses: {no_count} ({no_count/total:.2%})\n"
+        insights += f"Yes responses: {yes_count} ({yes_count/total:.2%})\n"
+        if yes_count > no_count:
+            insights += "The majority of responses indicate having a part-time job."
+        elif no_count > yes_count:
+            insights += "The majority of responses indicate not having a part-time job."
+        else:
+            insights += "The responses are evenly split between having and not having a part-time job."
+            
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+=== CORRECTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['part_time_job']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        df = data.copy()
+        part_time_job = df['part_time_job']
+        
+        # Validate data types
+        if not isinstance(part_time_job, pd.Series):
+            return None, "Error: 'part_time_job' must be a pandas Series", False
+            
+        # Ensure boolean values
+        if not (part_time_job.dtype == bool or part_time_job.dtype == 'object'):
+            return None, "'part_time_job' must be boolean or object type", False
+            
+        if part_time_job.dtype == 'object':
+            # Convert string booleans to actual boolean values
+            df['part_time_job'] = part_time_job.apply(lambda x: True if x == 'Yes' else False)
+        
+        # Validate after conversion
+        if not df['part_time_job'].dtype == bool:
+            return None, "Failed to convert 'part_time_job' to boolean", False
+        
+        # Check for empty data
+        if df.empty:
+            return None, "Data is empty", False
+            
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create count plot without the problematic 'ci' parameter
+        ax = sns.countplot(x='part_time_job', data=df)
+        
+        # Customize plot
+        plt.title('Distribution of Part-time Job Responses', fontsize=14, pad=20)
+        plt.xlabel('Part-time Job', fontsize=12)
+        plt.ylabel('Count', fontsize=12)
+        plt.xticks(fontsize=10)
+        plt.yticks(fontsize=10)
+        plt.grid(True, alpha=0.3)
+        
+        # Add value labels
+        for p in ax.patches:
+            height = p.get_height()
+            ax.text(p.get_x() + p.get_width()/2., height + 3,
+                    f'{int(height)}',
+                    ha="center", va="bottom", fontsize=10)
+        
+        # Generate insights
+        counts = df['part_time_job'].value_counts()
+        total = counts.sum()
+        no_count = counts[False]
+        yes_count = counts[True]
+        
+        insights = f"Analysis of Part-time Job Responses:\n"
+        insights += f"Total responses: {total}\n"
+        insights += f"No responses: {no_count} ({no_count/total:.2%})\n"
+        insights += f"Yes responses: {yes_count} ({yes_count/total:.2%})\n"
+        if yes_count > no_count:
+            insights += "The majority of responses indicate having a part-time job."
+        elif no_count > yes_count:
+            insights += "The majority of responses indicate not having a part-time job."
+        else:
+            insights += "The responses are evenly split between having and not having a part-time job."
+            
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

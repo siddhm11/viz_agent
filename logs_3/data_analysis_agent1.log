@@ -1,0 +1,546 @@
+2025-05-23 15:45:48,019 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 15:45:48,121 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 15:45:48,128 - newviz3 - INFO - Created workflow graph
+2025-05-23 15:45:48,128 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 15:45:48,128 - newviz3 - INFO - Input data shape: (1000, 16)
+2025-05-23 15:45:48,128 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 15:45:48,130 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 15:45:48,130 - newviz3 - INFO - DataFrame shape: (1000, 16)
+2025-05-23 15:45:48,130 - newviz3 - INFO - DataFrame columns: ['student_id', 'age', 'gender', 'study_hours_per_day', 'social_media_hours', 'netflix_hours', 'part_time_job', 'attendance_percentage', 'sleep_hours', 'diet_quality', 'exercise_frequency', 'parental_education_level', 'internet_quality', 'mental_health_rating', 'extracurricular_participation', 'exam_score']
+2025-05-23 15:45:48,142 - newviz3 - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-23 15:45:48,142 - newviz3 - INFO - Starting data type analysis
+2025-05-23 15:45:48,142 - newviz3 - INFO - Analyzing data types for 16 columns
+2025-05-23 15:45:48,142 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 15:45:51,571 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:45:51,585 - newviz3 - INFO - Received response from LLM for data type analysis
+2025-05-23 15:45:51,586 - newviz3 - INFO - Parsed column types: {'student_id': 'text', 'age': 'numerical_discrete', 'gender': 'categorical_nominal', 'study_hours_per_day': 'numerical_continuous', 'social_media_hours': 'numerical_continuous', 'netflix_hours': 'numerical_continuous', 'part_time_job': 'boolean', 'attendance_percentage': 'numerical_continuous', 'sleep_hours': 'numerical_continuous', 'diet_quality': 'categorical_ordinal', 'exercise_frequency': 'numerical_discrete', 'parental_education_level': 'categorical_nominal', 'internet_quality': 'categorical_ordinal', 'mental_health_rating': 'categorical_ordinal', 'extracurricular_participation': 'boolean', 'exam_score': 'numerical_continuous'}
+2025-05-23 15:45:51,586 - newviz3 - INFO - Completed data type analysis in 3.44 seconds
+2025-05-23 15:45:51,587 - newviz3 - INFO - Starting relationship identification
+2025-05-23 15:45:51,587 - newviz3 - INFO - Sending identify_relationships prompt to LLM
+2025-05-23 15:45:56,591 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:45:56,595 - newviz3 - INFO - Received response from LLM for relationship identification
+2025-05-23 15:45:56,595 - newviz3 - WARNING - Could not extract relationships list from LLM response. Using empty list.
+2025-05-23 15:45:56,595 - newviz3 - INFO - Completed relationship identification in 5.01 seconds
+2025-05-23 15:45:56,596 - newviz3 - INFO - Starting visualization suggestions
+2025-05-23 15:45:56,637 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:45:56,638 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 26.000000 seconds
+2025-05-23 15:46:26,326 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:46:26,330 - newviz3 - INFO - Generated 6 visualization suggestions
+2025-05-23 15:46:26,331 - newviz3 - INFO - Completed visualization suggestions in 29.73 seconds
+2025-05-23 15:46:26,332 - newviz3 - INFO - ============================================================
+2025-05-23 15:46:26,332 - newviz3 - INFO - STARTING DYNAMIC LLM-BASED VISUALIZATION CREATION
+2025-05-23 15:46:26,332 - newviz3 - INFO - ============================================================
+2025-05-23 15:46:26,332 - newviz3 - INFO - Creating comprehensive data summary...
+2025-05-23 15:46:26,332 - newviz3 - INFO - Creating enhanced data summary...
+2025-05-23 15:46:26,354 - newviz3 - INFO - Enhanced data summary created with 10 main sections
+2025-05-23 15:46:26,355 - newviz3 - INFO - Data summary created successfully with 16 columns
+2025-05-23 15:46:26,355 - newviz3 - INFO - Processing 6 suggested visualizations
+2025-05-23 15:46:26,355 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:46:26,355 - newviz3 - INFO - PROCESSING VISUALIZATION 1/6
+2025-05-23 15:46:26,355 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:46:26,355 - newviz3 - INFO - Chart Type: histogram
+2025-05-23 15:46:26,355 - newviz3 - INFO - Variables: ['study_hours_per_day']
+2025-05-23 15:46:26,355 - newviz3 - INFO - Priority: high
+2025-05-23 15:46:26,355 - newviz3 - INFO - Reasoning: This chart will show the distribution of study hours per day, helping to understand how students allocate their study time.
+2025-05-23 15:46:26,355 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 15:46:26,389 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:46:26,389 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 7.000000 seconds
+2025-05-23 15:46:36,018 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:46:36,020 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a histogram that shows 'study_hours_...
+2025-05-23 15:46:36,020 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 15:46:36,020 - newviz3 - INFO - Starting visualization generation with healing for histogram
+2025-05-23 15:46:36,020 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 15:46:36,020 - newviz3 - INFO - Generating code for histogram visualization of ['study_hours_per_day']
+2025-05-23 15:46:36,020 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 15:46:36,068 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:46:36,069 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 15:46:53,281 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:46:53,287 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 15:46:53,289 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 15:46:53,289 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 15:46:53,289 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 15:46:53,289 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 15:46:53,289 - newviz3 - INFO - 🔄 Attempt 1/4 for histogram
+2025-05-23 15:46:53,402 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.11s
+2025-05-23 15:46:53,403 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: distplot() got an unexpected keyword argument 'palette'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 42, in generate_plot
+TypeError: distplot() got an unexpected keyword argument 'palette'
+
+2025-05-23 15:46:53,403 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 15:46:53,403 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 15:46:53,403 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 15:46:53,430 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:46:53,430 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 20.000000 seconds
+2025-05-23 15:47:28,410 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:47:28,417 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 15:47:28,418 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 15:47:28,418 - newviz3 - INFO - 🔄 Attempt 2/4 for histogram
+2025-05-23 15:47:28,469 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.05s
+2025-05-23 15:47:28,469 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: KDE.__init__() got an unexpected keyword argument 'linewidth'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 43, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 447, in plot_univariate_histogram
+    densities = self._compute_univariate_density(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 308, in _compute_univariate_density
+    estimator = KDE(**estimate_kws)
+                ^^^^^^^^^^^^^^^^^^^
+TypeError: KDE.__init__() got an unexpected keyword argument 'linewidth'
+
+2025-05-23 15:47:28,469 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 15:47:28,469 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 15:47:28,469 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 15:47:28,503 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:47:28,504 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 39.000000 seconds
+2025-05-23 15:48:16,108 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:48:16,120 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 15:48:16,120 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 15:48:16,120 - newviz3 - INFO - 🔄 Attempt 3/4 for histogram
+2025-05-23 15:48:16,199 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.08s
+2025-05-23 15:48:16,199 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'vertical'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 43, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'vertical'
+
+2025-05-23 15:48:16,199 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 15:48:16,199 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 15:48:16,199 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 15:48:16,232 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:48:16,232 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 29.000000 seconds
+2025-05-23 15:48:50,721 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:48:50,728 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 15:48:50,728 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 15:48:50,728 - newviz3 - INFO - 🔄 Attempt 4/4 for histogram
+2025-05-23 15:48:50,758 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.03s
+2025-05-23 15:48:50,758 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'orient'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 43, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'orient'
+
+2025-05-23 15:48:50,758 - newviz3 - ERROR - ❌ Failed to create histogram visualization after 4 attempts
+2025-05-23 15:48:50,759 - newviz3 - ERROR - Total healing attempts: 3
+2025-05-23 15:48:50,759 - newviz3 - ERROR - 💥 Critical error processing visualization 1: name 'variables' is not defined
+2025-05-23 15:48:50,760 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 421, in create_visualization
+    result = self._generate_visualization_with_healing(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 584, in _generate_visualization_with_healing
+    result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 859, in _execute_with_enhanced_healing
+    chart_type, variables, stats, healing_history
+                ^^^^^^^^^
+NameError: name 'variables' is not defined
+
+2025-05-23 15:48:50,760 - newviz3 - INFO - Creating error result: Critical error: name 'variables' is not defined
+2025-05-23 15:48:50,821 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:48:50,821 - newviz3 - INFO - PROCESSING VISUALIZATION 2/6
+2025-05-23 15:48:50,821 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:48:50,821 - newviz3 - INFO - Chart Type: bar chart
+2025-05-23 15:48:50,821 - newviz3 - INFO - Variables: ['gender']
+2025-05-23 15:48:50,821 - newviz3 - INFO - Priority: medium
+2025-05-23 15:48:50,821 - newviz3 - INFO - Reasoning: This chart will display the gender distribution among students, providing a clear view of the proportion of male and female students.
+2025-05-23 15:48:50,821 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 15:48:50,845 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:48:50,845 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-23 15:49:02,690 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:49:02,692 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a bar chart that uses the variable '...
+2025-05-23 15:49:02,692 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 15:49:02,692 - newviz3 - INFO - Starting visualization generation with healing for bar chart
+2025-05-23 15:49:02,692 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 15:49:02,692 - newviz3 - INFO - Generating code for bar chart visualization of ['gender']
+2025-05-23 15:49:02,692 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 15:49:02,719 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:49:02,720 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-23 15:49:18,662 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:49:18,665 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 15:49:18,666 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 15:49:18,666 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 15:49:18,666 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 15:49:18,666 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 15:49:18,666 - newviz3 - INFO - 🔄 Attempt 1/4 for bar chart
+2025-05-23 15:49:18,803 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.14s
+2025-05-23 15:49:18,803 - newviz3 - INFO - ✅ SUCCESS on attempt 1
+2025-05-23 15:49:18,803 - newviz3 - INFO - Visualization generation completed in 16.11s
+2025-05-23 15:49:18,803 - newviz3 - INFO - Total attempts: 1, Healing attempts: 0
+2025-05-23 15:49:18,803 - newviz3 - INFO - ✅ Visualization 2 completed successfully
+2025-05-23 15:49:18,803 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:49:18,803 - newviz3 - INFO - PROCESSING VISUALIZATION 3/6
+2025-05-23 15:49:18,803 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:49:18,803 - newviz3 - INFO - Chart Type: scatter plot
+2025-05-23 15:49:18,803 - newviz3 - INFO - Variables: ['study_hours_per_day', 'exam_score']
+2025-05-23 15:49:18,803 - newviz3 - INFO - Priority: high
+2025-05-23 15:49:18,803 - newviz3 - INFO - Reasoning: This chart will help identify if there's a correlation between study hours and exam scores.
+2025-05-23 15:49:18,803 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 15:49:18,829 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:49:18,829 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 15:49:32,311 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:49:32,316 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a scatter plot that uses 'study_hour...
+2025-05-23 15:49:32,316 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 15:49:32,316 - newviz3 - INFO - Starting visualization generation with healing for scatter plot
+2025-05-23 15:49:32,316 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 15:49:32,316 - newviz3 - INFO - Generating code for scatter plot visualization of ['study_hours_per_day', 'exam_score']
+2025-05-23 15:49:32,316 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 15:49:32,357 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:49:32,357 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 15:49:49,276 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:49:49,281 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 15:49:49,282 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 15:49:49,282 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 15:49:49,282 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 15:49:49,282 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 15:49:49,282 - newviz3 - INFO - 🔄 Attempt 1/4 for scatter plot
+2025-05-23 15:49:49,282 - newviz3 - ERROR - Exception during code execution: '(' was never closed (<string>, line 22)
+2025-05-23 15:49:49,282 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.00s
+2025-05-23 15:49:49,282 - newviz3 - WARNING - ⚠️ Code executed but reported failure: '(' was never closed (<string>, line 22)
+2025-05-23 15:49:49,282 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 15:49:49,282 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 15:49:49,284 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 15:49:49,326 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:49:49,327 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 20.000000 seconds
+2025-05-23 15:50:13,978 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:50:13,982 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 15:50:13,982 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 15:50:13,982 - newviz3 - INFO - 🔄 Attempt 2/4 for scatter plot
+2025-05-23 15:50:14,030 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.05s
+2025-05-23 15:50:14,030 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: PathCollection.set() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 41, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/relational.py", line 634, in scatterplot
+    kwargs["color"] = _default_color(ax.scatter, hue, color, kwargs)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/utils.py", line 105, in _default_color
+    scout = method(scout_x, scout_y, **kws)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/_api/deprecation.py", line 453, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5052, in scatter
+    collection._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: PathCollection.set() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 15:50:14,030 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 15:50:14,030 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 15:50:14,031 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 15:50:14,062 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:50:14,062 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 22.000000 seconds
+2025-05-23 15:50:41,378 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:50:41,381 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 15:50:41,381 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 15:50:41,381 - newviz3 - INFO - 🔄 Attempt 3/4 for scatter plot
+2025-05-23 15:50:41,590 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.21s
+2025-05-23 15:50:41,590 - newviz3 - INFO - ✅ SUCCESS on attempt 3
+2025-05-23 15:50:41,590 - newviz3 - INFO - Visualization generation completed in 69.27s
+2025-05-23 15:50:41,590 - newviz3 - INFO - Total attempts: 3, Healing attempts: 2
+2025-05-23 15:50:41,590 - newviz3 - INFO - ✅ Visualization 3 completed successfully
+2025-05-23 15:50:41,590 - newviz3 - INFO - ⚕️  Required 2 healing attempts
+2025-05-23 15:50:41,590 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:50:41,590 - newviz3 - INFO - PROCESSING VISUALIZATION 4/6
+2025-05-23 15:50:41,590 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:50:41,590 - newviz3 - INFO - Chart Type: box plot
+2025-05-23 15:50:41,590 - newviz3 - INFO - Variables: ['exam_score', 'gender']
+2025-05-23 15:50:41,590 - newviz3 - INFO - Priority: medium
+2025-05-23 15:50:41,590 - newviz3 - INFO - Reasoning: This chart will compare exam scores across genders, showing distribution and potential differences.
+2025-05-23 15:50:41,590 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 15:50:41,620 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:50:41,620 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 15:50:54,725 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:50:54,731 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a box plot that uses 'exam_score' an...
+2025-05-23 15:50:54,731 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 15:50:54,731 - newviz3 - INFO - Starting visualization generation with healing for box plot
+2025-05-23 15:50:54,731 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 15:50:54,731 - newviz3 - INFO - Generating code for box plot visualization of ['exam_score', 'gender']
+2025-05-23 15:50:54,731 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 15:50:54,780 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:50:54,781 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-23 15:51:12,429 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:51:12,431 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 15:51:12,431 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 15:51:12,431 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 15:51:12,431 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 15:51:12,431 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 15:51:12,431 - newviz3 - INFO - 🔄 Attempt 1/4 for box plot
+2025-05-23 15:51:12,461 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.03s
+2025-05-23 15:51:12,461 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Axes.bxp() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 59, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1634, in boxplot
+    p.plot_boxes(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 700, in plot_boxes
+    artists = ax.bxp(**boxplot_kws)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/_api/deprecation.py", line 453, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: Axes.bxp() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 15:51:12,461 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 15:51:12,461 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 15:51:12,462 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 15:51:12,496 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:51:12,496 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 29.000000 seconds
+2025-05-23 15:51:47,846 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:51:47,856 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 15:51:47,856 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 15:51:47,856 - newviz3 - INFO - 🔄 Attempt 2/4 for box plot
+2025-05-23 15:51:47,905 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.05s
+2025-05-23 15:51:47,905 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Axes.bxp() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 60, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1634, in boxplot
+    p.plot_boxes(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 700, in plot_boxes
+    artists = ax.bxp(**boxplot_kws)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/_api/deprecation.py", line 453, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: Axes.bxp() got an unexpected keyword argument 'ci'
+
+2025-05-23 15:51:47,905 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 15:51:47,905 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 15:51:47,907 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 15:51:47,946 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:51:47,946 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 27.000000 seconds
+2025-05-23 15:52:21,295 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:52:21,302 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 15:52:21,302 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 15:52:21,302 - newviz3 - INFO - 🔄 Attempt 3/4 for box plot
+2025-05-23 15:52:21,341 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.04s
+2025-05-23 15:52:21,341 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Axes.bxp() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 60, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1634, in boxplot
+    p.plot_boxes(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 700, in plot_boxes
+    artists = ax.bxp(**boxplot_kws)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/_api/deprecation.py", line 453, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: Axes.bxp() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 15:52:21,341 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 15:52:21,341 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 15:52:21,342 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 15:52:21,370 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:52:21,370 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 26.000000 seconds
+2025-05-23 15:52:53,741 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:52:53,744 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 15:52:53,744 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 15:52:53,744 - newviz3 - INFO - 🔄 Attempt 4/4 for box plot
+2025-05-23 15:52:53,768 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.02s
+2025-05-23 15:52:53,768 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Axes.bxp() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 60, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1634, in boxplot
+    p.plot_boxes(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 700, in plot_boxes
+    artists = ax.bxp(**boxplot_kws)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/_api/deprecation.py", line 453, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: Axes.bxp() got an unexpected keyword argument 'ci'
+
+2025-05-23 15:52:53,768 - newviz3 - ERROR - ❌ Failed to create box plot visualization after 4 attempts
+2025-05-23 15:52:53,768 - newviz3 - ERROR - Total healing attempts: 3
+2025-05-23 15:52:53,768 - newviz3 - ERROR - 💥 Critical error processing visualization 4: name 'variables' is not defined
+2025-05-23 15:52:53,769 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 421, in create_visualization
+    result = self._generate_visualization_with_healing(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 584, in _generate_visualization_with_healing
+    result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 859, in _execute_with_enhanced_healing
+    chart_type, variables, stats, healing_history
+                ^^^^^^^^^
+NameError: name 'variables' is not defined
+
+2025-05-23 15:52:53,769 - newviz3 - INFO - Creating error result: Critical error: name 'variables' is not defined
+2025-05-23 15:52:53,806 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:52:53,806 - newviz3 - INFO - PROCESSING VISUALIZATION 5/6
+2025-05-23 15:52:53,806 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:52:53,806 - newviz3 - INFO - Chart Type: stacked bar chart
+2025-05-23 15:52:53,806 - newviz3 - INFO - Variables: ['diet_quality', 'exercise_frequency']
+2025-05-23 15:52:53,806 - newviz3 - INFO - Priority: medium
+2025-05-23 15:52:53,806 - newviz3 - INFO - Reasoning: This chart will show the relationship between diet quality and exercise frequency, indicating how these habits correlate.
+2025-05-23 15:52:53,806 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 15:52:53,851 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:52:53,851 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 15:53:08,699 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:53:08,701 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a stacked bar chart that uses the va...
+2025-05-23 15:53:08,701 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 15:53:08,701 - newviz3 - INFO - Starting visualization generation with healing for stacked bar chart
+2025-05-23 15:53:08,701 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 15:53:08,701 - newviz3 - INFO - Generating code for stacked bar chart visualization of ['diet_quality', 'exercise_frequency']
+2025-05-23 15:53:08,701 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 15:53:08,737 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:53:08,738 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 15:53:27,666 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:53:27,670 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 15:53:27,671 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 15:53:27,671 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 15:53:27,671 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 15:53:27,671 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 15:53:27,671 - newviz3 - INFO - 🔄 Attempt 1/4 for stacked bar chart
+2025-05-23 15:53:27,825 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.15s
+2025-05-23 15:53:27,825 - newviz3 - INFO - ✅ SUCCESS on attempt 1
+2025-05-23 15:53:27,825 - newviz3 - INFO - Visualization generation completed in 19.12s
+2025-05-23 15:53:27,825 - newviz3 - INFO - Total attempts: 1, Healing attempts: 0
+2025-05-23 15:53:27,825 - newviz3 - INFO - ✅ Visualization 5 completed successfully
+2025-05-23 15:53:27,825 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:53:27,825 - newviz3 - INFO - PROCESSING VISUALIZATION 6/6
+2025-05-23 15:53:27,825 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 15:53:27,825 - newviz3 - INFO - Chart Type: bar chart
+2025-05-23 15:53:27,825 - newviz3 - INFO - Variables: ['part_time_job']
+2025-05-23 15:53:27,825 - newviz3 - INFO - Priority: low
+2025-05-23 15:53:27,825 - newviz3 - INFO - Reasoning: This chart will display the proportion of students with part-time jobs, showing how common it is.
+2025-05-23 15:53:27,825 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 15:53:27,851 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:53:27,852 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 13.000000 seconds
+2025-05-23 15:53:43,381 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:53:43,384 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a bar chart that uses the variable '...
+2025-05-23 15:53:43,384 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 15:53:43,384 - newviz3 - INFO - Starting visualization generation with healing for bar chart
+2025-05-23 15:53:43,384 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 15:53:43,384 - newviz3 - INFO - Generating code for bar chart visualization of ['part_time_job']
+2025-05-23 15:53:43,384 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 15:53:43,444 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:53:43,444 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 15:54:00,486 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:54:00,492 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 15:54:00,493 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 15:54:00,493 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 15:54:00,493 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 15:54:00,493 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 15:54:00,493 - newviz3 - INFO - 🔄 Attempt 1/4 for bar chart
+2025-05-23 15:54:00,541 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.05s
+2025-05-23 15:54:00,541 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2661, in countplot
+    color = _default_color(ax.bar, hue, color, kwargs, saturation)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/utils.py", line 127, in _default_color
+    scout, = method([np.nan], [np.nan], **kws)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 15:54:00,541 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 15:54:00,541 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 15:54:00,542 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 15:54:00,579 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:54:00,579 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 24.000000 seconds
+2025-05-23 15:54:30,242 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:54:30,244 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 15:54:30,244 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 15:54:30,244 - newviz3 - INFO - 🔄 Attempt 2/4 for bar chart
+2025-05-23 15:54:30,264 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.02s
+2025-05-23 15:54:30,264 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2661, in countplot
+    color = _default_color(ax.bar, hue, color, kwargs, saturation)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/utils.py", line 127, in _default_color
+    scout, = method([np.nan], [np.nan], **kws)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'ci'
+
+2025-05-23 15:54:30,265 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 15:54:30,265 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 15:54:30,265 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 15:54:30,292 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:54:30,292 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 24.000000 seconds
+2025-05-23 15:55:08,616 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:55:08,620 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 15:55:08,620 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 15:55:08,620 - newviz3 - INFO - 🔄 Attempt 3/4 for bar chart
+2025-05-23 15:55:08,737 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.12s
+2025-05-23 15:55:08,737 - newviz3 - INFO - ✅ SUCCESS on attempt 3
+2025-05-23 15:55:08,737 - newviz3 - INFO - Visualization generation completed in 85.35s
+2025-05-23 15:55:08,737 - newviz3 - INFO - Total attempts: 3, Healing attempts: 2
+2025-05-23 15:55:08,737 - newviz3 - INFO - ✅ Visualization 6 completed successfully
+2025-05-23 15:55:08,737 - newviz3 - INFO - ⚕️  Required 2 healing attempts
+2025-05-23 15:55:08,737 - newviz3 - INFO - ============================================================
+2025-05-23 15:55:08,737 - newviz3 - INFO - VISUALIZATION CREATION SUMMARY
+2025-05-23 15:55:08,737 - newviz3 - INFO - ============================================================
+2025-05-23 15:55:08,737 - newviz3 - INFO - Total visualizations processed: 6
+2025-05-23 15:55:08,737 - newviz3 - INFO - Successful visualizations: 4
+2025-05-23 15:55:08,737 - newviz3 - INFO - Failed visualizations: 2
+2025-05-23 15:55:08,737 - newviz3 - INFO - Success rate: 66.7%
+2025-05-23 15:55:08,790 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:55:08,791 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 48.000000 seconds
+2025-05-23 15:56:02,473 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:56:02,476 - newviz3 - INFO - Analysis workflow completed in 614.35 seconds
+2025-05-23 15:56:02,476 - newviz3 - INFO - Result contains 6 visualizations
+2025-05-23 15:56:02,476 - newviz3 - INFO - LLM feedback was generated

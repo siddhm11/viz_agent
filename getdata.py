@@ -1,13 +1,13 @@
 import os
 import pandas as pd
 import base64
-from newviz import DataAnalystAgent
+from newviz3 import DataAnalystAgent
 
 # Set your Groq API key
 groq_api_key = os.getenv("GROQ_API_KEY")
 
 # Load your data
-df = pd.read_csv("student_habits_performance.csv")
+df = pd.read_csv("random_datasets/1000_ml_jobs_us.csv")
 
 # Create and run the agent with Groq
 agent = DataAnalystAgent(groq_api_key=groq_api_key)

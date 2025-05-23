@@ -905,3 +905,29 @@ TypeError: Axes.bxp() got an unexpected keyword argument 'errorbar'
 2025-05-23 13:05:12,106 - newviz3 - INFO - Analysis workflow completed in 647.55 seconds
 2025-05-23 13:05:12,106 - newviz3 - INFO - Result contains 9 visualizations
 2025-05-23 13:05:12,106 - newviz3 - INFO - LLM feedback was generated
+2025-05-23 15:44:45,931 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 15:44:46,040 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 15:44:46,047 - newviz3 - INFO - Created workflow graph
+2025-05-23 15:44:46,047 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 15:44:46,047 - newviz3 - INFO - Input data shape: (1000, 16)
+2025-05-23 15:44:46,047 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 15:44:46,048 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 15:44:46,048 - newviz3 - INFO - DataFrame shape: (1000, 16)
+2025-05-23 15:44:46,049 - newviz3 - INFO - DataFrame columns: ['student_id', 'age', 'gender', 'study_hours_per_day', 'social_media_hours', 'netflix_hours', 'part_time_job', 'attendance_percentage', 'sleep_hours', 'diet_quality', 'exercise_frequency', 'parental_education_level', 'internet_quality', 'mental_health_rating', 'extracurricular_participation', 'exam_score']
+2025-05-23 15:44:46,060 - newviz3 - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-23 15:44:46,061 - newviz3 - INFO - Starting data type analysis
+2025-05-23 15:44:46,061 - newviz3 - INFO - Analyzing data types for 16 columns
+2025-05-23 15:44:46,061 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 15:44:49,573 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:44:49,581 - newviz3 - INFO - Received response from LLM for data type analysis
+2025-05-23 15:44:49,581 - newviz3 - INFO - Parsed column types: {'student_id': 'categorical_nominal', 'age': 'numerical_discrete', 'gender': 'categorical_nominal', 'study_hours_per_day': 'numerical_continuous', 'social_media_hours': 'numerical_continuous', 'netflix_hours': 'numerical_continuous', 'part_time_job': 'boolean', 'attendance_percentage': 'numerical_continuous', 'sleep_hours': 'numerical_continuous', 'diet_quality': 'categorical_nominal', 'exercise_frequency': 'numerical_discrete', 'parental_education_level': 'categorical_nominal', 'internet_quality': 'categorical_nominal', 'mental_health_rating': 'categorical_ordinal', 'extracurricular_participation': 'boolean', 'exam_score': 'numerical_continuous'}
+2025-05-23 15:44:49,581 - newviz3 - INFO - Completed data type analysis in 3.52 seconds
+2025-05-23 15:44:49,582 - newviz3 - INFO - Starting relationship identification
+2025-05-23 15:44:49,582 - newviz3 - INFO - Sending identify_relationships prompt to LLM
+2025-05-23 15:44:57,034 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 15:44:57,035 - newviz3 - INFO - Received response from LLM for relationship identification
+2025-05-23 15:44:57,035 - newviz3 - WARNING - Could not extract relationships list from LLM response. Using empty list.
+2025-05-23 15:44:57,035 - newviz3 - INFO - Completed relationship identification in 7.45 seconds
+2025-05-23 15:44:57,036 - newviz3 - INFO - Starting visualization suggestions
+2025-05-23 15:44:57,073 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 15:44:57,073 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 25.000000 seconds
