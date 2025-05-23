@@ -318,6 +318,333 @@ class DataAnalystAgent:
         return state
 
 
+    # def create_visualization(self, state: DataAnalysisState) -> DataAnalysisState:
+    #     """Create visualizations by having the LLM dynamically generate the plotting code"""
+    #     self.logger.info("Starting dynamic LLM-based visualization creation")
+    #     state.visualization_outputs = []
+
+    #     # First, create a data summary that the LLM can use
+    #     data_summary = {
+    #         "shape": state.data.shape,
+    #         "columns": list(state.data.columns),
+    #         "dtypes": {col: str(dtype) for col, dtype in state.data.dtypes.items()},
+    #         "sample_values": {col: state.data[col].dropna().sample(min(3, len(state.data))).tolist() 
+    #                         for col in state.data.columns},
+    #         "column_types": state.column_types
+    #     }
+        
+    #     self.logger.info(f"Created data summary for LLM with {len(data_summary['columns'])} columns")
+
+    #     for viz in state.suggested_visualizations:
+    #         chart_type = viz['chart_type'].lower()
+    #         variables = viz['variables_to_use']
+    #         reasoning = viz.get('reasoning', '')
+            
+    #         self.logger.info(f"Requesting code for {chart_type} visualization of {variables}")
+
+    #         # 1. First ask LLM to explain visualization purpose
+    #         explain_prompt = f"""
+    #         <thinking>
+    #         I need to explain the analytical purpose of this {chart_type} visualization using variables {variables}.
+
+    #         Context:
+    #         - Chart type: {chart_type}
+    #         - Variables: {variables}
+    #         - Reasoning: {reasoning}
+
+    #         What insights can this visualization provide:
+    #         1. What patterns might be visible?
+    #         2. What questions does it answer?
+    #         3. What business/analytical value does it offer?
+    #         4. What should viewers focus on?
+    #         </thinking>
+
+    #         As a data visualization expert, explain the analytical purpose of this {chart_type} chart using {variables}.
+
+    #         Address:
+    #         1. What specific insights this visualization reveals
+    #         2. What patterns or relationships viewers should look for
+    #         3. How this contributes to overall data understanding
+
+    #         Keep response to 2-3 clear, actionable sentences focused on analytical value.
+
+    #         Explanation:
+    #         """
+    #         explanation_resp = self.llm.invoke([HumanMessage(content=explain_prompt)])
+    #         explanation = explanation_resp.content.strip()
+    #         log_path = "logs/explanations.log"   # or wherever you want the file
+    #         with open(log_path, "a", encoding="utf-8") as f:
+    #             f.write("=== New Explanation ===\n")
+    #             f.write("Prompt:\n")
+    #             f.write(explain_prompt.strip() + "\n\n")
+    #             f.write("Explanation:\n")
+    #             f.write(explanation + "\n\n")
+
+    #         # 2. Now ask LLM to generate the plotting code
+    #         code_prompt = f"""
+    #         <thinking>
+    #         I need to generate robust Python code for a {chart_type} visualization of {variables}.
+
+    #         Dataset characteristics:
+    #         - Shape: {data_summary['shape']}
+    #         - Column types: {data_summary['column_types']}
+    #         - Data types: {data_summary['dtypes']}
+    #         - Sample values: {{{", ".join([f"'{v}': {data_summary['sample_values'][v]}" for v in variables if v in data_summary['sample_values']])}}}
+
+    #         Code requirements:
+    #         1. Handle missing values appropriately
+    #         2. Check data types and convert if needed
+    #         3. Apply appropriate statistical transformations
+    #         4. Create clear, publication-ready visualization
+    #         5. Include meaningful insights detection
+    #         6. Robust error handling for edge cases
+    #         </thinking>
+
+    #         Generate a complete Python function that creates a {chart_type} visualization.
+
+    #         Requirements:
+    #         - Function signature: def generate_plot(data):
+    #         - Return: (base64_image_string, insights_text, success_boolean)
+    #         - Handle all edge cases (empty data, wrong types, etc.)
+    #         - Include statistical insights where relevant
+    #         - Use modern matplotlib/seaborn styling
+    #         - Appropriate figure size and DPI for clarity
+
+    #         ```python
+    #         import matplotlib.pyplot as plt
+    #         import seaborn as sns
+    #         import pandas as pd
+    #         import numpy as np
+    #         import io
+    #         import base64
+    #         from scipy import stats
+    #         import warnings
+    #         warnings.filterwarnings('ignore')
+
+    #         def generate_plot(data):
+    #             try:
+    #                 # Your complete implementation here
+    #                 # Include data validation, cleaning, plotting, and insight generation
+    #                 pass
+    #             except Exception as e:
+    #                 return None, f"Error: {{str(e)}}", False
+    #         ```
+
+    #         Complete Python code:
+    #         """
+    #         code_response = self.llm.invoke([HumanMessage(content=code_prompt)])
+    #         self.logger.info("Received code generation response from LLM")
+            
+    #         # Extract the code from the LLM response
+    #         import re
+    #         code_match = re.search(r'```python\s*(.*?)\s*```', code_response.content, re.DOTALL)
+    #         if not code_match:
+    #             code_match = re.search(r'def generate_plot\(data\):(.*?)(?:$|```)', code_response.content, re.DOTALL)
+            
+    #         if code_match:
+    #             plot_code = code_match.group(1)
+    #             # If the match doesn't include the function definition, add it
+    #             if not plot_code.strip().startswith("def generate_plot"):
+    #                 plot_code = "def generate_plot(data):" + plot_code
+                    
+    #             self.logger.info(f"Extracted plotting code of length {len(plot_code)}")
+                
+    #             # Execute the generated code in a safe context
+    #             try:
+    # # Extract the code from the LLM response
+    #                 plot_code = extract_code_from_response(code_response.content)
+                    
+    #                 if plot_code:
+    #                     # Execute with self-healing capabilities
+    #                     (img_str, insights, success), final_code, healing_history = execute_with_healing(plot_code, state.data)
+                        
+    #                     # Log the healing process
+    #                     self.logger.info(f"Code execution completed after {len(healing_history) + 1} attempts")
+                        
+    #                     # Store the visualization output
+    #                     state.visualization_outputs.append({
+    #                         'chart_type': chart_type,
+    #                         'variables': variables,
+    #                         'reasoning': reasoning,
+    #                         'explanation': explanation,
+    #                         'insights': insights if insights else "No specific insights detected.",
+    #                         'image_base64': img_str,
+    #                         'generated_code': final_code,  # Store the final healed code
+    #                         'healing_history': healing_history  # Store the healing history for analysis
+    #                     })
+                        
+    #                     # Log the healing process for analysis
+    #                     log_healing_process(chart_type, healing_history)
+    #                 else:
+    #                     # Handle case where code extraction failed
+    #                     self.logger.error("Could not extract plotting code from LLM response")
+    #                     # Create error visualization as in the original code
+                        
+    #             except Exception as e:
+    #                 self.logger.error(f"Unrecoverable error in self-healing process: {str(e)}")
+    #                 self.logger.error(traceback.format_exc())
+    #                 # Create error visualization as in the original code
+
+                
+    
+    # def execute_with_healing(code, data, max_attempts=3):
+    #     """Execute code with self-healing capabilities."""
+    #     healing_history = []
+    #     current_code = code
+        
+    #     for attempt in range(max_attempts):
+    #         try:
+    #             # Create local namespace for execution
+    #             local_vars = {}
+                
+    #             # Add necessary imports to local namespace
+    #             exec("import matplotlib.pyplot as plt", local_vars)
+    #             exec("import seaborn as sns", local_vars)
+    #             exec("import pandas as pd", local_vars)
+    #             exec("import io", local_vars)
+    #             exec("import base64", local_vars)
+    #             exec("import numpy as np", local_vars)
+                
+    #             # Execute the generated plotting function
+    #             exec(current_code, local_vars)
+                
+    #             # Call the function with our data
+    #             img_str, insights, success = local_vars['generate_plot'](data)
+                
+    #             if success:
+    #                 return (img_str, insights, success), current_code, healing_history
+    #             else:
+    #                 # Code executed but reported failure
+    #                 error_msg = f"Code reported failure: {insights}"
+    #                 healing_history.append({
+    #                     'attempt': attempt + 1,
+    #                     'error': error_msg,
+    #                     'code_before': current_code
+    #                 })
+                    
+    #                 # Generate healing prompt
+    #                 healing_prompt = create_healing_prompt(current_code, error_msg)
+                    
+    #                 # Get corrected code from LLM
+    #                 corrected_code = get_corrected_code_from_llm(healing_prompt)
+                    
+    #                 # Update current code
+    #                 current_code = corrected_code
+    #                 healing_history[-1]['code_after'] = current_code
+                    
+    #         except Exception as e:
+    #             error_msg = f"{type(e).__name__}: {str(e)}"
+    #             traceback_str = traceback.format_exc()
+                
+    #             healing_history.append({
+    #                 'attempt': attempt + 1,
+    #                 'error': error_msg,
+    #                 'traceback': traceback_str,
+    #                 'code_before': current_code
+    #             })
+                
+    #             # Generate healing prompt
+    #             healing_prompt = create_healing_prompt(current_code, error_msg, traceback_str)
+                
+    #             # Get corrected code from LLM
+    #             corrected_code = get_corrected_code_from_llm(healing_prompt)
+                
+    #             # Update current code
+    #             current_code = corrected_code
+    #             healing_history[-1]['code_after'] = current_code
+        
+    #     # If we've reached max attempts without success
+    #     return create_error_visualization(f"Failed after {max_attempts} healing attempts"), current_code, healing_history
+
+    # def create_healing_prompt(code, error_msg, traceback_str=None):
+    #     """Create a prompt for the LLM to fix the code based on error information."""
+    #     prompt = f"""
+    #     I need you to fix the following Python code that encountered an error.
+        
+    #     ERROR INFORMATION:
+    #     {error_msg}
+        
+    #     {'TRACEBACK:\n' + traceback_str if traceback_str else ''}
+        
+    #     ORIGINAL CODE:
+    #     ```
+    #     {code}
+    #     ```
+        
+    #     Please analyze the error and provide a corrected version of the code. Focus on:
+    #     1. Fixing the specific error mentioned
+    #     2. Ensuring robust error handling
+    #     3. Maintaining the original functionality
+    #     4. Improving code quality where possible
+        
+    #     Return ONLY the corrected code without explanations.
+    #     """
+        
+    #     return prompt
+
+    # def get_corrected_code_from_llm(healing_prompt):
+    #     """Get corrected code from LLM based on the healing prompt."""
+    #     # Send the healing prompt to the LLM
+    #     correction_response = self.llm.invoke([HumanMessage(content=healing_prompt)])
+        
+    #     # Extract the code from the LLM response
+    #     import re
+    #     code_match = re.search(r'``````', correction_response.content, re.DOTALL)
+        
+    #     if not code_match:
+    #         code_match = re.search(r'``````', correction_response.content, re.DOTALL)
+        
+    #     if code_match:
+    #         corrected_code = code_match.group(1)
+    #         # If the match doesn't include the function definition, add it
+    #         if not corrected_code.strip().startswith("def generate_plot"):
+    #             corrected_code = "def generate_plot(data):" + corrected_code
+            
+    #         return corrected_code
+    #     else:
+    #         # Fallback if no code block is found
+    #         return correction_response.content
+
+    # def create_error_visualization(error_message):
+    #     """Create an error visualization image with the provided message."""
+    #     plt.figure(figsize=(10, 4))
+    #     plt.text(0.5, 0.5, error_message, 
+    #             horizontalalignment='center', verticalalignment='center',
+    #             fontsize=12, color='red')
+    #     plt.axis('off')
+        
+    #     buf = io.BytesIO()
+    #     plt.savefig(buf, format='png')
+    #     buf.seek(0)
+    #     img_str = base64.b64encode(buf.read()).decode()
+    #     buf.close()
+    #     plt.close()
+        
+    #     return img_str, error_message, False
+
+
+    # def log_healing_process(chart_type, healing_history):
+    #     """Log the healing process for analysis."""
+    #     log_path = "logs/code_healing_history.log"
+    #     with open(log_path, "a", encoding="utf-8") as f:
+    #         f.write("=== New Code Healing Entry ===\n")
+    #         f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n")
+    #         f.write(f"Chart Type: {chart_type}\n\n")
+            
+    #         for i, attempt in enumerate(healing_history):
+    #             f.write(f"--- Attempt {attempt['attempt']} ---\n")
+    #             f.write(f"Error: {attempt['error']}\n")
+    #             if 'traceback' in attempt:
+    #                 f.write(f"Traceback:\n{attempt['traceback']}\n")
+    #             f.write("\nCode Before:\n")
+    #             f.write("```")
+    #             f.write(attempt['code_before'].strip() + "\n")
+    #             f.write("```\n\n")
+    #             f.write("Code After:\n")
+    #             f.write("```")
+    #             f.write(attempt['code_after'].strip() + "\n")
+    #             f.write("```\n\n")
+
     def create_visualization(self, state: DataAnalysisState) -> DataAnalysisState:
         """Create visualizations by having the LLM dynamically generate the plotting code"""
         self.logger.info("Starting dynamic LLM-based visualization creation")
@@ -343,309 +670,388 @@ class DataAnalystAgent:
             self.logger.info(f"Requesting code for {chart_type} visualization of {variables}")
 
             # 1. First ask LLM to explain visualization purpose
-            explain_prompt = f"""
-            <thinking>
-            I need to explain the analytical purpose of this {chart_type} visualization using variables {variables}.
+            explanation = self._get_visualization_explanation(chart_type, variables, reasoning)
+            
+            # 2. Generate the plotting code with self-healing
+            result = self._generate_visualization_with_healing(chart_type, variables, data_summary, state.data)
+            
+            # Store the visualization output
+            state.visualization_outputs.append({
+                'chart_type': chart_type,
+                'variables': variables,
+                'reasoning': reasoning,
+                'explanation': explanation,
+                'insights': result['insights'],
+                'image_base64': result['image_base64'],
+                'generated_code': result['final_code'],
+                'healing_history': result['healing_history'],
+                'success': result['success']
+            })
+            
+            # Log the healing process for analysis
+            if result['healing_history']:
+                self._log_healing_process(chart_type, result['healing_history'])
 
-            Context:
-            - Chart type: {chart_type}
-            - Variables: {variables}
-            - Reasoning: {reasoning}
+        return state
 
-            What insights can this visualization provide:
-            1. What patterns might be visible?
-            2. What questions does it answer?
-            3. What business/analytical value does it offer?
-            4. What should viewers focus on?
-            </thinking>
+    def _get_visualization_explanation(self, chart_type, variables, reasoning):
+        """Get explanation of visualization purpose from LLM"""
+        explain_prompt = f"""
+        <thinking>
+        I need to explain the analytical purpose of this {chart_type} visualization using variables {variables}.
 
-            As a data visualization expert, explain the analytical purpose of this {chart_type} chart using {variables}.
+        Context:
+        - Chart type: {chart_type}
+        - Variables: {variables}
+        - Reasoning: {reasoning}
 
-            Address:
-            1. What specific insights this visualization reveals
-            2. What patterns or relationships viewers should look for
-            3. How this contributes to overall data understanding
+        What insights can this visualization provide:
+        1. What patterns might be visible?
+        2. What questions does it answer?
+        3. What business/analytical value does it offer?
+        4. What should viewers focus on?
+        </thinking>
 
-            Keep response to 2-3 clear, actionable sentences focused on analytical value.
+        As a data visualization expert, explain the analytical purpose of this {chart_type} chart using {variables}.
 
-            Explanation:
-            """
+        Address:
+        1. What specific insights this visualization reveals
+        2. What patterns or relationships viewers should look for
+        3. How this contributes to overall data understanding
+
+        Keep response to 2-3 clear, actionable sentences focused on analytical value.
+
+        Explanation:
+        """
+        try:
             explanation_resp = self.llm.invoke([HumanMessage(content=explain_prompt)])
             explanation = explanation_resp.content.strip()
-            log_path = "logs/explanations.log"   # or wherever you want the file
+            
+            # Log explanation
+            log_path = "logs/explanations.log"
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write("=== New Explanation ===\n")
                 f.write("Prompt:\n")
                 f.write(explain_prompt.strip() + "\n\n")
                 f.write("Explanation:\n")
                 f.write(explanation + "\n\n")
+            
+            return explanation
+        except Exception as e:
+            self.logger.error(f"Error getting explanation: {str(e)}")
+            return f"This {chart_type} visualization shows relationships between {', '.join(variables)}."
 
-            # 2. Now ask LLM to generate the plotting code
-            code_prompt = f"""
-            <thinking>
-            I need to generate robust Python code for a {chart_type} visualization of {variables}.
+    def _generate_visualization_with_healing(self, chart_type, variables, data_summary, data):
+        """Generate visualization with self-healing capabilities"""
+        # Generate initial code
+        initial_code = self._generate_plotting_code(chart_type, variables, data_summary)
+        
+        if not initial_code:
+            return self._create_error_result("Failed to generate initial plotting code")
+        
+        # Execute with healing
+        return self._execute_with_healing(initial_code, data, chart_type)
 
-            Dataset characteristics:
-            - Shape: {data_summary['shape']}
-            - Column types: {data_summary['column_types']}
-            - Data types: {data_summary['dtypes']}
-            - Sample values: {{{", ".join([f"'{v}': {data_summary['sample_values'][v]}" for v in variables if v in data_summary['sample_values']])}}}
+    def _generate_plotting_code(self, chart_type, variables, data_summary):
+        """Generate initial plotting code from LLM"""
+        code_prompt = f"""
+        <thinking>
+        I need to generate robust Python code for a {chart_type} visualization of {variables}.
 
-            Code requirements:
-            1. Handle missing values appropriately
-            2. Check data types and convert if needed
-            3. Apply appropriate statistical transformations
-            4. Create clear, publication-ready visualization
-            5. Include meaningful insights detection
-            6. Robust error handling for edge cases
-            </thinking>
+        Dataset characteristics:
+        - Shape: {data_summary['shape']}
+        - Column types: {data_summary['column_types']}
+        - Data types: {data_summary['dtypes']}
+        - Sample values: {{{", ".join([f"'{v}': {data_summary['sample_values'][v]}" for v in variables if v in data_summary['sample_values']])}}}
 
-            Generate a complete Python function that creates a {chart_type} visualization.
+        Code requirements:
+        1. Handle missing values appropriately
+        2. Check data types and convert if needed
+        3. Apply appropriate statistical transformations
+        4. Create clear, publication-ready visualization
+        5. Include meaningful insights detection
+        6. Robust error handling for edge cases
+        7. Use only commonly available libraries (no sklearn, no advanced stats unless necessary)
+        8. For seaborn plots, avoid deprecated parameters like 'ci' (use 'errorbar' instead)
+        </thinking>
 
-            Requirements:
-            - Function signature: def generate_plot(data):
-            - Return: (base64_image_string, insights_text, success_boolean)
-            - Handle all edge cases (empty data, wrong types, etc.)
-            - Include statistical insights where relevant
-            - Use modern matplotlib/seaborn styling
-            - Appropriate figure size and DPI for clarity
+        Generate a complete Python function that creates a {chart_type} visualization.
 
-            ```python
+        Requirements:
+        - Function signature: def generate_plot(data):
+        - Return: (base64_image_string, insights_text, success_boolean)
+        - Handle all edge cases (empty data, wrong types, etc.)
+        - Include statistical insights where relevant
+        - Use modern matplotlib/seaborn styling
+        - Appropriate figure size and DPI for clarity
+        - IMPORTANT: Only use standard libraries (matplotlib, seaborn, pandas, numpy, scipy)
+        - IMPORTANT: Avoid deprecated parameters (use 'errorbar=None' instead of 'ci=None' in seaborn)
+
+        Variables to visualize: {variables}
+        Data types: {data_summary['dtypes']}
+
+        Return ONLY the complete Python function code:
+
+        ```python
+        def generate_plot(data):
             import matplotlib.pyplot as plt
             import seaborn as sns
             import pandas as pd
             import numpy as np
             import io
             import base64
-            from scipy import stats
             import warnings
             warnings.filterwarnings('ignore')
-
-            def generate_plot(data):
-                try:
-                    # Your complete implementation here
-                    # Include data validation, cleaning, plotting, and insight generation
-                    pass
-                except Exception as e:
-                    return None, f"Error: {{str(e)}}", False
-            ```
-
-            Complete Python code:
-            """
-            code_response = self.llm.invoke([HumanMessage(content=code_prompt)])
-            self.logger.info("Received code generation response from LLM")
             
-            # Extract the code from the LLM response
-            import re
-            code_match = re.search(r'```python\s*(.*?)\s*```', code_response.content, re.DOTALL)
-            if not code_match:
-                code_match = re.search(r'def generate_plot\(data\):(.*?)(?:$|```)', code_response.content, re.DOTALL)
-            
-            if code_match:
-                plot_code = code_match.group(1)
-                # If the match doesn't include the function definition, add it
-                if not plot_code.strip().startswith("def generate_plot"):
-                    plot_code = "def generate_plot(data):" + plot_code
-                    
-                self.logger.info(f"Extracted plotting code of length {len(plot_code)}")
+            try:
+                # Your complete implementation here
+                # Include data validation, cleaning, plotting, and insight generation
                 
-                # Execute the generated code in a safe context
-                try:
-    # Extract the code from the LLM response
-                    plot_code = extract_code_from_response(code_response.content)
-                    
-                    if plot_code:
-                        # Execute with self-healing capabilities
-                        (img_str, insights, success), final_code, healing_history = execute_with_healing(plot_code, state.data)
-                        
-                        # Log the healing process
-                        self.logger.info(f"Code execution completed after {len(healing_history) + 1} attempts")
-                        
-                        # Store the visualization output
-                        state.visualization_outputs.append({
-                            'chart_type': chart_type,
-                            'variables': variables,
-                            'reasoning': reasoning,
-                            'explanation': explanation,
-                            'insights': insights if insights else "No specific insights detected.",
-                            'image_base64': img_str,
-                            'generated_code': final_code,  # Store the final healed code
-                            'healing_history': healing_history  # Store the healing history for analysis
-                        })
-                        
-                        # Log the healing process for analysis
-                        log_healing_process(chart_type, healing_history)
-                    else:
-                        # Handle case where code extraction failed
-                        self.logger.error("Could not extract plotting code from LLM response")
-                        # Create error visualization as in the original code
-                        
-                except Exception as e:
-                    self.logger.error(f"Unrecoverable error in self-healing process: {str(e)}")
-                    self.logger.error(traceback.format_exc())
-                    # Create error visualization as in the original code
+                # Example structure:
+                # 1. Validate input data
+                # 2. Clean and prepare data
+                # 3. Create the plot
+                # 4. Generate insights
+                # 5. Convert to base64
+                # 6. Return results
+                
+                return base64_string, insights_text, True
+                
+            except Exception as e:
+                return None, f"Error: {{str(e)}}", False
+        ```
+        """
+        
+        try:
+            response = self.llm.invoke([HumanMessage(content=code_prompt)])
+            return self._extract_code_from_response(response.content)
+        except Exception as e:
+            self.logger.error(f"Error generating initial code: {str(e)}")
+            return None
 
+    def _extract_code_from_response(self, response_content):
+        """Extract Python code from LLM response"""
+        import re
+        
+        # Try to find code block
+        patterns = [
+            r'```python\s*(.*?)\s*```',
+            r'```\s*(def generate_plot.*?)\s*```',
+            r'(def generate_plot\(data\):.*?)(?=\n\n|\n```|\Z)'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, response_content, re.DOTALL)
+            if match:
+                code = match.group(1).strip()
                 
-    
-    def execute_with_healing(code, data, max_attempts=3):
-        """Execute code with self-healing capabilities."""
+                # Ensure function definition is present
+                if not code.startswith("def generate_plot"):
+                    code = "def generate_plot(data):\n" + code
+                
+                return code
+        
+        # If no pattern matches, try to extract everything after "def generate_plot"
+        if "def generate_plot" in response_content:
+            start_idx = response_content.find("def generate_plot")
+            code = response_content[start_idx:].strip()
+            
+            # Clean up common artifacts
+            code = re.sub(r'```.*$', '', code, flags=re.MULTILINE).strip()
+            return code
+        
+        return None
+
+    def _execute_with_healing(self, code, data, chart_type, max_attempts=3):
+        """Execute code with self-healing capabilities"""
         healing_history = []
         current_code = code
         
         for attempt in range(max_attempts):
             try:
-                # Create local namespace for execution
-                local_vars = {}
+                self.logger.info(f"Attempt {attempt + 1} for {chart_type} visualization")
                 
-                # Add necessary imports to local namespace
-                exec("import matplotlib.pyplot as plt", local_vars)
-                exec("import seaborn as sns", local_vars)
-                exec("import pandas as pd", local_vars)
-                exec("import io", local_vars)
-                exec("import base64", local_vars)
-                exec("import numpy as np", local_vars)
+                # Execute the code
+                result = self._safe_execute_code(current_code, data)
                 
-                # Execute the generated plotting function
-                exec(current_code, local_vars)
-                
-                # Call the function with our data
-                img_str, insights, success = local_vars['generate_plot'](data)
-                
-                if success:
-                    return (img_str, insights, success), current_code, healing_history
+                if result['success']:
+                    return {
+                        'image_base64': result['image_base64'],
+                        'insights': result['insights'],
+                        'success': True,
+                        'final_code': current_code,
+                        'healing_history': healing_history
+                    }
                 else:
                     # Code executed but reported failure
-                    error_msg = f"Code reported failure: {insights}"
-                    healing_history.append({
-                        'attempt': attempt + 1,
-                        'error': error_msg,
-                        'code_before': current_code
-                    })
-                    
-                    # Generate healing prompt
-                    healing_prompt = create_healing_prompt(current_code, error_msg)
-                    
-                    # Get corrected code from LLM
-                    corrected_code = get_corrected_code_from_llm(healing_prompt)
-                    
-                    # Update current code
-                    current_code = corrected_code
-                    healing_history[-1]['code_after'] = current_code
+                    error_msg = result['error']
+                    self.logger.warning(f"Code reported failure on attempt {attempt + 1}: {error_msg}")
                     
             except Exception as e:
                 error_msg = f"{type(e).__name__}: {str(e)}"
                 traceback_str = traceback.format_exc()
+                self.logger.error(f"Exception on attempt {attempt + 1}: {error_msg}")
                 
-                healing_history.append({
+                # Record healing attempt
+                healing_entry = {
                     'attempt': attempt + 1,
                     'error': error_msg,
                     'traceback': traceback_str,
                     'code_before': current_code
-                })
+                }
                 
-                # Generate healing prompt
-                healing_prompt = create_healing_prompt(current_code, error_msg, traceback_str)
+                # Generate corrected code
+                corrected_code = self._get_corrected_code(current_code, error_msg, traceback_str)
                 
-                # Get corrected code from LLM
-                corrected_code = get_corrected_code_from_llm(healing_prompt)
-                
-                # Update current code
-                current_code = corrected_code
-                healing_history[-1]['code_after'] = current_code
+                if corrected_code:
+                    current_code = corrected_code
+                    healing_entry['code_after'] = current_code
+                    healing_history.append(healing_entry)
+                else:
+                    self.logger.error("Failed to generate corrected code")
+                    break
         
         # If we've reached max attempts without success
-        return create_error_visualization(f"Failed after {max_attempts} healing attempts"), current_code, healing_history
+        self.logger.error(f"Failed to create {chart_type} visualization after {max_attempts} attempts")
+        return self._create_error_result(f"Failed after {max_attempts} healing attempts", healing_history)
 
-    def create_healing_prompt(code, error_msg, traceback_str=None):
-        """Create a prompt for the LLM to fix the code based on error information."""
-        prompt = f"""
-        I need you to fix the following Python code that encountered an error.
+    def _safe_execute_code(self, code, data):
+        """Safely execute the plotting code"""
+        try:
+            # Create isolated namespace
+            namespace = {
+                '__builtins__': __builtins__,
+                'matplotlib': __import__('matplotlib'),
+                'plt': plt,
+                'sns': sns,
+                'pd': pd,
+                'np': np,
+                'io': io,
+                'base64': base64,
+                'warnings': __import__('warnings')
+            }
+            
+            # Execute the function definition
+            exec(code, namespace)
+            
+            # Call the function
+            img_str, insights, success = namespace['generate_plot'](data)
+            
+            return {
+                'image_base64': img_str,
+                'insights': insights,
+                'success': success,
+                'error': insights if not success else None
+            }
+            
+        except Exception as e:
+            return {
+                'image_base64': None,
+                'insights': None,
+                'success': False,
+                'error': str(e)
+            }
+
+    def _get_corrected_code(self, code, error_msg, traceback_str=None):
+        """Get corrected code from LLM based on error"""
+        healing_prompt = f"""
+        Fix this Python visualization code that encountered an error.
         
-        ERROR INFORMATION:
-        {error_msg}
+        ERROR: {error_msg}
         
-        {'TRACEBACK:\n' + traceback_str if traceback_str else ''}
+        {f'TRACEBACK:\n{traceback_str}\n' if traceback_str else ''}
         
-        ORIGINAL CODE:
-        ```
+        PROBLEMATIC CODE:
+        ```python
         {code}
         ```
         
-        Please analyze the error and provide a corrected version of the code. Focus on:
-        1. Fixing the specific error mentioned
-        2. Ensuring robust error handling
-        3. Maintaining the original functionality
-        4. Improving code quality where possible
+        Common fixes needed:
+        1. For 'ci' parameter errors: Replace 'ci=None' with 'errorbar=None' in seaborn plots
+        2. For import errors: Remove or replace unavailable libraries (like sklearn)
+        3. For data type errors: Add proper type checking and conversion
+        4. For empty data errors: Add data validation checks
+        5. For 'PathCollection.set()' errors: This usually means passing wrong parameters to scatter plots
         
-        Return ONLY the corrected code without explanations.
+        Return ONLY the corrected Python function code without explanations:
+        
+        ```python
+        def generate_plot(data):
+            # corrected code here
+        ```
         """
         
-        return prompt
+        try:
+            response = self.llm.invoke([HumanMessage(content=healing_prompt)])
+            return self._extract_code_from_response(response.content)
+        except Exception as e:
+            self.logger.error(f"Error getting corrected code: {str(e)}")
+            return None
 
-    def get_corrected_code_from_llm(healing_prompt):
-        """Get corrected code from LLM based on the healing prompt."""
-        # Send the healing prompt to the LLM
-        correction_response = self.llm.invoke([HumanMessage(content=healing_prompt)])
-        
-        # Extract the code from the LLM response
-        import re
-        code_match = re.search(r'``````', correction_response.content, re.DOTALL)
-        
-        if not code_match:
-            code_match = re.search(r'``````', correction_response.content, re.DOTALL)
-        
-        if code_match:
-            corrected_code = code_match.group(1)
-            # If the match doesn't include the function definition, add it
-            if not corrected_code.strip().startswith("def generate_plot"):
-                corrected_code = "def generate_plot(data):" + corrected_code
+    def _create_error_result(self, error_message, healing_history=None):
+        """Create error result with visualization"""
+        try:
+            # Create error visualization
+            plt.figure(figsize=(10, 4))
+            plt.text(0.5, 0.5, f"Visualization Error:\n{error_message}", 
+                    horizontalalignment='center', verticalalignment='center',
+                    fontsize=12, color='red', wrap=True)
+            plt.axis('off')
+            plt.title("Visualization Generation Failed", fontsize=14, color='darkred')
             
-            return corrected_code
-        else:
-            # Fallback if no code block is found
-            return correction_response.content
-
-    def create_error_visualization(error_message):
-        """Create an error visualization image with the provided message."""
-        plt.figure(figsize=(10, 4))
-        plt.text(0.5, 0.5, error_message, 
-                horizontalalignment='center', verticalalignment='center',
-                fontsize=12, color='red')
-        plt.axis('off')
-        
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png')
-        buf.seek(0)
-        img_str = base64.b64encode(buf.read()).decode()
-        buf.close()
-        plt.close()
-        
-        return img_str, error_message, False
-
-
-    def log_healing_process(chart_type, healing_history):
-        """Log the healing process for analysis."""
-        log_path = "logs/code_healing_history.log"
-        with open(log_path, "a", encoding="utf-8") as f:
-            f.write("=== New Code Healing Entry ===\n")
-            f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n")
-            f.write(f"Chart Type: {chart_type}\n\n")
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
             
-            for i, attempt in enumerate(healing_history):
-                f.write(f"--- Attempt {attempt['attempt']} ---\n")
-                f.write(f"Error: {attempt['error']}\n")
-                if 'traceback' in attempt:
-                    f.write(f"Traceback:\n{attempt['traceback']}\n")
-                f.write("\nCode Before:\n")
-                f.write("```")
-                f.write(attempt['code_before'].strip() + "\n")
-                f.write("```\n\n")
-                f.write("Code After:\n")
-                f.write("```")
-                f.write(attempt['code_after'].strip() + "\n")
-                f.write("```\n\n")
+            return {
+                'image_base64': img_str,
+                'insights': f"Error: {error_message}",
+                'success': False,
+                'final_code': None,
+                'healing_history': healing_history or []
+            }
+        except Exception as e:
+            self.logger.error(f"Error creating error visualization: {str(e)}")
+            return {
+                'image_base64': None,
+                'insights': f"Critical Error: {error_message}",
+                'success': False,
+                'final_code': None,
+                'healing_history': healing_history or []
+            }
 
+    def _log_healing_process(self, chart_type, healing_history):
+        """Log the healing process for analysis"""
+        try:
+            log_path = "logs/code_healing_history.log"
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write("=== New Code Healing Entry ===\n")
+                f.write(f"Timestamp: {datetime.datetime.utcnow().isoformat()}Z\n")
+                f.write(f"Chart Type: {chart_type}\n\n")
+                
+                for i, attempt in enumerate(healing_history):
+                    f.write(f"--- Attempt {attempt['attempt']} ---\n")
+                    f.write(f"Error: {attempt['error']}\n")
+                    if 'traceback' in attempt:
+                        f.write(f"Traceback:\n{attempt['traceback']}\n")
+                    f.write("\nCode Before:\n")
+                    f.write("```python\n")
+                    f.write(attempt['code_before'].strip() + "\n")
+                    f.write("```\n\n")
+                    if 'code_after' in attempt:
+                        f.write("Code After:\n")
+                        f.write("```python\n")
+                        f.write(attempt['code_after'].strip() + "\n")
+                        f.write("```\n\n")
+                f.write("\n" + "="*50 + "\n\n")
+        except Exception as e:
+            self.logger.error(f"Error logging healing process: {str(e)}")
 
+    # Remove the old standalone functions and the problematic code section
+    # Replace the old create_visualization method with this improved version
 
     def evaluate_results(self, state: DataAnalysisState) -> DataAnalysisState:
         """Have the LLM evaluate visualization results and suggest improvements"""
