@@ -1,0 +1,326 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: bar_chart
+Variables: ['seniority_level', 'company_address_region']
+Timestamp: 2025-05-23T16:55:17.566058
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a bar_chart visualization.
+
+    Dataset Context:
+    - Shape: (997, 10)
+    - Total columns: 10
+
+    Variables to visualize: ['seniority_level', 'company_address_region']
+    Variable details:
+      - seniority_level: categorical_ordinal (object) - 9 missing, 7 unique
+  - company_address_region: categorical_nominal (object) - 113 missing, 87 unique
+
+    Sample values:
+      - seniority_level: ['Mid-Senior level', 'Entry level', 'Not Applicable', 'Not Applicable', 'Mid-Senior level']
+  - company_address_region: ['Washington', 'California', 'California', 'California', 'CA']
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+    Chart-specific considerations for bar_chart:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a bar_chart visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['seniority_level', 'company_address_region']
+    Data types: ['object', 'object']
+    Column types: ['categorical_ordinal', 'categorical_nominal']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['seniority_level', 'company_address_region']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for a bar chart visualization. The function has to handle various edge cases and meet specific requirements. Let me break down the problem step by step.
+
+First, I'll look at the dataset context. The data has 997 rows and 10 columns. The variables to visualize are 'seniority_level' and 'company_address_region'. Both are categorical, but 'seniority_level' is ordinal while 'company_address_region' is nominal. There are missing values in both, with 9 missing in seniority and 113 in region.
+
+The function must handle all edge cases, like empty data or missing values. It should use only standard libraries: matplotlib, seaborn, pandas, and numpy. No deprecated parameters, so I'll make sure to use 'errorbar=None' instead of 'ci=None' in seaborn functions.
+
+I'll start by validating the data. The function should check if the required columns exist. If any are missing, it returns an error. Then, I'll check the data types to ensure they are objects, as expected.
+
+Next, I'll handle missing values. For 'seniority_level', since it's ordinal, I'll replace missing values with 'Unknown' and then convert it to an ordinal type using pandas. For 'company_address_region', I'll replace missing values with 'Unknown' as well.
+
+Now, I need to decide on the type of plot. Since both variables are categorical, a bar chart showing the distribution of each seniority level across regions makes sense. But since 'company_address_region' has 87 unique values, plotting all regions isn't feasible. Instead, I'll aggregate the data by counting the number of occurrences for each seniority level and region combination.
+
+I'll create a crosstab of counts and then normalize it to get proportions. This helps in comparing distributions across regions. Using seaborn's catplot with a bar plot, I'll set x as seniority_level and y as proportion. I'll also ensure that the plot includes all levels, even if some have zero counts.
+
+Styling is important. I'll use a modern seaborn style with a larger figure size for clarity. The plot will have appropriate titles and labels, and I'll sort the seniority levels to maintain the ordinal nature.
+
+For insights, I'll calculate the total counts for each seniority level and determine the most common region for each. This provides meaningful statistical information based on the data.
+
+I'll also handle any exceptions that might occur during the function's execution, catching them and returning detailed error messages.
+
+Finally, I'll convert the plot to a base64 encoded string so it can be easily returned and displayed without saving the image. The function will return this string along with the insights and a success boolean.
+
+Putting it all together, I'll structure the function with data validation, data preparation, plotting, insight generation, and error handling. This ensures the function is robust, handles all edge cases, and produces a clear, publication-ready visualization.
+</think>
+
+Here's a complete, robust implementation of the `generate_plot` function based on the requirements and considerations:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['seniority_level', 'company_address_region']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data type validation
+        if not (data['seniority_level'].dtype == 'object' and 
+                data['company_address_region'].dtype == 'object'):
+            return None, "Error: Invalid data types for one or more columns", False
+        
+        # Handle missing values
+        data['seniority_level'] = data['seniority_level'].fillna('Unknown')
+        data['company_address_region'] = data['company_address_region'].fillna('Unknown')
+        
+        # Convert seniority_level to categorical ordinal
+        seniority_order = ['Entry level', 'Mid-Senior level', 'Not Applicable']
+        data['seniority_level'] = pd.Categorical(data['seniority_level'], 
+                                                  categories=seniority_order, 
+                                                  ordered=True)
+        
+        # Data aggregation
+        crosstab = pd.crosstab(data['seniority_level'], 
+                              data['company_address_region'], 
+                              normalize='index')
+        
+        # Create long format for plotting
+        plot_data = crosstab.reset_index().melt(id_vars=['seniority_level'], 
+                                               var_name='company_address_region', 
+                                               value_name='proportion')
+        
+        # Create visualization
+        plt.figure(figsize=(12, 8))
+        sns.set_style("whitegrid", {'axes.edgecolor': '0.2'})
+        
+        ax = sns.catplot(x='seniority_level', y='proportion', 
+                        data=plot_data, kind='bar', ci=None, errorbar=None,
+                        palette='husl', height=8, aspect=2)
+        
+        # Customize plot
+        plt.title('Distribution of Seniority Levels by Region', fontsize=14, pad=20)
+        plt.xlabel('Seniority Level', fontsize=12)
+        plt.ylabel('Proportion', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Generate statistical insights
+        total_counts = data['seniority_level'].value_counts()
+        most_common_region = data.groupby('seniority_level')['company_address_region'].apply(lambda x: x.mode().iloc[0])
+        
+        insights = f"Seniority Level Distribution:\n"
+        insights += f"- Total entries: {len(data)}\n"
+        for level, count in total_counts.items():
+            insights += f"- {level}: {count} ({count/len(data)*100:.1f}%)\n"
+            insights += f"  - Most common region: {most_common_region[level]}\n"
+        
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation and type checking
+2. Handling of missing values
+3. Proper categorical data conversion
+4. Statistical aggregation and visualization
+5. Modern styling with appropriate figure size
+6. Meaningful statistical insights
+7. Robust error handling
+8. Base64 encoding of the visualization
+9. Clear, publication-ready visualization
+10. Proper use of standard libraries only
+
+The function will return:
+- A base64-encoded image string of the visualization
+- Text containing statistical insights
+- A boolean indicating success/failure
+
+The visualization shows the distribution of seniority levels across different regions in a normalized bar chart format, making it easy to compare distributions across categories.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['seniority_level', 'company_address_region']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data type validation
+        if not (data['seniority_level'].dtype == 'object' and 
+                data['company_address_region'].dtype == 'object'):
+            return None, "Error: Invalid data types for one or more columns", False
+        
+        # Handle missing values
+        data['seniority_level'] = data['seniority_level'].fillna('Unknown')
+        data['company_address_region'] = data['company_address_region'].fillna('Unknown')
+        
+        # Convert seniority_level to categorical ordinal
+        seniority_order = ['Entry level', 'Mid-Senior level', 'Not Applicable']
+        data['seniority_level'] = pd.Categorical(data['seniority_level'], 
+                                                  categories=seniority_order, 
+                                                  ordered=True)
+        
+        # Data aggregation
+        crosstab = pd.crosstab(data['seniority_level'], 
+                              data['company_address_region'], 
+                              normalize='index')
+        
+        # Create long format for plotting
+        plot_data = crosstab.reset_index().melt(id_vars=['seniority_level'], 
+                                               var_name='company_address_region', 
+                                               value_name='proportion')
+        
+        # Create visualization
+        plt.figure(figsize=(12, 8))
+        sns.set_style("whitegrid", {'axes.edgecolor': '0.2'})
+        
+        ax = sns.catplot(x='seniority_level', y='proportion', 
+                        data=plot_data, kind='bar', ci=None, errorbar=None,
+                        palette='husl', height=8, aspect=2)
+        
+        # Customize plot
+        plt.title('Distribution of Seniority Levels by Region', fontsize=14, pad=20)
+        plt.xlabel('Seniority Level', fontsize=12)
+        plt.ylabel('Proportion', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Generate statistical insights
+        total_counts = data['seniority_level'].value_counts()
+        most_common_region = data.groupby('seniority_level')['company_address_region'].apply(lambda x: x.mode().iloc[0])
+        
+        insights = f"Seniority Level Distribution:\n"
+        insights += f"- Total entries: {len(data)}\n"
+        for level, count in total_counts.items():
+            insights += f"- {level}: {count} ({count/len(data)*100:.1f}%)\n"
+            insights += f"  - Most common region: {most_common_region[level]}\n"
+        
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

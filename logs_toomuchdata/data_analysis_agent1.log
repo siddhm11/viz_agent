@@ -1,0 +1,1560 @@
+2025-05-23 16:36:55,905 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 16:36:56,030 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 16:36:56,039 - newviz3 - INFO - Created workflow graph
+2025-05-23 16:36:56,040 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 16:36:56,040 - newviz3 - INFO - Input data shape: (997, 10)
+2025-05-23 16:36:56,040 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 16:36:56,041 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 16:36:56,041 - newviz3 - INFO - DataFrame shape: (997, 10)
+2025-05-23 16:36:56,042 - newviz3 - INFO - DataFrame columns: ['Unnamed: 0', 'job_posted_date', 'company_address_locality', 'company_address_region', 'company_name', 'company_website', 'company_description', 'job_description_text', 'seniority_level', 'job_title']
+2025-05-23 16:36:56,069 - newviz3 - INFO - Completed data preview preparation in 0.03 seconds
+2025-05-23 16:36:56,069 - newviz3 - INFO - Starting data type analysis
+2025-05-23 16:36:56,070 - newviz3 - INFO - Analyzing data types for 10 columns
+2025-05-23 16:36:56,070 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 16:36:56,411 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 413 Payload Too Large"
+2025-05-23 16:36:56,413 - newviz3 - ERROR - Error in analyze_data_types: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:36:56,417 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 140, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+2025-05-23 16:36:56,417 - newviz3 - ERROR - Error in run_analysis: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:36:56,419 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1444, in run_analysis
+    result = self.graph.invoke(initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2894, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2527, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 140, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'analyze' and id 'f50fa3a5-f629-f153-dcd2-5525f5012637'
+
+2025-05-23 16:37:23,381 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 16:37:23,480 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 16:37:23,488 - newviz3 - INFO - Created workflow graph
+2025-05-23 16:37:23,488 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 16:37:23,488 - newviz3 - INFO - Input data shape: (997, 10)
+2025-05-23 16:37:23,488 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 16:37:23,490 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 16:37:23,490 - newviz3 - INFO - DataFrame shape: (997, 10)
+2025-05-23 16:37:23,490 - newviz3 - INFO - DataFrame columns: ['Unnamed: 0', 'job_posted_date', 'company_address_locality', 'company_address_region', 'company_name', 'company_website', 'company_description', 'job_description_text', 'seniority_level', 'job_title']
+2025-05-23 16:37:23,496 - newviz3 - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-23 16:37:23,496 - newviz3 - INFO - Starting data type analysis
+2025-05-23 16:37:23,496 - newviz3 - INFO - Analyzing data types for 10 columns
+2025-05-23 16:37:23,496 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 16:37:23,668 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 413 Payload Too Large"
+2025-05-23 16:37:23,669 - newviz3 - ERROR - Error in analyze_data_types: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:37:23,672 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 140, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+2025-05-23 16:37:23,673 - newviz3 - ERROR - Error in run_analysis: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:37:23,674 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1444, in run_analysis
+    result = self.graph.invoke(initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2894, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2527, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 140, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 35827, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'analyze' and id 'ae20325b-c803-048c-0bb3-a79aeac1168a'
+
+2025-05-23 16:39:01,266 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 16:39:01,388 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 16:39:01,396 - newviz3 - INFO - Created workflow graph
+2025-05-23 16:39:01,396 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 16:39:01,396 - newviz3 - INFO - Input data shape: (997, 10)
+2025-05-23 16:39:01,396 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 16:39:01,397 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 16:39:01,398 - newviz3 - INFO - DataFrame shape: (997, 10)
+2025-05-23 16:39:01,398 - newviz3 - INFO - DataFrame columns: ['Unnamed: 0', 'job_posted_date', 'company_address_locality', 'company_address_region', 'company_name', 'company_website', 'company_description', 'job_description_text', 'seniority_level', 'job_title']
+2025-05-23 16:39:01,405 - newviz3 - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-23 16:39:01,405 - newviz3 - INFO - Starting data type analysis
+2025-05-23 16:39:01,405 - newviz3 - INFO - Analyzing data types for 10 columns
+2025-05-23 16:39:01,405 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 16:39:01,543 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 413 Payload Too Large"
+2025-05-23 16:39:01,545 - newviz3 - ERROR - Error in analyze_data_types: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 15355, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:39:01,549 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 145, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 15355, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+2025-05-23 16:39:01,549 - newviz3 - ERROR - Error in run_analysis: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 15355, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:39:01,551 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1449, in run_analysis
+    result = self.graph.invoke(initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2894, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2527, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 145, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 15355, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'analyze' and id '37c2801b-cd17-007e-17f3-611112038347'
+
+2025-05-23 16:40:09,833 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 16:40:09,948 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 16:40:09,955 - newviz3 - INFO - Created workflow graph
+2025-05-23 16:40:09,955 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 16:40:09,955 - newviz3 - INFO - Input data shape: (997, 10)
+2025-05-23 16:40:09,955 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 16:40:09,958 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 16:40:09,958 - newviz3 - INFO - DataFrame shape: (997, 10)
+2025-05-23 16:40:09,958 - newviz3 - INFO - DataFrame columns: ['Unnamed: 0', 'job_posted_date', 'company_address_locality', 'company_address_region', 'company_name', 'company_website', 'company_description', 'job_description_text', 'seniority_level', 'job_title']
+2025-05-23 16:40:09,965 - newviz3 - INFO - Completed data preview preparation in 0.01 seconds
+2025-05-23 16:40:09,966 - newviz3 - INFO - Starting data type analysis
+2025-05-23 16:40:09,966 - newviz3 - INFO - Analyzing data types for 10 columns
+2025-05-23 16:40:09,966 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 16:40:10,158 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 413 Payload Too Large"
+2025-05-23 16:40:10,160 - newviz3 - ERROR - Error in analyze_data_types: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 11567, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:40:10,164 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 145, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 11567, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+2025-05-23 16:40:10,165 - newviz3 - ERROR - Error in run_analysis: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 11567, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:40:10,167 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1449, in run_analysis
+    result = self.graph.invoke(initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2894, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2527, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 145, in analyze_data_types
+    response = self.llm.invoke([HumanMessage(content=analysis_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Requested 11567, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'analyze' and id '17ed135c-b833-b062-d8b6-f1f237255cf5'
+
+2025-05-23 16:40:17,169 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 16:40:17,284 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 16:40:17,293 - newviz3 - INFO - Created workflow graph
+2025-05-23 16:40:17,293 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 16:40:17,293 - newviz3 - INFO - Input data shape: (997, 10)
+2025-05-23 16:40:17,293 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 16:40:17,295 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 16:40:17,295 - newviz3 - INFO - DataFrame shape: (997, 10)
+2025-05-23 16:40:17,295 - newviz3 - INFO - DataFrame columns: ['Unnamed: 0', 'job_posted_date', 'company_address_locality', 'company_address_region', 'company_name', 'company_website', 'company_description', 'job_description_text', 'seniority_level', 'job_title']
+2025-05-23 16:40:17,298 - newviz3 - INFO - Completed data preview preparation in 0.00 seconds
+2025-05-23 16:40:17,298 - newviz3 - INFO - Starting data type analysis
+2025-05-23 16:40:17,298 - newviz3 - INFO - Analyzing data types for 10 columns
+2025-05-23 16:40:17,298 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 16:40:19,469 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:40:19,475 - newviz3 - INFO - Received response from LLM for data type analysis
+2025-05-23 16:40:19,476 - newviz3 - INFO - Parsed column types: {'Unnamed: 0': 'numerical_discrete', 'job_posted_date': 'temporal', 'company_address_locality': 'categorical_nominal', 'company_address_region': 'categorical_nominal', 'company_name': 'categorical_nominal', 'company_website': 'text', 'company_description': 'text', 'job_description_text': 'text', 'seniority_level': 'categorical_ordinal', 'job_title': 'categorical_nominal'}
+2025-05-23 16:40:19,476 - newviz3 - INFO - Completed data type analysis in 2.18 seconds
+2025-05-23 16:40:19,477 - newviz3 - INFO - Starting relationship identification
+2025-05-23 16:40:19,477 - newviz3 - INFO - Sending identify_relationships prompt to LLM
+2025-05-23 16:40:19,732 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:40:19,732 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 15.000000 seconds
+2025-05-23 16:40:40,127 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:40:40,132 - newviz3 - INFO - Received response from LLM for relationship identification
+2025-05-23 16:40:40,132 - newviz3 - INFO - Identified 8 potential relationships
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 1: ['job_posted_date', 'job_title'] - temporal_trend
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 2: ['job_posted_date', 'seniority_level'] - temporal_trend
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 3: ['company_address_region', 'job_title'] - grouping
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 4: ['company_address_region', 'seniority_level'] - grouping
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 5: ['company_name', 'job_title'] - grouping
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 6: ['job_posted_date', 'company_name'] - temporal_trend
+2025-05-23 16:40:40,132 - newviz3 - INFO - Relationship 7: ['company_name', 'seniority_level'] - grouping
+2025-05-23 16:40:40,133 - newviz3 - INFO - Relationship 8: ['job_title', 'seniority_level'] - grouping
+2025-05-23 16:40:40,133 - newviz3 - INFO - Completed relationship identification in 20.66 seconds
+2025-05-23 16:40:40,133 - newviz3 - INFO - Starting visualization suggestions
+2025-05-23 16:40:40,167 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:40:40,168 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 37.000000 seconds
+2025-05-23 16:41:22,138 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:41:22,140 - newviz3 - INFO - Generated 7 visualization suggestions
+2025-05-23 16:41:22,141 - newviz3 - INFO - Completed visualization suggestions in 42.01 seconds
+2025-05-23 16:41:22,147 - newviz3 - INFO - ============================================================
+2025-05-23 16:41:22,147 - newviz3 - INFO - STARTING DYNAMIC LLM-BASED VISUALIZATION CREATION
+2025-05-23 16:41:22,147 - newviz3 - INFO - ============================================================
+2025-05-23 16:41:22,147 - newviz3 - INFO - Creating comprehensive data summary...
+2025-05-23 16:41:22,147 - newviz3 - INFO - Creating enhanced data summary...
+2025-05-23 16:41:22,210 - newviz3 - INFO - Enhanced data summary created with 10 main sections
+2025-05-23 16:41:22,210 - newviz3 - INFO - Data summary created successfully with 10 columns
+2025-05-23 16:41:22,213 - newviz3 - INFO - Processing 7 suggested visualizations
+2025-05-23 16:41:22,213 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:41:22,213 - newviz3 - INFO - PROCESSING VISUALIZATION 1/7
+2025-05-23 16:41:22,214 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:41:22,214 - newviz3 - INFO - Chart Type: line_chart
+2025-05-23 16:41:22,214 - newviz3 - INFO - Variables: ['job_posted_date', 'job_title']
+2025-05-23 16:41:22,214 - newviz3 - INFO - Priority: high
+2025-05-23 16:41:22,214 - newviz3 - INFO - Reasoning: This visualization will help identify trends in job titles over time, revealing which roles are becoming more popular or declining.
+2025-05-23 16:41:22,214 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:41:24,594 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:41:24,605 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a line chart that uses 'job_posted_d...
+2025-05-23 16:41:24,605 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:41:24,605 - newviz3 - INFO - Starting visualization generation with healing for line_chart
+2025-05-23 16:41:24,605 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:41:24,605 - newviz3 - INFO - Generating code for line_chart visualization of ['job_posted_date', 'job_title']
+2025-05-23 16:41:24,605 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:41:30,470 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:41:30,475 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:41:30,476 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:41:30,476 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:41:30,476 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:41:30,476 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:41:30,476 - newviz3 - INFO - 🔄 Attempt 1/4 for line_chart
+2025-05-23 16:41:30,640 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.16s
+2025-05-23 16:41:30,640 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: float() argument must be a string or a real number, not 'Period'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 49, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/pyplot.py", line 3838, in plot
+    return gca().plot(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 1779, in plot
+    self.add_line(line)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 2407, in add_line
+    self._update_line_limits(line)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 2430, in _update_line_limits
+    path = line.get_path()
+           ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/lines.py", line 1052, in get_path
+    self.recache()
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/lines.py", line 689, in recache
+    x = _to_unmasked_float_array(xconv).ravel()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/cbook.py", line 1355, in _to_unmasked_float_array
+    return np.asarray(x, float)
+           ^^^^^^^^^^^^^^^^^^^^
+TypeError: float() argument must be a string or a real number, not 'Period'
+
+2025-05-23 16:41:30,640 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:41:30,640 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:41:30,641 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:41:30,697 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:41:30,697 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 24.000000 seconds
+2025-05-23 16:43:00,688 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 0.902401 seconds
+2025-05-23 16:43:08,647 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:43:08,657 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:43:08,658 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:43:08,658 - newviz3 - INFO - 🔄 Attempt 2/4 for line_chart
+2025-05-23 16:43:09,019 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.36s
+2025-05-23 16:43:09,020 - newviz3 - INFO - ✅ SUCCESS on attempt 2
+2025-05-23 16:43:09,020 - newviz3 - INFO - Visualization generation completed in 104.41s
+2025-05-23 16:43:09,020 - newviz3 - INFO - Total attempts: 2, Healing attempts: 1
+2025-05-23 16:43:09,020 - newviz3 - INFO - ✅ Visualization 1 completed successfully
+2025-05-23 16:43:09,020 - newviz3 - INFO - ⚕️  Required 1 healing attempts
+2025-05-23 16:43:09,020 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:43:09,020 - newviz3 - INFO - PROCESSING VISUALIZATION 2/7
+2025-05-23 16:43:09,020 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:43:09,020 - newviz3 - INFO - Chart Type: time_series_plot
+2025-05-23 16:43:09,020 - newviz3 - INFO - Variables: ['job_posted_date', 'seniority_level']
+2025-05-23 16:43:09,020 - newviz3 - INFO - Priority: high
+2025-05-23 16:43:09,020 - newviz3 - INFO - Reasoning: This plot will show how seniority levels of job postings change over time, reflecting market demands or company growth.
+2025-05-23 16:43:09,020 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:43:11,742 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:43:11,744 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a time series plot that uses 'job_po...
+2025-05-23 16:43:11,744 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:43:11,744 - newviz3 - INFO - Starting visualization generation with healing for time_series_plot
+2025-05-23 16:43:11,744 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:43:11,744 - newviz3 - INFO - Generating code for time_series_plot visualization of ['job_posted_date', 'seniority_level']
+2025-05-23 16:43:11,744 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:43:17,996 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:43:18,000 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:43:18,001 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:43:18,001 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:43:18,001 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:43:18,001 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:43:18,001 - newviz3 - INFO - 🔄 Attempt 1/4 for time_series_plot
+2025-05-23 16:43:18,010 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.01s
+2025-05-23 16:43:18,011 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: new categories must not include old categories: {'Unknown'}
+Traceback: Traceback (most recent call last):
+  File "<string>", line 46, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/accessor.py", line 112, in f
+    return self._delegate_method(name, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/arrays/categorical.py", line 2941, in _delegate_method
+    res = method(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/arrays/categorical.py", line 1330, in add_categories
+    raise ValueError(
+ValueError: new categories must not include old categories: {'Unknown'}
+
+2025-05-23 16:43:18,011 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:43:18,011 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:43:18,013 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:43:18,061 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:43:18,062 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 13.000000 seconds
+2025-05-23 16:43:36,727 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:43:36,733 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:43:36,733 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:43:36,733 - newviz3 - INFO - 🔄 Attempt 2/4 for time_series_plot
+2025-05-23 16:43:36,766 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.03s
+2025-05-23 16:43:36,767 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: 'PeriodArray' object has no attribute 'sort'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 67, in generate_plot
+AttributeError: 'PeriodArray' object has no attribute 'sort'
+
+2025-05-23 16:43:36,767 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 16:43:36,767 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 16:43:36,767 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 16:43:36,802 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:43:36,802 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 22.000000 seconds
+2025-05-23 16:44:05,919 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:44:05,924 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 16:44:05,924 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 16:44:05,924 - newviz3 - INFO - 🔄 Attempt 3/4 for time_series_plot
+2025-05-23 16:44:05,953 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.03s
+2025-05-23 16:44:05,954 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: float() argument must be a string or a real number, not 'Period'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 75, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/pyplot.py", line 3838, in plot
+    return gca().plot(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 1779, in plot
+    self.add_line(line)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 2407, in add_line
+    self._update_line_limits(line)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 2430, in _update_line_limits
+    path = line.get_path()
+           ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/lines.py", line 1052, in get_path
+    self.recache()
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/lines.py", line 689, in recache
+    x = _to_unmasked_float_array(xconv).ravel()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/cbook.py", line 1355, in _to_unmasked_float_array
+    return np.asarray(x, float)
+           ^^^^^^^^^^^^^^^^^^^^
+TypeError: float() argument must be a string or a real number, not 'Period'
+
+2025-05-23 16:44:05,954 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 16:44:05,954 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 16:44:05,954 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 16:44:05,997 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:44:05,997 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 28.000000 seconds
+2025-05-23 16:44:44,996 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:44:45,006 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 16:44:45,006 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 16:44:45,007 - newviz3 - INFO - 🔄 Attempt 4/4 for time_series_plot
+2025-05-23 16:44:45,269 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.26s
+2025-05-23 16:44:45,269 - newviz3 - INFO - ✅ SUCCESS on attempt 4
+2025-05-23 16:44:45,270 - newviz3 - INFO - Visualization generation completed in 93.53s
+2025-05-23 16:44:45,270 - newviz3 - INFO - Total attempts: 4, Healing attempts: 3
+2025-05-23 16:44:45,270 - newviz3 - INFO - ✅ Visualization 2 completed successfully
+2025-05-23 16:44:45,270 - newviz3 - INFO - ⚕️  Required 3 healing attempts
+2025-05-23 16:44:45,270 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:44:45,270 - newviz3 - INFO - PROCESSING VISUALIZATION 3/7
+2025-05-23 16:44:45,270 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:44:45,270 - newviz3 - INFO - Chart Type: stacked_bar_chart
+2025-05-23 16:44:45,270 - newviz3 - INFO - Variables: ['company_address_region', 'job_title']
+2025-05-23 16:44:45,270 - newviz3 - INFO - Priority: high
+2025-05-23 16:44:45,270 - newviz3 - INFO - Reasoning: This chart will display the distribution of job titles across different regions, highlighting regional industry focuses.
+2025-05-23 16:44:45,270 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:44:45,308 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:44:45,308 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 20.000000 seconds
+2025-05-23 16:45:15,529 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2025-05-23 16:45:15,530 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 0.950284 seconds
+2025-05-23 16:45:24,750 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:45:24,753 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a stacked bar chart that uses 'compa...
+2025-05-23 16:45:24,753 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:45:24,753 - newviz3 - INFO - Starting visualization generation with healing for stacked_bar_chart
+2025-05-23 16:45:24,753 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:45:24,753 - newviz3 - INFO - Generating code for stacked_bar_chart visualization of ['company_address_region', 'job_title']
+2025-05-23 16:45:24,753 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:45:31,030 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:45:31,035 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:45:31,036 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:45:31,036 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:45:31,036 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:45:31,036 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:45:31,036 - newviz3 - INFO - 🔄 Attempt 1/4 for stacked_bar_chart
+2025-05-23 16:45:31,087 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.05s
+2025-05-23 16:45:31,087 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'jitter'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 39, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2675, in countplot
+    p.plot_bars(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1315, in plot_bars
+    bar_func(**{**kws, **plot_kws})
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'jitter'
+
+2025-05-23 16:45:31,087 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:45:31,087 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:45:31,088 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:45:31,126 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:45:31,126 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 15.000000 seconds
+2025-05-23 16:45:51,811 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:45:51,814 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:45:51,814 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:45:51,814 - newviz3 - INFO - 🔄 Attempt 2/4 for stacked_bar_chart
+2025-05-23 16:45:51,849 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.03s
+2025-05-23 16:45:51,849 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 39, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2675, in countplot
+    p.plot_bars(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1315, in plot_bars
+    bar_func(**{**kws, **plot_kws})
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 16:45:51,849 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 16:45:51,849 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 16:45:51,850 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 16:45:51,889 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:45:51,890 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 21.000000 seconds
+2025-05-23 16:46:17,686 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:46:17,691 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 16:46:17,691 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 16:46:17,691 - newviz3 - INFO - 🔄 Attempt 3/4 for stacked_bar_chart
+2025-05-23 16:46:17,732 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.04s
+2025-05-23 16:46:17,732 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 39, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2675, in countplot
+    p.plot_bars(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1315, in plot_bars
+    bar_func(**{**kws, **plot_kws})
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'ci'
+
+2025-05-23 16:46:17,732 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 16:46:17,732 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 16:46:17,734 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 16:46:17,766 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:46:17,767 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 20.000000 seconds
+2025-05-23 16:46:43,904 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:46:43,913 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 16:46:43,913 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 16:46:43,913 - newviz3 - INFO - 🔄 Attempt 4/4 for stacked_bar_chart
+2025-05-23 16:46:43,969 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.06s
+2025-05-23 16:46:43,969 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 47, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 2675, in countplot
+    p.plot_bars(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1315, in plot_bars
+    bar_func(**{**kws, **plot_kws})
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 16:46:43,969 - newviz3 - ERROR - ❌ Failed to create stacked_bar_chart visualization after 4 attempts
+2025-05-23 16:46:43,969 - newviz3 - ERROR - Total healing attempts: 3
+2025-05-23 16:46:43,969 - newviz3 - ERROR - 💥 Critical error processing visualization 3: name 'variables' is not defined
+2025-05-23 16:46:43,971 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 426, in create_visualization
+    result = self._generate_visualization_with_healing(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 589, in _generate_visualization_with_healing
+    result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 864, in _execute_with_enhanced_healing
+    chart_type, variables, stats, healing_history
+                ^^^^^^^^^
+NameError: name 'variables' is not defined
+
+2025-05-23 16:46:43,971 - newviz3 - INFO - Creating error result: Critical error: name 'variables' is not defined
+2025-05-23 16:46:44,016 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:46:44,016 - newviz3 - INFO - PROCESSING VISUALIZATION 4/7
+2025-05-23 16:46:44,016 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:46:44,016 - newviz3 - INFO - Chart Type: bar_chart
+2025-05-23 16:46:44,016 - newviz3 - INFO - Variables: ['company_name', 'job_title']
+2025-05-23 16:46:44,016 - newviz3 - INFO - Priority: medium
+2025-05-23 16:46:44,016 - newviz3 - INFO - Reasoning: This visualization will show the frequency of job titles posted by each company, indicating their hiring focus areas.
+2025-05-23 16:46:44,016 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:46:44,053 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:46:44,053 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 16:46:59,728 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:46:59,730 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a bar chart that uses 'company_name'...
+2025-05-23 16:46:59,730 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:46:59,730 - newviz3 - INFO - Starting visualization generation with healing for bar_chart
+2025-05-23 16:46:59,730 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:46:59,730 - newviz3 - INFO - Generating code for bar_chart visualization of ['company_name', 'job_title']
+2025-05-23 16:46:59,730 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:46:59,766 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:46:59,766 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 14.000000 seconds
+2025-05-23 16:47:20,573 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:47:20,576 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:47:20,576 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:47:20,576 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:47:20,576 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:47:20,576 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:47:20,576 - newviz3 - INFO - 🔄 Attempt 1/4 for bar_chart
+2025-05-23 16:47:20,628 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.05s
+2025-05-23 16:47:20,628 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: keyword ha is not recognized; valid keywords are ['size', 'width', 'color', 'tickdir', 'pad', 'labelsize', 'labelcolor', 'labelfontfamily', 'zorder', 'gridOn', 'tick1On', 'tick2On', 'label1On', 'label2On', 'length', 'direction', 'left', 'bottom', 'right', 'top', 'labelleft', 'labelbottom', 'labelright', 'labeltop', 'labelrotation', 'grid_agg_filter', 'grid_alpha', 'grid_animated', 'grid_antialiased', 'grid_clip_box', 'grid_clip_on', 'grid_clip_path', 'grid_color', 'grid_dash_capstyle', 'grid_dash_joinstyle', 'grid_dashes', 'grid_data', 'grid_drawstyle', 'grid_figure', 'grid_fillstyle', 'grid_gapcolor', 'grid_gid', 'grid_in_layout', 'grid_label', 'grid_linestyle', 'grid_linewidth', 'grid_marker', 'grid_markeredgecolor', 'grid_markeredgewidth', 'grid_markerfacecolor', 'grid_markerfacecoloralt', 'grid_markersize', 'grid_markevery', 'grid_mouseover', 'grid_path_effects', 'grid_picker', 'grid_pickradius', 'grid_rasterized', 'grid_sketch_params', 'grid_snap', 'grid_solid_capstyle', 'grid_solid_joinstyle', 'grid_transform', 'grid_url', 'grid_visible', 'grid_xdata', 'grid_ydata', 'grid_zorder', 'grid_aa', 'grid_c', 'grid_ds', 'grid_ls', 'grid_lw', 'grid_mec', 'grid_mew', 'grid_mfc', 'grid_mfcalt', 'grid_ms']
+Traceback: Traceback (most recent call last):
+  File "<string>", line 46, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 3543, in tick_params
+    self.xaxis.set_tick_params(**xkw)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axis.py", line 960, in set_tick_params
+    kwtrans = self._translate_tick_params(kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axis.py", line 1109, in _translate_tick_params
+    raise ValueError(
+ValueError: keyword ha is not recognized; valid keywords are ['size', 'width', 'color', 'tickdir', 'pad', 'labelsize', 'labelcolor', 'labelfontfamily', 'zorder', 'gridOn', 'tick1On', 'tick2On', 'label1On', 'label2On', 'length', 'direction', 'left', 'bottom', 'right', 'top', 'labelleft', 'labelbottom', 'labelright', 'labeltop', 'labelrotation', 'grid_agg_filter', 'grid_alpha', 'grid_animated', 'grid_antialiased', 'grid_clip_box', 'grid_clip_on', 'grid_clip_path', 'grid_color', 'grid_dash_capstyle', 'grid_dash_joinstyle', 'grid_dashes', 'grid_data', 'grid_drawstyle', 'grid_figure', 'grid_fillstyle', 'grid_gapcolor', 'grid_gid', 'grid_in_layout', 'grid_label', 'grid_linestyle', 'grid_linewidth', 'grid_marker', 'grid_markeredgecolor', 'grid_markeredgewidth', 'grid_markerfacecolor', 'grid_markerfacecoloralt', 'grid_markersize', 'grid_markevery', 'grid_mouseover', 'grid_path_effects', 'grid_picker', 'grid_pickradius', 'grid_rasterized', 'grid_sketch_params', 'grid_snap', 'grid_solid_capstyle', 'grid_solid_joinstyle', 'grid_transform', 'grid_url', 'grid_visible', 'grid_xdata', 'grid_ydata', 'grid_zorder', 'grid_aa', 'grid_c', 'grid_ds', 'grid_ls', 'grid_lw', 'grid_mec', 'grid_mew', 'grid_mfc', 'grid_mfcalt', 'grid_ms']
+
+2025-05-23 16:47:20,629 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:47:20,629 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:47:20,629 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:47:20,673 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:47:20,674 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 29.000000 seconds
+2025-05-23 16:47:55,502 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:47:55,505 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:47:55,505 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:47:55,505 - newviz3 - INFO - 🔄 Attempt 2/4 for bar_chart
+2025-05-23 16:47:55,551 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.05s
+2025-05-23 16:47:55,551 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: keyword labelha is not recognized; valid keywords are ['size', 'width', 'color', 'tickdir', 'pad', 'labelsize', 'labelcolor', 'labelfontfamily', 'zorder', 'gridOn', 'tick1On', 'tick2On', 'label1On', 'label2On', 'length', 'direction', 'left', 'bottom', 'right', 'top', 'labelleft', 'labelbottom', 'labelright', 'labeltop', 'labelrotation', 'grid_agg_filter', 'grid_alpha', 'grid_animated', 'grid_antialiased', 'grid_clip_box', 'grid_clip_on', 'grid_clip_path', 'grid_color', 'grid_dash_capstyle', 'grid_dash_joinstyle', 'grid_dashes', 'grid_data', 'grid_drawstyle', 'grid_figure', 'grid_fillstyle', 'grid_gapcolor', 'grid_gid', 'grid_in_layout', 'grid_label', 'grid_linestyle', 'grid_linewidth', 'grid_marker', 'grid_markeredgecolor', 'grid_markeredgewidth', 'grid_markerfacecolor', 'grid_markerfacecoloralt', 'grid_markersize', 'grid_markevery', 'grid_mouseover', 'grid_path_effects', 'grid_picker', 'grid_pickradius', 'grid_rasterized', 'grid_sketch_params', 'grid_snap', 'grid_solid_capstyle', 'grid_solid_joinstyle', 'grid_transform', 'grid_url', 'grid_visible', 'grid_xdata', 'grid_ydata', 'grid_zorder', 'grid_aa', 'grid_c', 'grid_ds', 'grid_ls', 'grid_lw', 'grid_mec', 'grid_mew', 'grid_mfc', 'grid_mfcalt', 'grid_ms']
+Traceback: Traceback (most recent call last):
+  File "<string>", line 46, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 3543, in tick_params
+    self.xaxis.set_tick_params(**xkw)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axis.py", line 960, in set_tick_params
+    kwtrans = self._translate_tick_params(kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axis.py", line 1109, in _translate_tick_params
+    raise ValueError(
+ValueError: keyword labelha is not recognized; valid keywords are ['size', 'width', 'color', 'tickdir', 'pad', 'labelsize', 'labelcolor', 'labelfontfamily', 'zorder', 'gridOn', 'tick1On', 'tick2On', 'label1On', 'label2On', 'length', 'direction', 'left', 'bottom', 'right', 'top', 'labelleft', 'labelbottom', 'labelright', 'labeltop', 'labelrotation', 'grid_agg_filter', 'grid_alpha', 'grid_animated', 'grid_antialiased', 'grid_clip_box', 'grid_clip_on', 'grid_clip_path', 'grid_color', 'grid_dash_capstyle', 'grid_dash_joinstyle', 'grid_dashes', 'grid_data', 'grid_drawstyle', 'grid_figure', 'grid_fillstyle', 'grid_gapcolor', 'grid_gid', 'grid_in_layout', 'grid_label', 'grid_linestyle', 'grid_linewidth', 'grid_marker', 'grid_markeredgecolor', 'grid_markeredgewidth', 'grid_markerfacecolor', 'grid_markerfacecoloralt', 'grid_markersize', 'grid_markevery', 'grid_mouseover', 'grid_path_effects', 'grid_picker', 'grid_pickradius', 'grid_rasterized', 'grid_sketch_params', 'grid_snap', 'grid_solid_capstyle', 'grid_solid_joinstyle', 'grid_transform', 'grid_url', 'grid_visible', 'grid_xdata', 'grid_ydata', 'grid_zorder', 'grid_aa', 'grid_c', 'grid_ds', 'grid_ls', 'grid_lw', 'grid_mec', 'grid_mew', 'grid_mfc', 'grid_mfcalt', 'grid_ms']
+
+2025-05-23 16:47:55,551 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 16:47:55,551 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 16:47:55,553 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 16:47:55,594 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:47:55,594 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 28.000000 seconds
+2025-05-23 16:48:28,940 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:48:28,948 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 16:48:28,948 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 16:48:28,948 - newviz3 - INFO - 🔄 Attempt 3/4 for bar_chart
+2025-05-23 16:48:29,073 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.12s
+2025-05-23 16:48:29,073 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: keyword ha is not recognized; valid keywords are ['size', 'width', 'color', 'tickdir', 'pad', 'labelsize', 'labelcolor', 'labelfontfamily', 'zorder', 'gridOn', 'tick1On', 'tick2On', 'label1On', 'label2On', 'length', 'direction', 'left', 'bottom', 'right', 'top', 'labelleft', 'labelbottom', 'labelright', 'labeltop', 'labelrotation', 'grid_agg_filter', 'grid_alpha', 'grid_animated', 'grid_antialiased', 'grid_clip_box', 'grid_clip_on', 'grid_clip_path', 'grid_color', 'grid_dash_capstyle', 'grid_dash_joinstyle', 'grid_dashes', 'grid_data', 'grid_drawstyle', 'grid_figure', 'grid_fillstyle', 'grid_gapcolor', 'grid_gid', 'grid_in_layout', 'grid_label', 'grid_linestyle', 'grid_linewidth', 'grid_marker', 'grid_markeredgecolor', 'grid_markeredgewidth', 'grid_markerfacecolor', 'grid_markerfacecoloralt', 'grid_markersize', 'grid_markevery', 'grid_mouseover', 'grid_path_effects', 'grid_picker', 'grid_pickradius', 'grid_rasterized', 'grid_sketch_params', 'grid_snap', 'grid_solid_capstyle', 'grid_solid_joinstyle', 'grid_transform', 'grid_url', 'grid_visible', 'grid_xdata', 'grid_ydata', 'grid_zorder', 'grid_aa', 'grid_c', 'grid_ds', 'grid_ls', 'grid_lw', 'grid_mec', 'grid_mew', 'grid_mfc', 'grid_mfcalt', 'grid_ms']
+Traceback: Traceback (most recent call last):
+  File "<string>", line 46, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_base.py", line 3543, in tick_params
+    self.xaxis.set_tick_params(**xkw)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axis.py", line 960, in set_tick_params
+    kwtrans = self._translate_tick_params(kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axis.py", line 1109, in _translate_tick_params
+    raise ValueError(
+ValueError: keyword ha is not recognized; valid keywords are ['size', 'width', 'color', 'tickdir', 'pad', 'labelsize', 'labelcolor', 'labelfontfamily', 'zorder', 'gridOn', 'tick1On', 'tick2On', 'label1On', 'label2On', 'length', 'direction', 'left', 'bottom', 'right', 'top', 'labelleft', 'labelbottom', 'labelright', 'labeltop', 'labelrotation', 'grid_agg_filter', 'grid_alpha', 'grid_animated', 'grid_antialiased', 'grid_clip_box', 'grid_clip_on', 'grid_clip_path', 'grid_color', 'grid_dash_capstyle', 'grid_dash_joinstyle', 'grid_dashes', 'grid_data', 'grid_drawstyle', 'grid_figure', 'grid_fillstyle', 'grid_gapcolor', 'grid_gid', 'grid_in_layout', 'grid_label', 'grid_linestyle', 'grid_linewidth', 'grid_marker', 'grid_markeredgecolor', 'grid_markeredgewidth', 'grid_markerfacecolor', 'grid_markerfacecoloralt', 'grid_markersize', 'grid_markevery', 'grid_mouseover', 'grid_path_effects', 'grid_picker', 'grid_pickradius', 'grid_rasterized', 'grid_sketch_params', 'grid_snap', 'grid_solid_capstyle', 'grid_solid_joinstyle', 'grid_transform', 'grid_url', 'grid_visible', 'grid_xdata', 'grid_ydata', 'grid_zorder', 'grid_aa', 'grid_c', 'grid_ds', 'grid_ls', 'grid_lw', 'grid_mec', 'grid_mew', 'grid_mfc', 'grid_mfcalt', 'grid_ms']
+
+2025-05-23 16:48:29,073 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 16:48:29,073 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 16:48:29,074 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 16:48:29,112 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:48:29,112 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 28.000000 seconds
+2025-05-23 16:49:03,980 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:49:03,986 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 16:49:03,987 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 16:49:03,987 - newviz3 - INFO - 🔄 Attempt 4/4 for bar_chart
+2025-05-23 16:49:04,416 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.43s
+2025-05-23 16:49:04,417 - newviz3 - INFO - ✅ SUCCESS on attempt 4
+2025-05-23 16:49:04,417 - newviz3 - INFO - Visualization generation completed in 124.69s
+2025-05-23 16:49:04,417 - newviz3 - INFO - Total attempts: 4, Healing attempts: 3
+2025-05-23 16:49:04,417 - newviz3 - INFO - ✅ Visualization 4 completed successfully
+2025-05-23 16:49:04,417 - newviz3 - INFO - ⚕️  Required 3 healing attempts
+2025-05-23 16:49:04,417 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:49:04,417 - newviz3 - INFO - PROCESSING VISUALIZATION 5/7
+2025-05-23 16:49:04,417 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:49:04,417 - newviz3 - INFO - Chart Type: line_chart
+2025-05-23 16:49:04,417 - newviz3 - INFO - Variables: ['job_posted_date', 'company_name']
+2025-05-23 16:49:04,417 - newviz3 - INFO - Priority: medium
+2025-05-23 16:49:04,417 - newviz3 - INFO - Reasoning: This plot will show the volume of job postings by each company over time, indicating company growth or hiring trends.
+2025-05-23 16:49:04,417 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:49:04,474 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:49:04,474 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 15.000000 seconds
+2025-05-23 16:49:22,040 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:49:22,042 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a line chart that uses 'job_posted_d...
+2025-05-23 16:49:22,042 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:49:22,042 - newviz3 - INFO - Starting visualization generation with healing for line_chart
+2025-05-23 16:49:22,042 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:49:22,042 - newviz3 - INFO - Generating code for line_chart visualization of ['job_posted_date', 'company_name']
+2025-05-23 16:49:22,043 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:49:22,094 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:49:22,094 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 16:49:40,315 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:49:40,317 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:49:40,318 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:49:40,318 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:49:40,318 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:49:40,318 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:49:40,318 - newviz3 - INFO - 🔄 Attempt 1/4 for line_chart
+2025-05-23 16:49:40,629 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.31s
+2025-05-23 16:49:40,630 - newviz3 - INFO - ✅ SUCCESS on attempt 1
+2025-05-23 16:49:40,630 - newviz3 - INFO - Visualization generation completed in 18.59s
+2025-05-23 16:49:40,630 - newviz3 - INFO - Total attempts: 1, Healing attempts: 0
+2025-05-23 16:49:40,630 - newviz3 - INFO - ✅ Visualization 5 completed successfully
+2025-05-23 16:49:40,630 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:49:40,630 - newviz3 - INFO - PROCESSING VISUALIZATION 6/7
+2025-05-23 16:49:40,630 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:49:40,630 - newviz3 - INFO - Chart Type: violin_plot
+2025-05-23 16:49:40,630 - newviz3 - INFO - Variables: ['company_address_region', 'seniority_level']
+2025-05-23 16:49:40,630 - newviz3 - INFO - Priority: medium
+2025-05-23 16:49:40,630 - newviz3 - INFO - Reasoning: This plot will show the distribution of seniority levels across regions, highlighting regional differences in hiring practices.
+2025-05-23 16:49:40,630 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:49:40,664 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:49:40,665 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 16:49:56,848 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:49:56,871 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a violin plot that uses the variable...
+2025-05-23 16:49:56,871 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:49:56,871 - newviz3 - INFO - Starting visualization generation with healing for violin_plot
+2025-05-23 16:49:56,871 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:49:56,871 - newviz3 - INFO - Generating code for violin_plot visualization of ['company_address_region', 'seniority_level']
+2025-05-23 16:49:56,871 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:49:56,929 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:49:56,929 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 14.000000 seconds
+2025-05-23 16:50:17,840 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:50:17,844 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:50:17,845 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:50:17,845 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:50:17,845 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:50:17,846 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:50:17,846 - newviz3 - INFO - 🔄 Attempt 1/4 for violin_plot
+2025-05-23 16:50:17,906 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:50:17,910 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:50:17,929 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.08s
+2025-05-23 16:50:17,929 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: FillBetweenPolyCollection.set() got an unexpected keyword argument 'jitter'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1770, in violinplot
+    p.plot_violins(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1047, in plot_violins
+    plot_func(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5719, in fill_between
+    return self._fill_between_x_or_y(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5704, in _fill_between_x_or_y
+    collection = mcoll.FillBetweenPolyCollection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1332, in __init__
+    super().__init__(verts, **kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1201, in __init__
+    super().__init__(**kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 209, in __init__
+    self._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: FillBetweenPolyCollection.set() got an unexpected keyword argument 'jitter'
+
+2025-05-23 16:50:17,929 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:50:17,929 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:50:17,930 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:50:17,974 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:50:17,974 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 27.000000 seconds
+2025-05-23 16:50:50,017 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:50:50,020 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:50:50,020 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:50:50,020 - newviz3 - INFO - 🔄 Attempt 2/4 for violin_plot
+2025-05-23 16:50:50,048 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:50:50,051 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:50:50,062 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.04s
+2025-05-23 16:50:50,062 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: FillBetweenPolyCollection.set() got an unexpected keyword argument 'innerkwargs'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1770, in violinplot
+    p.plot_violins(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1047, in plot_violins
+    plot_func(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5719, in fill_between
+    return self._fill_between_x_or_y(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5704, in _fill_between_x_or_y
+    collection = mcoll.FillBetweenPolyCollection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1332, in __init__
+    super().__init__(verts, **kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1201, in __init__
+    super().__init__(**kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 209, in __init__
+    self._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: FillBetweenPolyCollection.set() got an unexpected keyword argument 'innerkwargs'
+
+2025-05-23 16:50:50,062 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 16:50:50,062 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 16:50:50,063 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 16:50:50,096 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:50:50,096 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 23.000000 seconds
+2025-05-23 16:51:18,428 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:51:18,432 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 16:51:18,433 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 16:51:18,433 - newviz3 - INFO - 🔄 Attempt 3/4 for violin_plot
+2025-05-23 16:51:18,465 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:51:18,469 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:51:18,480 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.05s
+2025-05-23 16:51:18,480 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: FillBetweenPolyCollection.set() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1770, in violinplot
+    p.plot_violins(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1047, in plot_violins
+    plot_func(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5719, in fill_between
+    return self._fill_between_x_or_y(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5704, in _fill_between_x_or_y
+    collection = mcoll.FillBetweenPolyCollection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1332, in __init__
+    super().__init__(verts, **kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1201, in __init__
+    super().__init__(**kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 209, in __init__
+    self._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: FillBetweenPolyCollection.set() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 16:51:18,480 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 16:51:18,480 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 16:51:18,481 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 16:51:18,532 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:51:18,533 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 25.000000 seconds
+2025-05-23 16:51:49,073 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:51:49,095 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 16:51:49,096 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 16:51:49,096 - newviz3 - INFO - 🔄 Attempt 4/4 for violin_plot
+2025-05-23 16:51:49,139 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:51:49,144 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-05-23 16:51:49,153 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.06s
+2025-05-23 16:51:49,153 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: FillBetweenPolyCollection.set() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1770, in violinplot
+    p.plot_violins(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1047, in plot_violins
+    plot_func(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5719, in fill_between
+    return self._fill_between_x_or_y(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5704, in _fill_between_x_or_y
+    collection = mcoll.FillBetweenPolyCollection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1332, in __init__
+    super().__init__(verts, **kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1201, in __init__
+    super().__init__(**kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 209, in __init__
+    self._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: FillBetweenPolyCollection.set() got an unexpected keyword argument 'ci'
+
+2025-05-23 16:51:49,153 - newviz3 - ERROR - ❌ Failed to create violin_plot visualization after 4 attempts
+2025-05-23 16:51:49,153 - newviz3 - ERROR - Total healing attempts: 3
+2025-05-23 16:51:49,154 - newviz3 - ERROR - 💥 Critical error processing visualization 6: name 'variables' is not defined
+2025-05-23 16:51:49,155 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 426, in create_visualization
+    result = self._generate_visualization_with_healing(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 589, in _generate_visualization_with_healing
+    result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 864, in _execute_with_enhanced_healing
+    chart_type, variables, stats, healing_history
+                ^^^^^^^^^
+NameError: name 'variables' is not defined
+
+2025-05-23 16:51:49,155 - newviz3 - INFO - Creating error result: Critical error: name 'variables' is not defined
+2025-05-23 16:51:49,207 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:51:49,207 - newviz3 - INFO - PROCESSING VISUALIZATION 7/7
+2025-05-23 16:51:49,207 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:51:49,207 - newviz3 - INFO - Chart Type: heatmap
+2025-05-23 16:51:49,207 - newviz3 - INFO - Variables: ['job_title', 'seniority_level']
+2025-05-23 16:51:49,207 - newviz3 - INFO - Priority: low
+2025-05-23 16:51:49,207 - newviz3 - INFO - Reasoning: This visualization will show the relationship between job titles and seniority levels, indicating typical career progression paths.
+2025-05-23 16:51:49,207 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:51:49,249 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:51:49,250 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 16:52:02,805 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:52:02,808 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a heatmap that uses 'job_title' and ...
+2025-05-23 16:52:02,808 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:52:02,808 - newviz3 - INFO - Starting visualization generation with healing for heatmap
+2025-05-23 16:52:02,808 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:52:02,808 - newviz3 - INFO - Generating code for heatmap visualization of ['job_title', 'seniority_level']
+2025-05-23 16:52:02,808 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:52:02,862 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:52:02,863 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 16:52:21,218 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:52:21,221 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:52:21,222 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:52:21,222 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:52:21,222 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:52:21,222 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:52:21,222 - newviz3 - INFO - 🔄 Attempt 1/4 for heatmap
+2025-05-23 16:52:21,229 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.01s
+2025-05-23 16:52:21,229 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Cannot setitem on a Categorical with a new category (Missing), set the categories first
+Traceback: Traceback (most recent call last):
+  File "<string>", line 29, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/generic.py", line 7349, in fillna
+    new_data = self._mgr.fillna(
+               ^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/internals/base.py", line 186, in fillna
+    return self.apply_with_block(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/internals/managers.py", line 363, in apply
+    applied = getattr(b, f)(**kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/internals/blocks.py", line 2334, in fillna
+    new_values = self.values.fillna(value=value, method=None, limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/arrays/_mixins.py", line 376, in fillna
+    self._validate_setitem_value(value)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/arrays/categorical.py", line 1589, in _validate_setitem_value
+    return self._validate_scalar(value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/pandas/core/arrays/categorical.py", line 1614, in _validate_scalar
+    raise TypeError(
+TypeError: Cannot setitem on a Categorical with a new category (Missing), set the categories first
+
+2025-05-23 16:52:21,229 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:52:21,229 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:52:21,230 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:52:21,266 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:52:21,266 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 25.000000 seconds
+2025-05-23 16:52:54,537 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:52:54,545 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:52:54,545 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:52:54,546 - newviz3 - INFO - 🔄 Attempt 2/4 for heatmap
+2025-05-23 16:52:54,987 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.44s
+2025-05-23 16:52:54,988 - newviz3 - INFO - ✅ SUCCESS on attempt 2
+2025-05-23 16:52:54,988 - newviz3 - INFO - Visualization generation completed in 52.18s
+2025-05-23 16:52:54,988 - newviz3 - INFO - Total attempts: 2, Healing attempts: 1
+2025-05-23 16:52:54,988 - newviz3 - INFO - ✅ Visualization 7 completed successfully
+2025-05-23 16:52:54,988 - newviz3 - INFO - ⚕️  Required 1 healing attempts
+2025-05-23 16:52:54,988 - newviz3 - INFO - ============================================================
+2025-05-23 16:52:54,988 - newviz3 - INFO - VISUALIZATION CREATION SUMMARY
+2025-05-23 16:52:54,988 - newviz3 - INFO - ============================================================
+2025-05-23 16:52:54,988 - newviz3 - INFO - Total visualizations processed: 7
+2025-05-23 16:52:54,988 - newviz3 - INFO - Successful visualizations: 5
+2025-05-23 16:52:54,988 - newviz3 - INFO - Failed visualizations: 2
+2025-05-23 16:52:54,988 - newviz3 - INFO - Success rate: 71.4%
+2025-05-23 16:52:55,027 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:52:55,028 - newviz3 - ERROR - Error in run_analysis: Error code: 429 - {'error': {'message': 'Rate limit reached for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 7182, Requested 5447. Please try again in 1m6.294s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 16:52:55,033 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1449, in run_analysis
+    result = self.graph.invoke(initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2894, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2527, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1391, in evaluate_results
+    response = self.llm.invoke([HumanMessage(content=evaluation_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `deepseek-r1-distill-llama-70b` in organization `org_01j8dgxdn8fg0anmwqv2xq1b4k` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 7182, Requested 5447. Please try again in 1m6.294s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'evaluate' and id '0d504206-5d86-01d4-e87f-99b07b30fa89'
+
+2025-05-23 16:54:06,495 - newviz3 - INFO - Initializing DataAnalystAgent
+2025-05-23 16:54:06,605 - newviz3 - INFO - Initialized LLM with model: deepseek-r1-distill-llama-70b
+2025-05-23 16:54:06,612 - newviz3 - INFO - Created workflow graph
+2025-05-23 16:54:06,612 - newviz3 - INFO - Starting analysis workflow
+2025-05-23 16:54:06,612 - newviz3 - INFO - Input data shape: (997, 10)
+2025-05-23 16:54:06,612 - newviz3 - INFO - Invoking workflow graph
+2025-05-23 16:54:06,614 - newviz3 - INFO - Starting data preview preparation
+2025-05-23 16:54:06,614 - newviz3 - INFO - DataFrame shape: (997, 10)
+2025-05-23 16:54:06,614 - newviz3 - INFO - DataFrame columns: ['Unnamed: 0', 'job_posted_date', 'company_address_locality', 'company_address_region', 'company_name', 'company_website', 'company_description', 'job_description_text', 'seniority_level', 'job_title']
+2025-05-23 16:54:06,619 - newviz3 - INFO - Completed data preview preparation in 0.00 seconds
+2025-05-23 16:54:06,619 - newviz3 - INFO - Starting data type analysis
+2025-05-23 16:54:06,619 - newviz3 - INFO - Analyzing data types for 10 columns
+2025-05-23 16:54:06,619 - newviz3 - INFO - Sending analyze_data_types prompt to LLM
+2025-05-23 16:54:08,633 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:54:08,640 - newviz3 - INFO - Received response from LLM for data type analysis
+2025-05-23 16:54:08,641 - newviz3 - INFO - Parsed column types: {'Unnamed: 0': 'numerical_discrete', 'job_posted_date': 'temporal', 'company_address_locality': 'categorical_nominal', 'company_address_region': 'categorical_nominal', 'company_name': 'categorical_nominal', 'company_website': 'text', 'company_description': 'text', 'job_description_text': 'text', 'seniority_level': 'categorical_ordinal', 'job_title': 'categorical_nominal'}
+2025-05-23 16:54:08,641 - newviz3 - INFO - Completed data type analysis in 2.02 seconds
+2025-05-23 16:54:08,642 - newviz3 - INFO - Starting relationship identification
+2025-05-23 16:54:08,642 - newviz3 - INFO - Sending identify_relationships prompt to LLM
+2025-05-23 16:54:08,725 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:54:08,727 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 15.000000 seconds
+2025-05-23 16:54:30,246 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:54:30,249 - newviz3 - INFO - Received response from LLM for relationship identification
+2025-05-23 16:54:30,250 - newviz3 - INFO - Identified 9 potential relationships
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 1: ['seniority_level', 'company_address_region'] - comparison
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 2: ['job_posted_date', 'company_name'] - temporal_trend
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 3: ['job_title', 'company_address_locality'] - grouping
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 4: ['company_description', 'job_title'] - causal
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 5: ['seniority_level', 'company_name'] - comparison
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 6: ['job_posted_date', 'job_title'] - temporal_trend
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 7: ['company_address_region', 'seniority_level'] - comparison
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 8: ['company_name', 'job_title'] - grouping
+2025-05-23 16:54:30,250 - newviz3 - INFO - Relationship 9: ['job_title'] - distribution_analysis
+2025-05-23 16:54:30,250 - newviz3 - INFO - Completed relationship identification in 21.61 seconds
+2025-05-23 16:54:30,251 - newviz3 - INFO - Starting visualization suggestions
+2025-05-23 16:54:30,324 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:54:30,325 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 40.000000 seconds
+2025-05-23 16:55:14,478 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:55:14,487 - newviz3 - INFO - Generated 6 visualization suggestions
+2025-05-23 16:55:14,487 - newviz3 - INFO - Completed visualization suggestions in 44.24 seconds
+2025-05-23 16:55:14,491 - newviz3 - INFO - ============================================================
+2025-05-23 16:55:14,492 - newviz3 - INFO - STARTING DYNAMIC LLM-BASED VISUALIZATION CREATION
+2025-05-23 16:55:14,492 - newviz3 - INFO - ============================================================
+2025-05-23 16:55:14,492 - newviz3 - INFO - Creating comprehensive data summary...
+2025-05-23 16:55:14,492 - newviz3 - INFO - Creating enhanced data summary...
+2025-05-23 16:55:14,560 - newviz3 - INFO - Enhanced data summary created with 10 main sections
+2025-05-23 16:55:14,560 - newviz3 - INFO - Data summary created successfully with 10 columns
+2025-05-23 16:55:14,561 - newviz3 - INFO - Processing 6 suggested visualizations
+2025-05-23 16:55:14,561 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:55:14,561 - newviz3 - INFO - PROCESSING VISUALIZATION 1/6
+2025-05-23 16:55:14,561 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:55:14,561 - newviz3 - INFO - Chart Type: bar_chart
+2025-05-23 16:55:14,561 - newviz3 - INFO - Variables: ['seniority_level', 'company_address_region']
+2025-05-23 16:55:14,561 - newviz3 - INFO - Priority: high
+2025-05-23 16:55:14,562 - newviz3 - INFO - Reasoning: This chart will help compare the distribution of seniority levels across different regions, revealing if certain areas have more senior-level job postings.
+2025-05-23 16:55:14,562 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:55:17,561 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:55:17,563 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a bar chart that uses 'seniority_lev...
+2025-05-23 16:55:17,563 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:55:17,563 - newviz3 - INFO - Starting visualization generation with healing for bar_chart
+2025-05-23 16:55:17,563 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:55:17,563 - newviz3 - INFO - Generating code for bar_chart visualization of ['seniority_level', 'company_address_region']
+2025-05-23 16:55:17,564 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:55:23,560 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:55:23,564 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:55:23,565 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:55:23,565 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:55:23,565 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:55:23,565 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:55:23,565 - newviz3 - INFO - 🔄 Attempt 1/4 for bar_chart
+2025-05-23 16:55:23,980 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.42s
+2025-05-23 16:55:23,981 - newviz3 - INFO - ✅ SUCCESS on attempt 1
+2025-05-23 16:55:23,981 - newviz3 - INFO - Visualization generation completed in 6.42s
+2025-05-23 16:55:23,981 - newviz3 - INFO - Total attempts: 1, Healing attempts: 0
+2025-05-23 16:55:23,981 - newviz3 - INFO - ✅ Visualization 1 completed successfully
+2025-05-23 16:55:23,981 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:55:23,981 - newviz3 - INFO - PROCESSING VISUALIZATION 2/6
+2025-05-23 16:55:23,981 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:55:23,981 - newviz3 - INFO - Chart Type: line_plot
+2025-05-23 16:55:23,981 - newviz3 - INFO - Variables: ['job_posted_date', 'company_name']
+2025-05-23 16:55:23,981 - newviz3 - INFO - Priority: high
+2025-05-23 16:55:23,981 - newviz3 - INFO - Reasoning: This plot will show hiring trends over time for each company, helping identify which firms are expanding their workforce more rapidly.
+2025-05-23 16:55:23,981 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:55:24,011 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:55:24,011 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2025-05-23 16:55:32,568 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:55:32,570 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a line plot that uses 'job_posted_da...
+2025-05-23 16:55:32,570 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:55:32,570 - newviz3 - INFO - Starting visualization generation with healing for line_plot
+2025-05-23 16:55:32,570 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:55:32,570 - newviz3 - INFO - Generating code for line_plot visualization of ['job_posted_date', 'company_name']
+2025-05-23 16:55:32,570 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:55:32,610 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:55:32,610 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 12.000000 seconds
+2025-05-23 16:55:50,059 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:55:50,062 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:55:50,064 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:55:50,064 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:55:50,064 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:55:50,064 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:55:50,064 - newviz3 - INFO - 🔄 Attempt 1/4 for line_plot
+2025-05-23 16:55:50,354 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.29s
+2025-05-23 16:55:50,354 - newviz3 - INFO - ✅ SUCCESS on attempt 1
+2025-05-23 16:55:50,354 - newviz3 - INFO - Visualization generation completed in 17.78s
+2025-05-23 16:55:50,354 - newviz3 - INFO - Total attempts: 1, Healing attempts: 0
+2025-05-23 16:55:50,354 - newviz3 - INFO - ✅ Visualization 2 completed successfully
+2025-05-23 16:55:50,354 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:55:50,354 - newviz3 - INFO - PROCESSING VISUALIZATION 3/6
+2025-05-23 16:55:50,354 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:55:50,354 - newviz3 - INFO - Chart Type: box_plot
+2025-05-23 16:55:50,354 - newviz3 - INFO - Variables: ['seniority_level', 'company_address_locality']
+2025-05-23 16:55:50,354 - newviz3 - INFO - Priority: medium
+2025-05-23 16:55:50,354 - newviz3 - INFO - Reasoning: This plot will display the distribution of seniority levels across different localities, highlighting any outliers or trends.
+2025-05-23 16:55:50,354 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:55:50,390 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:55:50,391 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2025-05-23 16:56:03,667 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:56:03,669 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a box plot that uses the variables '...
+2025-05-23 16:56:03,669 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:56:03,669 - newviz3 - INFO - Starting visualization generation with healing for box_plot
+2025-05-23 16:56:03,669 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:56:03,669 - newviz3 - INFO - Generating code for box_plot visualization of ['seniority_level', 'company_address_locality']
+2025-05-23 16:56:03,669 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:56:03,714 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:56:03,714 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 13.000000 seconds
+2025-05-23 16:56:46,710 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:56:46,715 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:56:46,716 - newviz3 - ERROR - ❌ Failed to extract code from LLM response
+2025-05-23 16:56:46,716 - newviz3 - ERROR - ❌ Failed to generate initial plotting code
+2025-05-23 16:56:46,716 - newviz3 - INFO - Creating error result: Failed to generate initial plotting code
+2025-05-23 16:56:46,794 - newviz3 - ERROR - ❌ Visualization 3 failed
+2025-05-23 16:56:46,794 - newviz3 - ERROR - Final error: Error: Failed to generate initial plotting code
+2025-05-23 16:56:46,794 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:56:46,794 - newviz3 - INFO - PROCESSING VISUALIZATION 4/6
+2025-05-23 16:56:46,794 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:56:46,794 - newviz3 - INFO - Chart Type: word_cloud
+2025-05-23 16:56:46,794 - newviz3 - INFO - Variables: ['company_description']
+2025-05-23 16:56:46,794 - newviz3 - INFO - Priority: medium
+2025-05-23 16:56:46,794 - newviz3 - INFO - Reasoning: This visualization will highlight common themes and technologies mentioned in company descriptions, indicating industry focuses.
+2025-05-23 16:56:46,794 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:56:48,863 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:56:48,866 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a word cloud visualization that uses...
+2025-05-23 16:56:48,866 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:56:48,866 - newviz3 - INFO - Starting visualization generation with healing for word_cloud
+2025-05-23 16:56:48,866 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:56:48,866 - newviz3 - INFO - Generating code for word_cloud visualization of ['company_description']
+2025-05-23 16:56:48,866 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:56:54,286 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:56:54,291 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:56:54,291 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:56:54,291 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:56:54,291 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:56:54,291 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:56:54,291 - newviz3 - INFO - 🔄 Attempt 1/4 for word_cloud
+2025-05-23 16:56:54,293 - newviz3 - ERROR - Exception during code execution: No module named 'wordcloud'
+2025-05-23 16:56:54,293 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.00s
+2025-05-23 16:56:54,293 - newviz3 - WARNING - ⚠️ Code executed but reported failure: No module named 'wordcloud'
+2025-05-23 16:56:54,294 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:56:54,294 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:56:54,296 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:56:54,328 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:56:54,329 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 3.000000 seconds
+2025-05-23 16:57:27,267 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:57:27,273 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:57:27,273 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:57:27,273 - newviz3 - INFO - 🔄 Attempt 2/4 for word_cloud
+2025-05-23 16:57:27,274 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.00s
+2025-05-23 16:57:27,274 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Missing required module - No module named 'wordcloud'
+2025-05-23 16:57:27,274 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 16:57:27,274 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 16:57:27,276 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 16:57:32,851 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:57:32,856 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 16:57:32,856 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 16:57:32,856 - newviz3 - INFO - 🔄 Attempt 3/4 for word_cloud
+2025-05-23 16:57:32,857 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.00s
+2025-05-23 16:57:32,857 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Missing required module - No module named 'wordcloud'
+2025-05-23 16:57:32,857 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 16:57:32,857 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 16:57:32,859 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 16:57:45,497 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:57:45,501 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 16:57:45,501 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 16:57:45,501 - newviz3 - INFO - 🔄 Attempt 4/4 for word_cloud
+2025-05-23 16:57:45,502 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.00s
+2025-05-23 16:57:45,502 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Missing required module - No module named 'wordcloud'. Please install the missing module using 'pip install wordcloud'.
+2025-05-23 16:57:45,502 - newviz3 - ERROR - ❌ Failed to create word_cloud visualization after 4 attempts
+2025-05-23 16:57:45,502 - newviz3 - ERROR - Total healing attempts: 3
+2025-05-23 16:57:45,502 - newviz3 - ERROR - 💥 Critical error processing visualization 4: name 'variables' is not defined
+2025-05-23 16:57:45,508 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 426, in create_visualization
+    result = self._generate_visualization_with_healing(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 589, in _generate_visualization_with_healing
+    result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 864, in _execute_with_enhanced_healing
+    chart_type, variables, stats, healing_history
+                ^^^^^^^^^
+NameError: name 'variables' is not defined
+
+2025-05-23 16:57:45,508 - newviz3 - INFO - Creating error result: Critical error: name 'variables' is not defined
+2025-05-23 16:57:45,562 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:57:45,562 - newviz3 - INFO - PROCESSING VISUALIZATION 5/6
+2025-05-23 16:57:45,562 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:57:45,562 - newviz3 - INFO - Chart Type: histogram
+2025-05-23 16:57:45,562 - newviz3 - INFO - Variables: ['Unnamed: 0']
+2025-05-23 16:57:45,562 - newviz3 - INFO - Priority: low
+2025-05-23 16:57:45,562 - newviz3 - INFO - Reasoning: This chart will show the distribution of the numerical index, helping understand data spread and potential outliers.
+2025-05-23 16:57:45,563 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:57:45,594 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:57:45,595 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 2.000000 seconds
+2025-05-23 16:57:51,193 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:57:51,197 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a histogram that uses the variable [...
+2025-05-23 16:57:51,198 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:57:51,198 - newviz3 - INFO - Starting visualization generation with healing for histogram
+2025-05-23 16:57:51,198 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:57:51,198 - newviz3 - INFO - Generating code for histogram visualization of ['Unnamed: 0']
+2025-05-23 16:57:51,198 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:57:51,237 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:57:51,237 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 13.000000 seconds
+2025-05-23 16:58:10,423 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:58:10,427 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 16:58:10,428 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 16:58:10,428 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 16:58:10,428 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 16:58:10,428 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 16:58:10,428 - newviz3 - INFO - 🔄 Attempt 1/4 for histogram
+2025-05-23 16:58:10,468 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.04s
+2025-05-23 16:58:10,468 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'line_heigth'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'line_heigth'
+
+2025-05-23 16:58:10,468 - newviz3 - INFO - 🔧 Starting healing attempt 1...
+2025-05-23 16:58:10,468 - newviz3 - INFO - Requesting code correction for attempt 1
+2025-05-23 16:58:10,469 - newviz3 - INFO - Sending healing prompt to LLM (attempt 1)...
+2025-05-23 16:58:10,531 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:58:10,532 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 25.000000 seconds
+2025-05-23 16:58:41,620 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:58:41,623 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 1)
+2025-05-23 16:58:41,624 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 1)
+2025-05-23 16:58:41,624 - newviz3 - INFO - 🔄 Attempt 2/4 for histogram
+2025-05-23 16:58:41,656 - newviz3 - INFO - ⏱️ Attempt 2 completed in 0.03s
+2025-05-23 16:58:41,656 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'lineheight'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'lineheight'
+
+2025-05-23 16:58:41,656 - newviz3 - INFO - 🔧 Starting healing attempt 2...
+2025-05-23 16:58:41,656 - newviz3 - INFO - Requesting code correction for attempt 2
+2025-05-23 16:58:41,656 - newviz3 - INFO - Sending healing prompt to LLM (attempt 2)...
+2025-05-23 16:58:41,723 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:58:41,723 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 24.000000 seconds
+2025-05-23 16:59:11,611 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:59:11,619 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 2)
+2025-05-23 16:59:11,619 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 2)
+2025-05-23 16:59:11,619 - newviz3 - INFO - 🔄 Attempt 3/4 for histogram
+2025-05-23 16:59:11,659 - newviz3 - INFO - ⏱️ Attempt 3 completed in 0.04s
+2025-05-23 16:59:11,660 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'errorbar'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'errorbar'
+
+2025-05-23 16:59:11,660 - newviz3 - INFO - 🔧 Starting healing attempt 3...
+2025-05-23 16:59:11,660 - newviz3 - INFO - Requesting code correction for attempt 3
+2025-05-23 16:59:11,661 - newviz3 - INFO - Sending healing prompt to LLM (attempt 3)...
+2025-05-23 16:59:11,720 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:59:11,721 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 26.000000 seconds
+2025-05-23 16:59:43,357 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:59:43,360 - newviz3 - INFO - ✅ Successfully generated corrected code (attempt 3)
+2025-05-23 16:59:43,360 - newviz3 - INFO - ✅ Generated corrected code (healing attempt 3)
+2025-05-23 16:59:43,360 - newviz3 - INFO - 🔄 Attempt 4/4 for histogram
+2025-05-23 16:59:43,386 - newviz3 - INFO - ⏱️ Attempt 4 completed in 0.03s
+2025-05-23 16:59:43,387 - newviz3 - WARNING - ⚠️ Code executed but reported failure: Error: Rectangle.set() got an unexpected keyword argument 'ci'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'ci'
+
+2025-05-23 16:59:43,387 - newviz3 - ERROR - ❌ Failed to create histogram visualization after 4 attempts
+2025-05-23 16:59:43,387 - newviz3 - ERROR - Total healing attempts: 3
+2025-05-23 16:59:43,387 - newviz3 - ERROR - 💥 Critical error processing visualization 5: name 'variables' is not defined
+2025-05-23 16:59:43,388 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 426, in create_visualization
+    result = self._generate_visualization_with_healing(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 589, in _generate_visualization_with_healing
+    result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 864, in _execute_with_enhanced_healing
+    chart_type, variables, stats, healing_history
+                ^^^^^^^^^
+NameError: name 'variables' is not defined
+
+2025-05-23 16:59:43,388 - newviz3 - INFO - Creating error result: Critical error: name 'variables' is not defined
+2025-05-23 16:59:43,429 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:59:43,430 - newviz3 - INFO - PROCESSING VISUALIZATION 6/6
+2025-05-23 16:59:43,430 - newviz3 - INFO - --------------------------------------------------
+2025-05-23 16:59:43,430 - newviz3 - INFO - Chart Type: pie_chart
+2025-05-23 16:59:43,430 - newviz3 - INFO - Variables: ['job_title']
+2025-05-23 16:59:43,430 - newviz3 - INFO - Priority: low
+2025-05-23 16:59:43,430 - newviz3 - INFO - Reasoning: This chart will display the frequency of each job title, showing common roles in the industry.
+2025-05-23 16:59:43,430 - newviz3 - INFO - Step 1: Getting visualization explanation...
+2025-05-23 16:59:43,466 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:59:43,466 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 16:59:57,033 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 16:59:57,036 - newviz3 - INFO - Explanation generated: <think>
+Okay, so I need to figure out the analytical purpose of a pie chart that uses the variable '...
+2025-05-23 16:59:57,036 - newviz3 - INFO - Step 2: Generating visualization with self-healing...
+2025-05-23 16:59:57,036 - newviz3 - INFO - Starting visualization generation with healing for pie_chart
+2025-05-23 16:59:57,036 - newviz3 - INFO - Phase 1: Generating initial plotting code...
+2025-05-23 16:59:57,036 - newviz3 - INFO - Generating code for pie_chart visualization of ['job_title']
+2025-05-23 16:59:57,037 - newviz3 - INFO - Sending code generation prompt to LLM...
+2025-05-23 16:59:57,079 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 16:59:57,080 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 11.000000 seconds
+2025-05-23 17:00:13,763 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-23 17:00:13,765 - newviz3 - INFO - ✅ Received response from LLM
+2025-05-23 17:00:13,766 - newviz3 - INFO - ✅ Successfully extracted code from LLM response
+2025-05-23 17:00:13,766 - newviz3 - INFO - ✅ Initial code generated successfully
+2025-05-23 17:00:13,766 - newviz3 - INFO - Phase 2: Executing code with self-healing...
+2025-05-23 17:00:13,766 - newviz3 - INFO - Starting enhanced healing execution (max 4 attempts)
+2025-05-23 17:00:13,766 - newviz3 - INFO - 🔄 Attempt 1/4 for pie_chart
+2025-05-23 17:00:13,989 - newviz3 - INFO - ⏱️ Attempt 1 completed in 0.22s
+2025-05-23 17:00:13,990 - newviz3 - INFO - ✅ SUCCESS on attempt 1
+2025-05-23 17:00:13,990 - newviz3 - INFO - Visualization generation completed in 16.95s
+2025-05-23 17:00:13,990 - newviz3 - INFO - Total attempts: 1, Healing attempts: 0
+2025-05-23 17:00:13,990 - newviz3 - INFO - ✅ Visualization 6 completed successfully
+2025-05-23 17:00:13,990 - newviz3 - INFO - ============================================================
+2025-05-23 17:00:13,990 - newviz3 - INFO - VISUALIZATION CREATION SUMMARY
+2025-05-23 17:00:13,990 - newviz3 - INFO - ============================================================
+2025-05-23 17:00:13,990 - newviz3 - INFO - Total visualizations processed: 6
+2025-05-23 17:00:13,990 - newviz3 - INFO - Successful visualizations: 3
+2025-05-23 17:00:13,990 - newviz3 - INFO - Failed visualizations: 3
+2025-05-23 17:00:13,990 - newviz3 - INFO - Success rate: 50.0%
+2025-05-23 17:00:14,054 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-05-23 17:00:14,055 - newviz3 - ERROR - Error in run_analysis: Error code: 429 - {'error': {'message': 'Rate limit reached for model `deepseek-r1-distill-llama-70b` in organization `org_01jvy9mrgjf618b51ykhbk01de` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 6667, Requested 5493. Please try again in 1m1.605s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+2025-05-23 17:00:14,060 - newviz3 - ERROR - Traceback (most recent call last):
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1449, in run_analysis
+    result = self.graph.invoke(initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2894, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langgraph/pregel/__init__.py", line 2527, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/siddhmehta/ai-prompt-enhancer/viz_agent/newviz3.py", line 1391, in evaluate_results
+    response = self.llm.invoke([HumanMessage(content=evaluation_prompt)])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 371, in invoke
+    self.generate_prompt(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 956, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 775, in generate
+    self._generate_with_cache(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 1021, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/langchain_groq/chat_models.py", line 498, in _generate
+    response = self.client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/resources/chat/completions.py", line 361, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1222, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/groq/_base_client.py", line 1031, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `deepseek-r1-distill-llama-70b` in organization `org_01jvy9mrgjf618b51ykhbk01de` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 6667, Requested 5493. Please try again in 1m1.605s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'evaluate' and id '13ad18dc-d31f-e98f-71d9-ffcd6885ecf2'
+

@@ -1,0 +1,351 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: line_plot
+Variables: ['job_posted_date', 'company_name']
+Timestamp: 2025-05-23T16:55:32.571943
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a line_plot visualization.
+
+    Dataset Context:
+    - Shape: (997, 10)
+    - Total columns: 10
+
+    Variables to visualize: ['job_posted_date', 'company_name']
+    Variable details:
+      - job_posted_date: temporal (object) - 0 missing, 116 unique
+  - company_name: categorical_nominal (object) - 0 missing, 488 unique
+
+    Sample values:
+      - job_posted_date: ['2025-04-03', '2024-08-03', '2025-03-26', '2025-03-25', '2025-04-09']
+  - company_name: ['AMD', 'Google', 'IntelePeer', 'XPENG', 'Johnson & Johnson']
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+    Chart-specific considerations for line_plot:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a line_plot visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['job_posted_date', 'company_name']
+    Data types: ['object', 'object']
+    Column types: ['temporal', 'categorical_nominal']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['job_posted_date', 'company_name']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to generate a robust Python function for a line plot visualization using the given dataset. The function has to handle all edge cases, use only standard libraries, and return a base64 image string, insights, and a success boolean.
+
+First, I'll look at the dataset. The data has two columns: 'job_posted_date' and 'company_name'. The dates are in string format, so I'll need to convert them to datetime. The company names are categorical with 488 unique values, which is a lot for a line plot. Maybe I should group them or show top companies to make it meaningful.
+
+I'll start by validating the data. Check if both columns exist and are of the correct type. If any are missing, return an error. Then, convert 'job_posted_date' to datetime and handle any errors during conversion.
+
+Next, for the line plot, since there are many companies, I'll select the top 10 by the number of job postings. This will make the plot less cluttered. I'll count the occurrences of each company and sort them in descending order.
+
+Now, I'll create a new DataFrame with these top companies. For each company, I'll extract the dates and sort them. Then, I'll assign a color to each company from a predefined list for better differentiation.
+
+In the plotting section, I'll set up a figure with a suitable size and style using seaborn. I'll loop through each company, plot their job posting dates over time, and add markers for clarity. Also, I'll include the number of postings in the legend for each company.
+
+I'll add labels, a title, and grid lines to make the plot clear. After plotting, I'll generate insights based on the data, like which company has the most postings and any noticeable trends.
+
+Finally, I'll convert the plot to a base64 string and return it along with the insights and success status. I'll handle any exceptions and return appropriate error messages if something goes wrong.
+</think>
+
+Here's a complete, robust implementation of the `generate_plot` function based on the requirements and context provided:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    from datetime import datetime
+    warnings.filterwarnings('ignore')
+
+    try:
+        # Comprehensive data validation
+        required_cols = ['job_posted_date', 'company_name']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input must be a pandas DataFrame", False
+        
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data['job_posted_date'], pd.core.series.Series) and 
+                isinstance(data['company_name'], pd.core.series.Series)):
+            return None, "Error: Invalid data types for required columns", False
+        
+        # Convert and validate date format
+        try:
+            data['job_posted_date'] = pd.to_datetime(data['job_posted_date'])
+        except Exception as e:
+            return None, f"Error converting dates: {str(e)}", False
+        
+        # Validate company_name
+        if not data['company_name'].notna().all():
+            return None, "Error: company_name contains missing values", False
+        
+        # Prepare data for plotting
+        # Count occurrences of each company
+        company_counts = data['company_name'].value_counts()
+        
+        # Get top 10 companies by number of postings
+        top_companies = company_counts.nlargest(10).index
+        
+        # Filter data to include only top companies
+        filtered_data = data[data['company_name'].isin(top_companies)]
+        
+        # Create a date range for x-axis
+        min_date = filtered_data['job_posted_date'].min()
+        max_date = filtered_data['job_posted_date'].max()
+        
+        # Create the visualization
+        plt.figure(figsize=(12, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create a list of colors for each company
+        colors = sns.color_palette(n_colors=len(top_companies))
+        
+        # Plot each company's data
+        for i, company in enumerate(top_companies):
+            company_data = filtered_data[filtered_data['company_name'] == company]
+            company_dates = company_data['job_posted_date'].sort_values()
+            
+            # Create a line plot
+            plt.plot(company_dates, 
+                    [i for i in range(len(company_dates))], 
+                    marker='o', 
+                    linestyle='-', 
+                    color=colors[i], 
+                    label=f"{company} ({len(company_data)} postings)")
+        
+        # Customize the plot
+        plt.title('Job Postings Over Time for Top 10 Companies')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Postings')
+        plt.grid(True, alpha=0.3)
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = (
+            "The visualization shows the number of job postings over time for the top 10 most active companies.\n"
+            f"The company with the most postings is {top_companies[0]} with {company_counts.max()} postings.\n"
+            "The x-axis represents time, and the y-axis shows the cumulative count of postings.\n"
+            "This plot helps identify patterns in hiring activity over time across different companies."
+        )
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation and type checking
+2. Robust date conversion and handling
+3. Filtering of top companies to make the visualization meaningful
+4. Modern styling with seaborn
+5. Clear labeling and legend placement
+6. Meaningful insights generation
+7. Proper error handling and traceback reporting
+8. Conversion to base64 string for visualization
+9. Professional figure size and styling
+
+The function will return:
+- A base64-encoded image string of the visualization
+- Text containing insights about the data
+- A boolean indicating success/failure
+
+The visualization will show the number of job postings over time for the top 10 companies, making it easy to compare hiring patterns across different companies.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    from datetime import datetime
+    warnings.filterwarnings('ignore')
+
+    try:
+        # Comprehensive data validation
+        required_cols = ['job_posted_date', 'company_name']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input must be a pandas DataFrame", False
+        
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data['job_posted_date'], pd.core.series.Series) and 
+                isinstance(data['company_name'], pd.core.series.Series)):
+            return None, "Error: Invalid data types for required columns", False
+        
+        # Convert and validate date format
+        try:
+            data['job_posted_date'] = pd.to_datetime(data['job_posted_date'])
+        except Exception as e:
+            return None, f"Error converting dates: {str(e)}", False
+        
+        # Validate company_name
+        if not data['company_name'].notna().all():
+            return None, "Error: company_name contains missing values", False
+        
+        # Prepare data for plotting
+        # Count occurrences of each company
+        company_counts = data['company_name'].value_counts()
+        
+        # Get top 10 companies by number of postings
+        top_companies = company_counts.nlargest(10).index
+        
+        # Filter data to include only top companies
+        filtered_data = data[data['company_name'].isin(top_companies)]
+        
+        # Create a date range for x-axis
+        min_date = filtered_data['job_posted_date'].min()
+        max_date = filtered_data['job_posted_date'].max()
+        
+        # Create the visualization
+        plt.figure(figsize=(12, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create a list of colors for each company
+        colors = sns.color_palette(n_colors=len(top_companies))
+        
+        # Plot each company's data
+        for i, company in enumerate(top_companies):
+            company_data = filtered_data[filtered_data['company_name'] == company]
+            company_dates = company_data['job_posted_date'].sort_values()
+            
+            # Create a line plot
+            plt.plot(company_dates, 
+                    [i for i in range(len(company_dates))], 
+                    marker='o', 
+                    linestyle='-', 
+                    color=colors[i], 
+                    label=f"{company} ({len(company_data)} postings)")
+        
+        # Customize the plot
+        plt.title('Job Postings Over Time for Top 10 Companies')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Postings')
+        plt.grid(True, alpha=0.3)
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = (
+            "The visualization shows the number of job postings over time for the top 10 most active companies.\n"
+            f"The company with the most postings is {top_companies[0]} with {company_counts.max()} postings.\n"
+            "The x-axis represents time, and the y-axis shows the cumulative count of postings.\n"
+            "This plot helps identify patterns in hiring activity over time across different companies."
+        )
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

@@ -1,0 +1,325 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: pie_chart
+Variables: ['job_title']
+Timestamp: 2025-05-23T16:59:57.037624
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a pie_chart visualization.
+
+    Dataset Context:
+    - Shape: (997, 10)
+    - Total columns: 10
+
+    Variables to visualize: ['job_title']
+    Variable details:
+      - job_title: categorical_nominal (object) - 0 missing, 450 unique
+
+    Sample values:
+      - job_title: ['Data Scientist', 'Machine Learning Engineer', 'Machine Learning Engineer', 'Machine Learning Engineer (Google Cloud Platform)', 'Machine Learning Engineer, Search Engine, E-Commerce Alliance']
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+    Chart-specific considerations for pie_chart:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a pie_chart visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['job_title']
+    Data types: ['object']
+    Column types: ['categorical_nominal']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['job_title']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for creating a pie chart visualization. The function has to meet several strict requirements, so I should go through each one carefully.
+
+First, the function signature is given as def generate_plot(data):, and it needs to return a tuple with a base64 image string, some insights text, and a success boolean. So I'll structure the function accordingly.
+
+Looking at the dataset context, the data has 997 rows and 10 columns, with 'job_title' being a categorical variable with 450 unique values. That's a lot of categories for a pie chart, which might be a problem because too many slices can make the chart hard to read. I should handle that by limiting the display to the top N categories and grouping the rest into 'Others'.
+
+The critical requirements mention handling all edge cases, like empty data or missing values. So I'll start by validating that the required columns exist and that the data isn't empty. If any required column is missing, I'll return an error.
+
+Next, I'll check the data types. Since 'job_title' is an object type, I need to ensure it's a categorical variable. I'll count the occurrences of each job title and handle cases where there are too many unique values by summing the smallest ones into an 'Others' category. I'll choose the top 10 to display, but I should make this number configurable or adjust it based on the data.
+
+For the visualization, I'll use matplotlib and seaborn. I'll create a pie chart with the top categories and include an 'Others' slice. I'll style it to be publication-ready, using a modern theme, appropriate figure size, and clear labels. I'll also add a title and ensure the plot is visually appealing.
+
+Generating meaningful insights is another key point. I'll calculate the top category's percentage and mention the number of unique job titles. If there are more than 10, I'll note that the chart shows the top 10 plus others.
+
+I'll also handle exceptions gracefully. If any error occurs during processing, I'll catch it, format the error details, and return them along with False for the success boolean.
+
+Finally, I'll convert the plot to a base64 encoded string so it can be easily returned without saving the image. I'll make sure to close the plot after saving to avoid memory issues.
+
+Putting it all together, I'll structure the function with data validation, data preparation, plotting, insight generation, and error handling. I'll test each part to ensure it works as expected, especially handling edge cases like empty data or too many categories.
+</think>
+
+Here's a complete, robust implementation of the `generate_plot` function for pie chart visualization:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['job_title']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+            
+        # Check for empty data
+        if data.empty:
+            return None, "Error: Empty dataset provided", False
+            
+        # Data preparation with type checking
+        job_title = data['job_title']
+        if not isinstance(job_title, pd.Series):
+            return None, "Error: 'job_title' must be a pandas Series", False
+            
+        # Ensure data type is object/categorical
+        if not (job_title.dtype == 'object' or job_title.dtype == 'category'):
+            return None, "Error: 'job_title' must be categorical data", False
+            
+        # Count occurrences
+        counts = job_title.value_counts()
+        
+        # Handle too many categories by combining rare ones
+        max_display_categories = 10  # Adjust based on visualization needs
+        if len(counts) > max_display_categories:
+            # Combine all categories beyond top max_display_categories
+            other_counts = counts.iloc[max_display_categories:].sum()
+            top_counts = counts.iloc[:max_display_categories]
+            top_counts.loc['Others'] = other_counts
+            counts = top_counts
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 8))
+        sns.set_theme(style="whitegrid", palette="husl")
+        
+        # Create pie chart
+        plt.pie(counts, labels=counts.index, autopct='%1.1f%%', 
+                startangle=90, pctdistance=0.85, labeldistance=1.2)
+        plt.title('Distribution of Job Titles', y=1.03, fontsize=14)
+        plt.axis('equal')  # Equal aspect ratio ensures pie is drawn as a circle
+        
+        # Generate meaningful insights
+        top_category = counts.index[0]
+        top_percentage = counts.iloc[0] / counts.sum() * 100
+        num_unique = len(data['job_title'].unique())
+        
+        insights = f"The most common job title is {top_category} ({top_percentage:.1f}% of total). "
+        insights += f"There are {num_unique} unique job titles in total. "
+        if len(counts) > max_display_categories:
+            insights += "The chart shows the top 10 most common titles, with all others combined into 'Others'."
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation:
+   - Checks for required columns
+   - Validates data types
+   - Handles empty datasets
+   - Ensures proper categorical data format
+
+2. Data preparation:
+   - Handles high cardinality by combining rare categories
+   - Creates a clean distribution for visualization
+
+3. Visualization features:
+   - Modern styling with seaborn
+   - Clear labeling and formatting
+   - Responsive pie chart with percentage labels
+   - Equal aspect ratio for proper circle representation
+
+4. Insight generation:
+   - Automatically identifies top category
+   - Calculates percentages
+   - Provides context about unique values
+
+5. Error handling:
+   - Catches and reports exceptions with full traceback
+   - Returns meaningful error messages
+   - Maintains function robustness
+
+6. Output formatting:
+   - Returns base64 encoded image string
+   - Provides both visual results and textual insights
+   - Maintains consistent return format
+
+The function is designed to handle real-world data challenges while maintaining scientific visualization standards and robust error handling.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['job_title']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+            
+        # Check for empty data
+        if data.empty:
+            return None, "Error: Empty dataset provided", False
+            
+        # Data preparation with type checking
+        job_title = data['job_title']
+        if not isinstance(job_title, pd.Series):
+            return None, "Error: 'job_title' must be a pandas Series", False
+            
+        # Ensure data type is object/categorical
+        if not (job_title.dtype == 'object' or job_title.dtype == 'category'):
+            return None, "Error: 'job_title' must be categorical data", False
+            
+        # Count occurrences
+        counts = job_title.value_counts()
+        
+        # Handle too many categories by combining rare ones
+        max_display_categories = 10  # Adjust based on visualization needs
+        if len(counts) > max_display_categories:
+            # Combine all categories beyond top max_display_categories
+            other_counts = counts.iloc[max_display_categories:].sum()
+            top_counts = counts.iloc[:max_display_categories]
+            top_counts.loc['Others'] = other_counts
+            counts = top_counts
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 8))
+        sns.set_theme(style="whitegrid", palette="husl")
+        
+        # Create pie chart
+        plt.pie(counts, labels=counts.index, autopct='%1.1f%%', 
+                startangle=90, pctdistance=0.85, labeldistance=1.2)
+        plt.title('Distribution of Job Titles', y=1.03, fontsize=14)
+        plt.axis('equal')  # Equal aspect ratio ensures pie is drawn as a circle
+        
+        # Generate meaningful insights
+        top_category = counts.index[0]
+        top_percentage = counts.iloc[0] / counts.sum() * 100
+        num_unique = len(data['job_title'].unique())
+        
+        insights = f"The most common job title is {top_category} ({top_percentage:.1f}% of total). "
+        insights += f"There are {num_unique} unique job titles in total. "
+        if len(counts) > max_display_categories:
+            insights += "The chart shows the top 10 most common titles, with all others combined into 'Others'."
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

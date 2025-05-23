@@ -1,0 +1,433 @@
+=== HEALING PROMPT ===
+Attempt: 2
+Error: Error: Rectangle.set() got an unexpected keyword argument 'lineheight'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'lineheight'
+
+Timestamp: 2025-05-23T16:58:41.656618
+
+PROMPT:
+URGENT: Fix this broken Python visualization code.
+
+    ATTEMPT NUMBER: 2
+    ERROR ENCOUNTERED: Error: Rectangle.set() got an unexpected keyword argument 'lineheight'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 54, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 1416, in histplot
+    p.plot_univariate_histogram(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/distributions.py", line 571, in plot_univariate_histogram
+    artists = plot_func(
+              ^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 2654, in bar
+    r._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: Rectangle.set() got an unexpected keyword argument 'lineheight'
+
+
+    
+
+    PROBLEMATIC CODE:
+    ```python
+    def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Unnamed: 0']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        series = data['Unnamed: 0']
+        if not isinstance(series, pd.Series):
+            return None, "Error: 'Unnamed: 0' must be a pandas Series", False
+            
+        # Ensure numerical type
+        if not pd.api.types.is_numeric_dtype(series):
+            if series.dtype == 'object':
+                try:
+                    series = series.astype(int)
+                except ValueError:
+                    return None, "Error: 'Unnamed: 0' cannot be converted to numeric type", False
+            else:
+                return None, "Error: 'Unnamed: 0' must be numeric", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        n = len(series)
+        mean_val = series.mean()
+        median_val = series.median()
+        
+        # Calculate number of bins using Freedman-Diaconis rule
+        q75, q25 = np.percentile(series, [75, 25])
+        iqr = q75 - q25
+        bin_width = 2 * iqr * (n ** (-1/3))
+        bin_count = int((series.max() - series.min()) / bin_width)
+        bin_count = max(10, bin_count)  # Ensure minimum bins
+        
+        # Create plot
+        plt.suptitle('Histogram of Unnamed: 0', y=1.02, fontsize=14)
+        ax = sns.histplot(series, bins=bin_count, kde=True, color='skyblue',
+                          edgecolor='black', linewidth=1, lineheight=2,
+                          stat='count', errorbar=None)
+        
+        # Add statistics to plot
+        plt.title(f"Mean = {mean_val:.2f}, Median = {median_val:.2f}, n = {n}\n"
+                  f"Min = {series.min():.2f}, Max = {series.max():.2f}", fontsize=10)
+        
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
+        
+        # Layout adjustments
+        plt.tight_layout()
+        plt.grid(True, alpha=0.3)
+        
+        # Generate statistical insights
+        insights = f"Histogram Analysis:\n"
+        insights += f"Mean: {mean_val:.2f}, Median: {median_val:.2f}\n"
+        insights += f"Range: {series.min():.2f} to {series.max():.2f}\n"
+        insights += f"Standard Deviation: {series.std():.2f}\n"
+        
+        # Outlier analysis
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        
+        outliers = ((series < lower_bound) | (series > upper_bound)).sum()
+        insights += f"Number of outliers: {outliers} ({outliers/n*100:.1f}% of data)\n"
+        
+        # Unique value analysis
+        unique_count = series.nunique()
+        insights += f"Number of unique values: {unique_count}\n"
+        if unique_count > 50:
+            insights += "Warning: High number of unique values may affect histogram clarity"
+            
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+    ```
+
+    COMMON FIXES NEEDED:
+    1. Seaborn 'ci' parameter → use 'errorbar=None' instead
+    2. Missing imports → add required imports
+    3. Data type issues → add proper validation and conversion
+    4. Empty data → add data checks
+    5. Column access errors → validate column existence
+    6. Plotting parameter errors → use correct parameter names
+    7. Memory/resource issues → add proper cleanup
+
+    REQUIREMENTS:
+    - Fix the specific error mentioned above
+    - Maintain the same function signature: def generate_plot(data):
+    - Return: (base64_string, insights_text, success_boolean)
+    - Keep all existing functionality that works
+    - Add better error handling
+    - Ensure robust data validation
+
+    RETURN ONLY THE CORRECTED PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        # Fixed code here
+    ```
+
+=== LLM HEALING RESPONSE ===
+<think>
+Okay, I need to fix this broken Python visualization code. The error encountered is an AttributeError: Rectangle.set() got an unexpected keyword argument 'lineheight'. Let me look at the code to see where this is happening.
+
+Looking at the problematic code, I see that in the generate_plot function, there's a call to sns.histplot. The parameters include lineheight=2. Wait, I remember that in some versions of Seaborn or Matplotlib, certain parameters might have changed or been removed.
+
+I should check the documentation for Seaborn's histplot. Oh right, the 'lineheight' parameter isn't a valid argument for histplot. Maybe it's supposed to be 'linewidth'? Or perhaps it's a parameter that's been deprecated.
+
+Wait, in the code, the line is:
+ax = sns.histplot(series, bins=bin_count, kde=True, color='skyblue',
+                  edgecolor='black', linewidth=1, lineheight=2,
+                  stat='count', errorbar=None)
+
+So 'lineheight' is passed here. But looking up the histplot parameters, I don't see 'lineheight' as an option. Maybe it's a typo or a wrong parameter.
+
+I think the intended parameter might be 'linewidth' for the lines, but in this context, perhaps it's not applicable. Alternatively, maybe 'lineheight' is used elsewhere, but not in histplot.
+
+So to fix the error, I should remove the 'lineheight=2' argument from the histplot call. Let me check if that's the only issue.
+
+Also, I should review the other parameters. For example, 'errorbar=None' is correct as per the common fixes mentioned, so that's fine.
+
+Another thing to consider: are there any other incorrect parameters? Let me see. The histplot function's parameters include color, edgecolor, linewidth, etc. 'lineheight' doesn't seem to be one of them. So removing 'lineheight=2' should fix the error.
+
+I'll make that change in the code. Let me also check if there are any other potential issues, like missing imports or data validation. But according to the problem, the main error is due to 'lineheight', so focusing on that.
+
+So the corrected code should have the histplot line without the 'lineheight' argument. Let me update that part.
+
+Additionally, I should ensure that all other parts of the code are correct and that the function still returns the base64 string, insights, and success boolean as required.
+
+I think that's the main fix needed. Now, I'll write the corrected function with this change.
+</think>
+
+To fix the error, we need to remove the invalid 'lineheight' parameter from the `sns.histplot` function call. This parameter is not recognized, causing the AttributeError. Here's the corrected code:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Unnamed: 0']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        series = data['Unnamed: 0']
+        if not isinstance(series, pd.Series):
+            return None, "Error: 'Unnamed: 0' must be a pandas Series", False
+            
+        # Ensure numerical type
+        if not pd.api.types.is_numeric_dtype(series):
+            if series.dtype == 'object':
+                try:
+                    series = series.astype(int)
+                except ValueError:
+                    return None, "Error: 'Unnamed: 0' cannot be converted to numeric type", False
+            else:
+                return None, "Error: 'Unnamed: 0' must be numeric", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        n = len(series)
+        mean_val = series.mean()
+        median_val = series.median()
+        
+        # Calculate number of bins using Freedman-Diaconis rule
+        q75, q25 = np.percentile(series, [75, 25])
+        iqr = q75 - q25
+        bin_width = 2 * iqr * (n ** (-1/3))
+        bin_count = int((series.max() - series.min()) / bin_width)
+        bin_count = max(10, bin_count)  # Ensure minimum bins
+        
+        # Create plot
+        plt.suptitle('Histogram of Unnamed: 0', y=1.02, fontsize=14)
+        ax = sns.histplot(series, bins=bin_count, kde=True, color='skyblue',
+                          edgecolor='black', linewidth=1,
+                          stat='count', errorbar=None)
+        
+        # Add statistics to plot
+        plt.title(f"Mean = {mean_val:.2f}, Median = {median_val:.2f}, n = {n}\n"
+                  f"Min = {series.min():.2f}, Max = {series.max():.2f}", fontsize=10)
+        
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
+        
+        # Layout adjustments
+        plt.tight_layout()
+        plt.grid(True, alpha=0.3)
+        
+        # Generate statistical insights
+        insights = f"Histogram Analysis:\n"
+        insights += f"Mean: {mean_val:.2f}, Median: {median_val:.2f}\n"
+        insights += f"Range: {series.min():.2f} to {series.max():.2f}\n"
+        insights += f"Standard Deviation: {series.std():.2f}\n"
+        
+        # Outlier analysis
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        
+        outliers = ((series < lower_bound) | (series > upper_bound)).sum()
+        insights += f"Number of outliers: {outliers} ({outliers/n*100:.1f}% of data)\n"
+        
+        # Unique value analysis
+        unique_count = series.nunique()
+        insights += f"Number of unique values: {unique_count}\n"
+        if unique_count > 50:
+            insights += "Warning: High number of unique values may affect histogram clarity"
+            
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+=== CORRECTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Unnamed: 0']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        series = data['Unnamed: 0']
+        if not isinstance(series, pd.Series):
+            return None, "Error: 'Unnamed: 0' must be a pandas Series", False
+            
+        # Ensure numerical type
+        if not pd.api.types.is_numeric_dtype(series):
+            if series.dtype == 'object':
+                try:
+                    series = series.astype(int)
+                except ValueError:
+                    return None, "Error: 'Unnamed: 0' cannot be converted to numeric type", False
+            else:
+                return None, "Error: 'Unnamed: 0' must be numeric", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        n = len(series)
+        mean_val = series.mean()
+        median_val = series.median()
+        
+        # Calculate number of bins using Freedman-Diaconis rule
+        q75, q25 = np.percentile(series, [75, 25])
+        iqr = q75 - q25
+        bin_width = 2 * iqr * (n ** (-1/3))
+        bin_count = int((series.max() - series.min()) / bin_width)
+        bin_count = max(10, bin_count)  # Ensure minimum bins
+        
+        # Create plot
+        plt.suptitle('Histogram of Unnamed: 0', y=1.02, fontsize=14)
+        ax = sns.histplot(series, bins=bin_count, kde=True, color='skyblue',
+                          edgecolor='black', linewidth=1,
+                          stat='count', errorbar=None)
+        
+        # Add statistics to plot
+        plt.title(f"Mean = {mean_val:.2f}, Median = {median_val:.2f}, n = {n}\n"
+                  f"Min = {series.min():.2f}, Max = {series.max():.2f}", fontsize=10)
+        
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
+        
+        # Layout adjustments
+        plt.tight_layout()
+        plt.grid(True, alpha=0.3)
+        
+        # Generate statistical insights
+        insights = f"Histogram Analysis:\n"
+        insights += f"Mean: {mean_val:.2f}, Median: {median_val:.2f}\n"
+        insights += f"Range: {series.min():.2f} to {series.max():.2f}\n"
+        insights += f"Standard Deviation: {series.std():.2f}\n"
+        
+        # Outlier analysis
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        
+        outliers = ((series < lower_bound) | (series > upper_bound)).sum()
+        insights += f"Number of outliers: {outliers} ({outliers/n*100:.1f}% of data)\n"
+        
+        # Unique value analysis
+        unique_count = series.nunique()
+        insights += f"Number of unique values: {unique_count}\n"
+        if unique_count > 50:
+            insights += "Warning: High number of unique values may affect histogram clarity"
+            
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+
