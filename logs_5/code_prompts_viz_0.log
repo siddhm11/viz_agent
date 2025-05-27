@@ -1,0 +1,403 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: scatter plot
+Variables: ['Avg_Daily_Usage_Hours', 'Addicted_Score']
+Timestamp: 2025-05-27T11:14:06.823416
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a scatter plot visualization.
+
+    Dataset Context:
+    - Shape: (705, 13)
+    - Total columns: 13
+
+    Variables to visualize: ['Avg_Daily_Usage_Hours', 'Addicted_Score']
+    Variable details:
+      - Avg_Daily_Usage_Hours: numerical_continuous (float64) - 0 missing, 67 unique
+  - Addicted_Score: numerical_discrete (int64) - 0 missing, 8 unique
+
+    Sample values:
+      - Avg_Daily_Usage_Hours: [4.0, 5.3, 5.1, 6.7, 2.3]
+  - Addicted_Score: [4, 4, 5, 7, 8]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for scatter plot:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a scatter plot visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['Avg_Daily_Usage_Hours', 'Addicted_Score']
+    Data types: ['float64', 'int64']
+    Column types: ['numerical_continuous', 'numerical_discrete']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['Avg_Daily_Usage_Hours', 'Addicted_Score']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for a scatter plot visualization. Let me start by understanding the problem and the requirements.
+
+First, the dataset has 705 rows and 13 columns. The variables to visualize are 'Avg_Daily_Usage_Hours' and 'Addicted_Score'. The first is a float64 with no missing values and 67 unique values, while the second is an int64, also with no missing values and 8 unique values.
+
+The function needs to return a base64 image string, some insights text, and a success boolean. It must handle all edge cases, use only standard libraries, avoid deprecated methods, and include proper data validation.
+
+Looking at the provided code skeleton, I see that it imports necessary libraries and sets up a try-except block. The initial steps check for missing columns, which is good. Now, I need to fill in the data preparation and plotting sections.
+
+Data preparation: I should validate that the columns exist and have the correct data types. For 'Avg_Daily_Usage_Hours', I'll check if it's numeric. If not, I'll try to convert it, and if that fails, it's an error. For 'Addicted_Score', since it's discrete, I'll ensure it's an integer type, converting if necessary.
+
+Next, I need to handle edge cases like empty data or non-numeric values. If the data is empty after validation, I'll return an error. Also, I should check for any non-numeric values that might cause issues during plotting.
+
+For the visualization, using seaborn's scatterplot makes sense. I'll set a reasonable figure size and modern style. Since 'Addicted_Score' is discrete, I'll add a regression line to show the trend. Customizing the axes with labels and titles will make the plot clear.
+
+Generating insights involves calculating basic statistics like mean and standard deviation for 'Avg_Daily_Usage_Hours' and mode for 'Addicted_Score'. I'll also compute the correlation coefficient to understand the relationship between the variables.
+
+I should ensure that the function handles cases where the data might be too small or not numeric without crashing. Using try-except within the function will help catch any unexpected errors and return appropriate messages.
+
+Finally, converting the plot to a base64 string is straightforward with matplotlib's savefig and base64 encoding. I'll make sure to close the plot after saving to avoid memory issues.
+
+Putting it all together, I'll structure the function to perform each step methodically, ensuring all validations are in place before attempting to create the plot. This should result in a robust function that meets all the user's requirements.
+</think>
+
+Here's a complete, robust implementation of the scatter plot visualization function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Avg_Daily_Usage_Hours', 'Addicted_Score']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        try:
+            # Validate numerical columns
+            avg_usage = data['Avg_Daily_Usage_Hours']
+            if not pd.api.types.is_numeric_dtype(avg_usage):
+                try:
+                    avg_usage = pd.to_numeric(avg_usage)
+                except:
+                    return None, "Error: 'Avg_Daily_Usage_Hours' column cannot be converted to numeric", False
+            data['Avg_Daily_Usage_Hours'] = avg_usage
+            
+            # Validate discrete numerical column
+            addicted_score = data['Addicted_Score']
+            if not pd.api.types.is_integer_dtype(addicted_score):
+                try:
+                    addicted_score = pd.to_numeric(addicted_score).astype(int)
+                except:
+                    return None, "Error: 'Addicted_Score' column cannot be converted to integer", False
+            data['Addicted_Score'] = addicted_score
+            
+            # Handle edge cases
+            if data.empty:
+                return None, "Error: Empty dataset provided", False
+                
+            if data['Avg_Daily_Usage_Hours'].nunique() == 1:
+                return None, "Error: All values in 'Avg_Daily_Usage_Hours' are identical", False
+                
+        except Exception as e:
+            return None, f"Error in data preparation: {str(e)}", False
+            
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create scatter plot
+        scatter = sns.scatterplot(
+            x='Avg_Daily_Usage_Hours',
+            y='Addicted_Score',
+            data=data,
+            ci=None,
+            errorbar=None,
+            palette='Set1'
+        )
+        
+        # Customize plot
+        plt.title('Relationship Between Daily Usage Hours and Addiction Score')
+        plt.xlabel('Average Daily Usage Hours')
+        plt.ylabel('Addiction Score')
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        
+        # Add regression line
+        sns.regplot(
+            x='Avg_Daily_Usage_Hours',
+            y='Addicted_Score',
+            data=data,
+            ci=None,
+            scatter=False,
+            color='red',
+            line_kws={'linewidth': 2}
+        )
+        
+        # Generate statistical insights
+        try:
+            avg_usage_mean = data['Avg_Daily_Usage_Hours'].mean()
+            avg_usage_std = data['Avg_Daily_Usage_Hours'].std()
+            addicted_mode = data['Addicted_Score'].mode()[0]
+            correlation = data['Avg_Daily_Usage_Hours'].corr(data['Addicted_Score'])
+            
+            insights = f"Mean daily usage: {avg_usage_mean:.2f} hours\n"
+            insights += f"Standard deviation of usage: {avg_usage_std:.2f} hours\n"
+            insights += f"Most common addiction score: {addicted_mode}\n"
+            insights += f"Correlation between usage and addiction score: {correlation:.2f}\n"
+            if correlation > 0.7:
+                insights += "Strong positive correlation observed between usage hours and addiction score."
+            elif correlation > 0.3:
+                insights += "Moderate positive correlation observed between usage hours and addiction score."
+            else:
+                insights += "Weak or no significant correlation observed between usage hours and addiction score."
+                
+        except Exception as e:
+            insights = "Detailed analysis of patterns observed in the visualization."
+            
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation and type checking
+2. Robust error handling
+3. Modern visualization styling with seaborn
+4. Statistical insights generation
+5. Proper figure formatting and base64 conversion
+6. Edge case handling
+7. Clear, publication-ready visualization
+8. Meaningful statistical analysis
+9. Modern styling and appropriate figure size
+
+The function will return:
+- A base64-encoded PNG image string
+- Textual insights about the data
+- Boolean indicating success/failure
+
+The visualization includes:
+- Scatter plot of the relationship between usage hours and addiction score
+- Regression line showing the trend
+- Clear axis labels and title
+- Modern styling with appropriate color palette
+- Statistical insights about the distribution and correlation
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Avg_Daily_Usage_Hours', 'Addicted_Score']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        try:
+            # Validate numerical columns
+            avg_usage = data['Avg_Daily_Usage_Hours']
+            if not pd.api.types.is_numeric_dtype(avg_usage):
+                try:
+                    avg_usage = pd.to_numeric(avg_usage)
+                except:
+                    return None, "Error: 'Avg_Daily_Usage_Hours' column cannot be converted to numeric", False
+            data['Avg_Daily_Usage_Hours'] = avg_usage
+            
+            # Validate discrete numerical column
+            addicted_score = data['Addicted_Score']
+            if not pd.api.types.is_integer_dtype(addicted_score):
+                try:
+                    addicted_score = pd.to_numeric(addicted_score).astype(int)
+                except:
+                    return None, "Error: 'Addicted_Score' column cannot be converted to integer", False
+            data['Addicted_Score'] = addicted_score
+            
+            # Handle edge cases
+            if data.empty:
+                return None, "Error: Empty dataset provided", False
+                
+            if data['Avg_Daily_Usage_Hours'].nunique() == 1:
+                return None, "Error: All values in 'Avg_Daily_Usage_Hours' are identical", False
+                
+        except Exception as e:
+            return None, f"Error in data preparation: {str(e)}", False
+            
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create scatter plot
+        scatter = sns.scatterplot(
+            x='Avg_Daily_Usage_Hours',
+            y='Addicted_Score',
+            data=data,
+            ci=None,
+            errorbar=None,
+            palette='Set1'
+        )
+        
+        # Customize plot
+        plt.title('Relationship Between Daily Usage Hours and Addiction Score')
+        plt.xlabel('Average Daily Usage Hours')
+        plt.ylabel('Addiction Score')
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        
+        # Add regression line
+        sns.regplot(
+            x='Avg_Daily_Usage_Hours',
+            y='Addicted_Score',
+            data=data,
+            ci=None,
+            scatter=False,
+            color='red',
+            line_kws={'linewidth': 2}
+        )
+        
+        # Generate statistical insights
+        try:
+            avg_usage_mean = data['Avg_Daily_Usage_Hours'].mean()
+            avg_usage_std = data['Avg_Daily_Usage_Hours'].std()
+            addicted_mode = data['Addicted_Score'].mode()[0]
+            correlation = data['Avg_Daily_Usage_Hours'].corr(data['Addicted_Score'])
+            
+            insights = f"Mean daily usage: {avg_usage_mean:.2f} hours\n"
+            insights += f"Standard deviation of usage: {avg_usage_std:.2f} hours\n"
+            insights += f"Most common addiction score: {addicted_mode}\n"
+            insights += f"Correlation between usage and addiction score: {correlation:.2f}\n"
+            if correlation > 0.7:
+                insights += "Strong positive correlation observed between usage hours and addiction score."
+            elif correlation > 0.3:
+                insights += "Moderate positive correlation observed between usage hours and addiction score."
+            else:
+                insights += "Weak or no significant correlation observed between usage hours and addiction score."
+                
+        except Exception as e:
+            insights = "Detailed analysis of patterns observed in the visualization."
+            
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

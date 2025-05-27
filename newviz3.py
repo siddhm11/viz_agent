@@ -17,9 +17,6 @@ import os
 import sklearn
 import numpy as np
 from scipy import stats
-import warnings
-warnings.filterwarnings('ignore')
-
 
 # Set up logging configuration
 os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
@@ -72,7 +69,7 @@ class DataAnalystAgent:
             
             # Capture DataFrame.head()
             buffer.write("## Data Preview (First 15 rows)\n")
-            buffer.write(state.data.head(2).to_string())
+            buffer.write(state.data.head(10).to_string())
             buffer.write("\n\n")
             
             # Capture DataFrame.info() 
@@ -580,13 +577,14 @@ class DataAnalystAgent:
             )
         
         self.logger.info("✅ Initial code generated successfully")
+        self.logger.info(f"Initial code length: {len(initial_code)} characters")
         self.logger.debug(f"Generated code length: {len(initial_code)} characters")
         
         # Execute with healing
         self.logger.info("Phase 2: Executing code with self-healing...")
         exec_start = time.time()
         
-        result = self._execute_with_enhanced_healing(initial_code, data, chart_type, stats)
+        result = self._execute_with_enhanced_healing(initial_code,variables,data ,chart_type, stats)
         
         stats["execution_time"] = time.time() - exec_start
         stats["total_time"] = time.time() - generation_start_time
@@ -693,6 +691,12 @@ class DataAnalystAgent:
     Sample values:
     {chr(10).join([f"  - {var['name']}: {var['samples']}" for var in var_info])}
 
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
     Critical Requirements:
     1. Handle ALL edge cases (empty data, missing values, wrong types)
     2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
@@ -703,6 +707,7 @@ class DataAnalystAgent:
     7. Meaningful statistical insights
     8. Robust error handling
     9. Modern styling and appropriate figure size
+
 
     Chart-specific considerations for {chart_type}:
     - Validate that variables exist and have appropriate data types
@@ -775,7 +780,7 @@ class DataAnalystAgent:
         
         return prompt
 
-    def _execute_with_enhanced_healing(self, code, data, chart_type, stats, max_attempts=4):
+    def _execute_with_enhanced_healing(self, code,variables, data, chart_type, stats, max_attempts=4):
         """Execute code with enhanced self-healing capabilities"""
         self.logger.info(f"Starting enhanced healing execution (max {max_attempts} attempts)")
         
@@ -1446,6 +1451,8 @@ class DataAnalystAgent:
             )
             
             self.logger.info("Invoking workflow graph")
+
+            #invoking the graph using the null state so that it works
             result = self.graph.invoke(initial_state)
             
             elapsed_time = time.time() - start_time

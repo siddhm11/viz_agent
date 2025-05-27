@@ -1,0 +1,355 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: bar chart
+Variables: ['Country', 'Avg_Daily_Usage_Hours']
+Timestamp: 2025-05-26T18:09:50.219391
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a bar chart visualization.
+
+    Dataset Context:
+    - Shape: (705, 13)
+    - Total columns: 13
+
+    Variables to visualize: ['Country', 'Avg_Daily_Usage_Hours']
+    Variable details:
+      - Country: categorical_nominal (object) - 0 missing, 110 unique
+  - Avg_Daily_Usage_Hours: numerical_continuous (float64) - 0 missing, 67 unique
+
+    Sample values:
+      - Country: ['Switzerland', 'Nepal', 'Jordan', 'Mexico', 'Switzerland']
+  - Avg_Daily_Usage_Hours: [3.7, 2.5, 5.8, 3.1, 4.6]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for bar chart:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a bar chart visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['Country', 'Avg_Daily_Usage_Hours']
+    Data types: ['object', 'float64']
+    Column types: ['categorical_nominal', 'numerical_continuous']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['Country', 'Avg_Daily_Usage_Hours']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for a bar chart visualization. Let me start by understanding the problem and the requirements.
+
+First, the dataset has 705 rows and 13 columns. The variables to visualize are 'Country' and 'Avg_Daily_Usage_Hours'. 'Country' is a categorical variable with 110 unique values, and 'Avg_Daily_Usage_Hours' is a numerical variable. The sample data shows multiple countries with varying average hours.
+
+The function needs to return a base64 image string, some insights text, and a success boolean. It must handle all edge cases, use only standard libraries, avoid deprecated methods, and ensure proper data validation.
+
+I should begin by validating the data. Check if the required columns exist and if the data types are correct. For 'Country', I'll make sure it's an object type, and for 'Avg_Daily_Usage_Hours', it should be a float. If any checks fail, the function should return an error.
+
+Next, data preparation. Since there are 110 unique countries, plotting all might clutter the chart. Maybe top 10 by average usage would make it more readable. I'll sort the data in descending order and take the top 10. If there are fewer than 10, that's fine.
+
+For the visualization, using seaborn's barplot makes sense. I'll set a modern style with a custom color. The figure size should be appropriate, maybe 10x6 inches. Titles and labels are necessary for clarity. Rotating the x-axis labels will prevent overlapping.
+
+Generating insights should be based on the data. I'll calculate the mean and standard deviation of the average usage. Also, checking if the top country's usage is significantly higher than the others could indicate outliers.
+
+Error handling is crucial. I'll wrap everything in a try-except block to catch any exceptions and return detailed error information.
+
+Finally, converting the plot to a base64 string involves saving the figure to a buffer and encoding it. I'll make sure to close the buffer and the plot after processing.
+
+Putting it all together, I'll structure the function step by step, ensuring each part is handled correctly and all edge cases are considered.
+</think>
+
+Here's a complete, robust implementation of the function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Country', 'Avg_Daily_Usage_Hours']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+        
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data['Country'], pd.core.series.Series) and 
+                data['Country'].dtype == 'object'):
+            return None, "Error: 'Country' column must be of type object", False
+        
+        if not (isinstance(data['Avg_Daily_Usage_Hours'], pd.core.series.Series) and 
+                data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            return None, "Error: 'Avg_Daily_Usage_Hours' column must be of type float64", False
+        
+        # Data preparation
+        # Check for empty data
+        if data.empty:
+            return None, "Error: Empty dataset provided", False
+        
+        # Check for valid categorical data
+        if not all(isinstance(country, str) for country in data['Country']):
+            return None, "Error: 'Country' column contains non-string values", False
+        
+        # Check for valid numerical data
+        if not all(isinstance(hours, (int, float)) for hours in data['Avg_Daily_Usage_Hours']):
+            return None, "Error: 'Avg_Daily_Usage_Hours' column contains non-numeric values", False
+        
+        # Group by country and calculate mean usage
+        country_usage = data.groupby('Country')['Avg_Daily_Usage_Hours'].mean().reset_index()
+        
+        # Handle large number of categories
+        if len(country_usage) > 10:
+            # Get top 10 countries by average usage
+            top_countries = country_usage.sort_values('Avg_Daily_Usage_Hours', 
+                                                       ascending=False).head(10)
+            insights = f"Showing top 10 countries by average daily usage hours"
+        else:
+            top_countries = country_usage
+            insights = f"All {len(country_usage)} countries are shown"
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        ax = sns.barplot(x='Country', y='Avg_Daily_Usage_Hours', data=top_countries)
+        
+        # Customize the plot
+        plt.title('Average Daily Usage Hours by Country', fontsize=14, pad=20)
+        plt.xlabel('Country', fontsize=12)
+        plt.ylabel('Average Daily Usage Hours', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Add statistical insights
+        mean_usage = top_countries['Avg_Daily_Usage_Hours'].mean()
+        std_dev = top_countries['Avg_Daily_Usage_Hours'].std()
+        max_usage = top_countries['Avg_Daily_Usage_Hours'].max()
+        min_usage = top_countries['Avg_Daily_Usage_Hours'].min()
+        
+        insights += f"\nMean usage: {mean_usage:.2f} hours"
+        insights += f"\nStandard deviation: {std_dev:.2f} hours"
+        insights += f"\nMaximum usage: {max_usage:.2f} hours in {top_countries.loc[top_countries['Avg_Daily_Usage_Hours'].idxmax(), 'Country']}"
+        insights += f"\nMinimum usage: {min_usage:.2f} hours in {top_countries.loc[top_countries['Avg_Daily_Usage_Hours'].idxmin(), 'Country']}"
+        
+        if max_usage > mean_usage + 2*std_dev:
+            insights += "\n\nNote: The country with the highest usage appears to be an outlier"
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation for both columns and data types
+2. Robust error handling
+3. Modern visualization styling
+4. Statistical insights generation
+5. Proper handling of large numbers of categories
+6. Clear, publication-ready visualization
+7. Base64 encoding of the plot
+8. Proper cleanup of plot resources
+9. Meaningful insights based on the data distribution
+10. Handling of edge cases like empty data and invalid types
+
+The function returns a tuple containing:
+- Base64-encoded image string
+- Text containing statistical insights
+- Boolean indicating success/failure
+
+The visualization is styled with a modern look using seaborn's whitegrid style and appropriate figure dimensions. The insights include basic statistics and outlier detection.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Country', 'Avg_Daily_Usage_Hours']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+        
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data['Country'], pd.core.series.Series) and 
+                data['Country'].dtype == 'object'):
+            return None, "Error: 'Country' column must be of type object", False
+        
+        if not (isinstance(data['Avg_Daily_Usage_Hours'], pd.core.series.Series) and 
+                data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            return None, "Error: 'Avg_Daily_Usage_Hours' column must be of type float64", False
+        
+        # Data preparation
+        # Check for empty data
+        if data.empty:
+            return None, "Error: Empty dataset provided", False
+        
+        # Check for valid categorical data
+        if not all(isinstance(country, str) for country in data['Country']):
+            return None, "Error: 'Country' column contains non-string values", False
+        
+        # Check for valid numerical data
+        if not all(isinstance(hours, (int, float)) for hours in data['Avg_Daily_Usage_Hours']):
+            return None, "Error: 'Avg_Daily_Usage_Hours' column contains non-numeric values", False
+        
+        # Group by country and calculate mean usage
+        country_usage = data.groupby('Country')['Avg_Daily_Usage_Hours'].mean().reset_index()
+        
+        # Handle large number of categories
+        if len(country_usage) > 10:
+            # Get top 10 countries by average usage
+            top_countries = country_usage.sort_values('Avg_Daily_Usage_Hours', 
+                                                       ascending=False).head(10)
+            insights = f"Showing top 10 countries by average daily usage hours"
+        else:
+            top_countries = country_usage
+            insights = f"All {len(country_usage)} countries are shown"
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        ax = sns.barplot(x='Country', y='Avg_Daily_Usage_Hours', data=top_countries)
+        
+        # Customize the plot
+        plt.title('Average Daily Usage Hours by Country', fontsize=14, pad=20)
+        plt.xlabel('Country', fontsize=12)
+        plt.ylabel('Average Daily Usage Hours', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Add statistical insights
+        mean_usage = top_countries['Avg_Daily_Usage_Hours'].mean()
+        std_dev = top_countries['Avg_Daily_Usage_Hours'].std()
+        max_usage = top_countries['Avg_Daily_Usage_Hours'].max()
+        min_usage = top_countries['Avg_Daily_Usage_Hours'].min()
+        
+        insights += f"\nMean usage: {mean_usage:.2f} hours"
+        insights += f"\nStandard deviation: {std_dev:.2f} hours"
+        insights += f"\nMaximum usage: {max_usage:.2f} hours in {top_countries.loc[top_countries['Avg_Daily_Usage_Hours'].idxmax(), 'Country']}"
+        insights += f"\nMinimum usage: {min_usage:.2f} hours in {top_countries.loc[top_countries['Avg_Daily_Usage_Hours'].idxmin(), 'Country']}"
+        
+        if max_usage > mean_usage + 2*std_dev:
+            insights += "\n\nNote: The country with the highest usage appears to be an outlier"
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

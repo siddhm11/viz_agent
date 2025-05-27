@@ -7,7 +7,7 @@ from newviz3 import DataAnalystAgent
 groq_api_key = os.getenv("GROQ_API_KEY")
 
 # Load your data
-df = pd.read_csv("random_datasets/1000_ml_jobs_us.csv")
+df = pd.read_csv("random_datasets/Students Social Media Addiction.csv")
 
 # Create and run the agent with Groq
 agent = DataAnalystAgent(groq_api_key=groq_api_key)

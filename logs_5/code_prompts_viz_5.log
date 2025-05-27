@@ -1,0 +1,325 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: stacked bar chart
+Variables: ['Most_Used_Platform', 'Conflicts_Over_Social_Media']
+Timestamp: 2025-05-27T11:19:07.490043
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a stacked bar chart visualization.
+
+    Dataset Context:
+    - Shape: (705, 13)
+    - Total columns: 13
+
+    Variables to visualize: ['Most_Used_Platform', 'Conflicts_Over_Social_Media']
+    Variable details:
+      - Most_Used_Platform: categorical_nominal (object) - 0 missing, 12 unique
+  - Conflicts_Over_Social_Media: numerical_discrete (int64) - 0 missing, 6 unique
+
+    Sample values:
+      - Most_Used_Platform: ['TikTok', 'TikTok', 'LINE', 'WhatsApp', 'Instagram']
+  - Conflicts_Over_Social_Media: [4, 3, 5, 2, 4]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for stacked bar chart:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a stacked bar chart visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['Most_Used_Platform', 'Conflicts_Over_Social_Media']
+    Data types: ['object', 'int64']
+    Column types: ['categorical_nominal', 'numerical_discrete']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['Most_Used_Platform', 'Conflicts_Over_Social_Media']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a complete and robust Python function for a stacked bar chart visualization. The function should take a dataset and return a base64 encoded image, some insights, and a success boolean. Let me think through how to approach this.
+
+First, I'll start by understanding the requirements. The dataset has two variables: 'Most_Used_Platform' which is categorical, and 'Conflicts_Over_Social_Media' which is numerical. The goal is to create a stacked bar chart, so I need to aggregate the data by 'Most_Used_Platform' and sum the conflicts.
+
+I should begin with data validation. The function needs to check if the required columns exist and if their data types are correct. If any required columns are missing, the function should return an error. Also, I need to ensure that 'Most_Used_Platform' is treated as a categorical variable and 'Conflicts_Over_Social_Media' is numerical. I'll use pandas' methods like 'infer_objects' and 'to_numeric' with error handling to convert the data if necessary.
+
+Next, I'll handle edge cases. For example, if there are no data points, the function should return an error. Also, if after validation, the data is empty, that should be handled gracefully.
+
+Once the data is validated, I'll prepare it for plotting. I'll group the data by 'Most_Used_Platform' and calculate the sum of conflicts. This will give me a DataFrame where each row represents a platform and the total conflicts.
+
+For the visualization, I'll use seaborn's countplot, but since I need a stacked bar chart, I might need to adjust the approach. Wait, actually, since the data is aggregated, I can plot it using matplotlib's bar function. I'll create a figure with a title, labels, and ensure it's styled professionally. Rotating the x-axis labels will make them easier to read.
+
+Generating meaningful insights is important. I'll calculate the total number of conflicts, the average, and identify the platform with the highest and lowest conflicts. These statistics will form the basis of the insights text.
+
+I also need to ensure that the function doesn't use any deprecated methods. For example, using 'errorbar=None' instead of 'ci=None' in seaborn functions. Since we're not using error bars here, that shouldn't be an issue.
+
+Finally, I'll convert the plot to a base64 encoded string so it can be returned. I'll make sure to handle any exceptions that might occur during the process and return appropriate error messages.
+
+Putting it all together, I'll structure the function with try-except blocks to handle exceptions, perform data validation, prepare the data, create the plot, generate insights, and then convert the plot to a base64 string. I'll also make sure to close the plot after saving it to avoid memory issues.
+
+I think that covers all the requirements. Now, I'll write the code step by step, ensuring each part is handled correctly.
+</think>
+
+Here's a complete, robust implementation of the function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Most_Used_Platform', 'Conflicts_Over_Social_Media']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not pd.api.types.is_object_dtype(data['Most_Used_Platform']):
+            return None, "Error: Most_Used_Platform must be categorical", False
+            
+        if not pd.api.types.is_integer_dtype(data['Conflicts_Over_Social_Media']):
+            # Attempt to convert if possible
+            try:
+                data['Conflicts_Over_Social_Media'] = pd.to_numeric(
+                    data['Conflicts_Over_Social_Media'], errors='coerce'
+                )
+                if data['Conflicts_Over_Social_Media'].isna().any():
+                    return None, "Error: Non-numeric values in Conflicts_Over_Social_Media", False
+            except:
+                return None, "Error: Conflicts_Over_Social_Media must be numeric", False
+            
+        # Handle edge cases
+        if data.empty:
+            return None, "Error: Empty dataset provided", False
+            
+        if len(data['Most_Used_Platform'].unique()) == 0:
+            return None, "Error: No valid categories in Most_Used_Platform", False
+            
+        # Data preparation
+        # Group by Most_Used_Platform and calculate total conflicts
+        platform_conflicts = data.groupby('Most_Used_Platform')\
+                                .agg({'Conflicts_Over_Social_Media': 'sum'})\
+                                .reset_index()
+        
+        # Create visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        
+        # Create stacked bar chart
+        ax = sns.countplot(x="Most_Used_Platform", data=data, hue="Most_Used_Platform")
+        
+        # Customize the plot
+        plt.title('Distribution of Conflicts by Most Used Platform', fontsize=14, pad=20)
+        plt.xlabel('Most Used Platform', fontsize=12)
+        plt.ylabel('Count of Conflicts', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Generate insights
+        total_conflicts = data['Conflicts_Over_Social_Media'].sum()
+        avg_conflicts = data['Conflicts_Over_Social_Media'].mean()
+        max_conflicts_platform = platform_conflicts.loc[
+            platform_conflicts['Conflicts_Over_Social_Media'].idxmax()
+        ]['Most_Used_Platform']
+        min_conflicts_platform = platform_conflicts.loc[
+            platform_conflicts['Conflicts_Over_Social_Media'].idxmin()
+        ]['Most_Used_Platform']
+        
+        insights = f"Total Conflicts: {total_conflicts}\n"
+        insights += f"Average Conflicts: {avg_conflicts:.2f}\n"
+        insights += f"Platform with Most Conflicts: {max_conflicts_platform}\n"
+        insights += f"Platform with Fewest Conflicts: {min_conflicts_platform}"
+        
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Most_Used_Platform', 'Conflicts_Over_Social_Media']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not pd.api.types.is_object_dtype(data['Most_Used_Platform']):
+            return None, "Error: Most_Used_Platform must be categorical", False
+            
+        if not pd.api.types.is_integer_dtype(data['Conflicts_Over_Social_Media']):
+            # Attempt to convert if possible
+            try:
+                data['Conflicts_Over_Social_Media'] = pd.to_numeric(
+                    data['Conflicts_Over_Social_Media'], errors='coerce'
+                )
+                if data['Conflicts_Over_Social_Media'].isna().any():
+                    return None, "Error: Non-numeric values in Conflicts_Over_Social_Media", False
+            except:
+                return None, "Error: Conflicts_Over_Social_Media must be numeric", False
+            
+        # Handle edge cases
+        if data.empty:
+            return None, "Error: Empty dataset provided", False
+            
+        if len(data['Most_Used_Platform'].unique()) == 0:
+            return None, "Error: No valid categories in Most_Used_Platform", False
+            
+        # Data preparation
+        # Group by Most_Used_Platform and calculate total conflicts
+        platform_conflicts = data.groupby('Most_Used_Platform')\
+                                .agg({'Conflicts_Over_Social_Media': 'sum'})\
+                                .reset_index()
+        
+        # Create visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        
+        # Create stacked bar chart
+        ax = sns.countplot(x="Most_Used_Platform", data=data, hue="Most_Used_Platform")
+        
+        # Customize the plot
+        plt.title('Distribution of Conflicts by Most Used Platform', fontsize=14, pad=20)
+        plt.xlabel('Most Used Platform', fontsize=12)
+        plt.ylabel('Count of Conflicts', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Generate insights
+        total_conflicts = data['Conflicts_Over_Social_Media'].sum()
+        avg_conflicts = data['Conflicts_Over_Social_Media'].mean()
+        max_conflicts_platform = platform_conflicts.loc[
+            platform_conflicts['Conflicts_Over_Social_Media'].idxmax()
+        ]['Most_Used_Platform']
+        min_conflicts_platform = platform_conflicts.loc[
+            platform_conflicts['Conflicts_Over_Social_Media'].idxmin()
+        ]['Most_Used_Platform']
+        
+        insights = f"Total Conflicts: {total_conflicts}\n"
+        insights += f"Average Conflicts: {avg_conflicts:.2f}\n"
+        insights += f"Platform with Most Conflicts: {max_conflicts_platform}\n"
+        insights += f"Platform with Fewest Conflicts: {min_conflicts_platform}"
+        
+        # Convert plot to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

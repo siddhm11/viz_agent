@@ -1,0 +1,426 @@
+=== HEALING PROMPT ===
+Attempt: 2
+Error: Error: FillBetweenPolyCollection.set() got an unexpected keyword argument 'violin_colors'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1770, in violinplot
+    p.plot_violins(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1047, in plot_violins
+    plot_func(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5733, in fill_betweenx
+    return self._fill_between_x_or_y(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5704, in _fill_between_x_or_y
+    collection = mcoll.FillBetweenPolyCollection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1332, in __init__
+    super().__init__(verts, **kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1201, in __init__
+    super().__init__(**kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 209, in __init__
+    self._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: FillBetweenPolyCollection.set() got an unexpected keyword argument 'violin_colors'
+
+Timestamp: 2025-05-27T11:21:16.223653
+
+PROMPT:
+URGENT: Fix this broken Python visualization code.
+
+    ATTEMPT NUMBER: 2
+    ERROR ENCOUNTERED: Error: FillBetweenPolyCollection.set() got an unexpected keyword argument 'violin_colors'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 51, in generate_plot
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1770, in violinplot
+    p.plot_violins(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/seaborn/categorical.py", line 1047, in plot_violins
+    plot_func(
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5733, in fill_betweenx
+    return self._fill_between_x_or_y(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/axes/_axes.py", line 5704, in _fill_between_x_or_y
+    collection = mcoll.FillBetweenPolyCollection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1332, in __init__
+    super().__init__(verts, **kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 1201, in __init__
+    super().__init__(**kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/collections.py", line 209, in __init__
+    self._internal_update(kwargs)
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1233, in _internal_update
+    return self._update_props(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/siddhmehta/fyndcodes/viz_agent/venv/lib/python3.12/site-packages/matplotlib/artist.py", line 1206, in _update_props
+    raise AttributeError(
+AttributeError: FillBetweenPolyCollection.set() got an unexpected keyword argument 'violin_colors'
+
+
+    
+
+    PROBLEMATIC CODE:
+    ```python
+    def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Check data types
+        if not (data['Academic_Level'].dtype == 'object'):
+            raise TypeError("Academic_Level must be of type object")
+        if not (data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            raise TypeError("Avg_Daily_Usage_Hours must be of type float64")
+        if not (data['Mental_Health_Score'].dtype == 'int64'):
+            raise TypeError("Mental_Health_Score must be of type int64")
+        
+        # Check for missing values
+        missing_values = data[required_cols].isnull().sum().sum()
+        if missing_values > 0:
+            raise ValueError("Dataset contains missing values")
+        
+        # Validate categorical variable
+        academic_levels = data['Academic_Level'].unique()
+        if len(academic_levels) != 3:
+            raise ValueError(f"Expected 3 unique Academic Levels, found {len(academic_levels)}")
+        
+        # Validate numerical ranges
+        if (data['Avg_Daily_Usage_Hours'] < 0).any() or (data['Avg_Daily_Usage_Hours'] > 24).any():
+            raise ValueError("Avg_Daily_Usage_Hours contains invalid values")
+        if (data['Mental_Health_Score'] < 1).any() or (data['Mental_Health_Score'] > 10).any():
+            raise ValueError("Mental_Health_Score contains invalid values")
+        
+        # Data preparation
+        df = data.copy()
+        df['Academic_Level'] = pd.Categorical(df['Academic_Level']).codes
+        df['Mental_Health_Score'] = df['Mental_Health_Score'].astype(float)
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {"xtick.bottom": True, "ytick.left": True})
+        
+        ax = sns.violinplot(x='Academic_Level', y='Avg_Daily_Usage_Hours', 
+                            hue='Mental_Health_Score', data=df, palette='viridis',
+                            inner='quartile', scale='width', order=None, 
+                            hue_order=None, split=True, 
+                            orient=None, saturation=0.75, violin_colors=None)
+        
+        plt.title('Distribution of Average Daily Usage Hours by Academic Level and Mental Health Score')
+        plt.xlabel('Academic Level')
+        plt.ylabel('Average Daily Usage Hours')
+        plt.legend(title='Mental Health Score', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = []
+        for level in academic_levels:
+            level_df = df[df['Academic_Level'] == level]
+            mean_usage = level_df['Avg_Daily_Usage_Hours'].mean()
+            median_usage = level_df['Avg_Daily_Usage_Hours'].median()
+            std_usage = level_df['Avg_Daily_Usage_Hours'].std()
+            insights.append(f"Academic Level {level} has mean usage of {mean_usage:.2f} hours, "
+                           f"median of {median_usage:.2f}, and standard deviation of {std_usage:.2f}")
+        
+        mental_health_scores = df['Mental_Health_Score'].unique()
+        for score in mental_health_scores:
+            score_df = df[df['Mental_Health_Score'] == score]
+            mean_usage = score_df['Avg_Daily_Usage_Hours'].mean()
+            insights.append(f"Mental Health Score {int(score)} has mean usage of {mean_usage:.2f} hours")
+        
+        insights = "\n".join(insights)
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+    ```
+
+    COMMON FIXES NEEDED:
+    1. Seaborn 'ci' parameter → use 'errorbar=None' instead
+    2. Missing imports → add required imports
+    3. Data type issues → add proper validation and conversion
+    4. Empty data → add data checks
+    5. Column access errors → validate column existence
+    6. Plotting parameter errors → use correct parameter names
+    7. Memory/resource issues → add proper cleanup
+
+    REQUIREMENTS:
+    - Fix the specific error mentioned above
+    - Maintain the same function signature: def generate_plot(data):
+    - Return: (base64_string, insights_text, success_boolean)
+    - Keep all existing functionality that works
+    - Add better error handling
+    - Ensure robust data validation
+
+    RETURN ONLY THE CORRECTED PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        # Fixed code here
+    ```
+
+=== LLM HEALING RESPONSE ===
+<think>
+Okay, I need to fix this broken Python visualization code. The error encountered is an AttributeError where FillBetweenPolyCollection.set() got an unexpected keyword argument 'violin_colors'. Let me look at the code and figure out what's wrong.
+
+Looking at the problematic code, the error occurs in the seaborn violinplot function. The traceback points to line 51 where generate_plot is called, and it's failing in the plot_violins method. The error is happening because 'violin_colors' is being passed as a keyword argument, but FillBetweenPolyCollection doesn't accept that.
+
+Wait, in the code, the violinplot is called with hue='Mental_Health_Score' and palette='viridis', and then violin_colors=None. Oh, I remember that in some versions of seaborn, the 'violin_colors' parameter might not be a valid argument for violinplot. Or perhaps it's been deprecated or renamed.
+
+Let me check the documentation for seaborn's violinplot. Oh right, the 'violin_colors' parameter isn't a standard argument for violinplot. Instead, the color is controlled by the palette and hue parameters. So passing violin_colors=None is causing the error because it's an unexpected keyword.
+
+So the fix is to remove the 'violin_colors=None' argument from the violinplot call. That should prevent the error.
+
+Let me go through the code step by step.
+
+In the generate_plot function, the data validation seems thorough. They check for required columns, data types, missing values, etc. That's good.
+
+In the data preparation, they convert 'Academic_Level' to categorical codes and 'Mental_Health_Score' to float. That makes sense for plotting.
+
+Then, when creating the visualization, they set up a figure and style. The problematic line is the sns.violinplot call. The parameters include hue, palette, and then violin_colors=None. Since 'violin_colors' isn't a valid parameter, removing it should fix the issue.
+
+So I'll remove the 'violin_colors=None' part from the violinplot function call.
+
+Let me also check if there are any other potential issues. For example, the 'hue' parameter is used, which should handle the coloring based on 'Mental_Health_Score' with the specified palette. So the plot should still be colored correctly without the 'violin_colors' argument.
+
+Additionally, I should ensure that all other parameters are correct. The 'inner' is set to 'quartile', which is valid. 'scale' is 'width', which is also correct.
+
+Another thing to consider is whether the 'hue_order' and 'split' parameters are correctly used. Since 'hue_order' is set to None, it should automatically determine the order, which is fine.
+
+So the main fix is to remove the 'violin_colors=None' argument.
+
+I should also check if there are any other deprecated parameters or issues in the code. For example, in older versions of seaborn, some parameters might have changed. But in this case, the error is specifically about 'violin_colors', so removing it should resolve the problem.
+
+Let me make sure that after removing 'violin_colors', the rest of the code still works as intended. The legend should still show the Mental Health Scores with the correct colors from the 'viridis' palette.
+
+I think that's the main issue here. So the corrected code will have the violinplot line without the 'violin_colors' parameter.
+</think>
+
+To fix the error, we need to remove the invalid `violin_colors` parameter from the `sns.violinplot()` function call. This parameter is not recognized, causing the AttributeError. By removing it, the plot will use the specified palette for coloring as intended.
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Check data types
+        if not (data['Academic_Level'].dtype == 'object'):
+            raise TypeError("Academic_Level must be of type object")
+        if not (data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            raise TypeError("Avg_Daily_Usage_Hours must be of type float64")
+        if not (data['Mental_Health_Score'].dtype == 'int64'):
+            raise TypeError("Mental_Health_Score must be of type int64")
+        
+        # Check for missing values
+        missing_values = data[required_cols].isnull().sum().sum()
+        if missing_values > 0:
+            raise ValueError("Dataset contains missing values")
+        
+        # Validate categorical variable
+        academic_levels = data['Academic_Level'].unique()
+        if len(academic_levels) != 3:
+            raise ValueError(f"Expected 3 unique Academic Levels, found {len(academic_levels)}")
+        
+        # Validate numerical ranges
+        if (data['Avg_Daily_Usage_Hours'] < 0).any() or (data['Avg_Daily_Usage_Hours'] > 24).any():
+            raise ValueError("Avg_Daily_Usage_Hours contains invalid values")
+        if (data['Mental_Health_Score'] < 1).any() or (data['Mental_Health_Score'] > 10).any():
+            raise ValueError("Mental_Health_Score contains invalid values")
+        
+        # Data preparation
+        df = data.copy()
+        df['Academic_Level'] = pd.Categorical(df['Academic_Level']).codes
+        df['Mental_Health_Score'] = df['Mental_Health_Score'].astype(float)
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {"xtick.bottom": True, "ytick.left": True})
+        
+        ax = sns.violinplot(x='Academic_Level', y='Avg_Daily_Usage_Hours', 
+                            hue='Mental_Health_Score', data=df, palette='viridis',
+                            inner='quartile', scale='width', order=None, 
+                            hue_order=None, split=True, 
+                            orient=None, saturation=0.75)
+        
+        plt.title('Distribution of Average Daily Usage Hours by Academic Level and Mental Health Score')
+        plt.xlabel('Academic Level')
+        plt.ylabel('Average Daily Usage Hours')
+        plt.legend(title='Mental Health Score', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = []
+        for level in academic_levels:
+            level_df = df[df['Academic_Level'] == level]
+            mean_usage = level_df['Avg_Daily_Usage_Hours'].mean()
+            median_usage = level_df['Avg_Daily_Usage_Hours'].median()
+            std_usage = level_df['Avg_Daily_Usage_Hours'].std()
+            insights.append(f"Academic Level {level} has mean usage of {mean_usage:.2f} hours, "
+                           f"median of {median_usage:.2f}, and standard deviation of {std_usage:.2f}")
+        
+        mental_health_scores = df['Mental_Health_Score'].unique()
+        for score in mental_health_scores:
+            score_df = df[df['Mental_Health_Score'] == score]
+            mean_usage = score_df['Avg_Daily_Usage_Hours'].mean()
+            insights.append(f"Mental Health Score {int(score)} has mean usage of {mean_usage:.2f} hours")
+        
+        insights = "\n".join(insights)
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+=== CORRECTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Check data types
+        if not (data['Academic_Level'].dtype == 'object'):
+            raise TypeError("Academic_Level must be of type object")
+        if not (data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            raise TypeError("Avg_Daily_Usage_Hours must be of type float64")
+        if not (data['Mental_Health_Score'].dtype == 'int64'):
+            raise TypeError("Mental_Health_Score must be of type int64")
+        
+        # Check for missing values
+        missing_values = data[required_cols].isnull().sum().sum()
+        if missing_values > 0:
+            raise ValueError("Dataset contains missing values")
+        
+        # Validate categorical variable
+        academic_levels = data['Academic_Level'].unique()
+        if len(academic_levels) != 3:
+            raise ValueError(f"Expected 3 unique Academic Levels, found {len(academic_levels)}")
+        
+        # Validate numerical ranges
+        if (data['Avg_Daily_Usage_Hours'] < 0).any() or (data['Avg_Daily_Usage_Hours'] > 24).any():
+            raise ValueError("Avg_Daily_Usage_Hours contains invalid values")
+        if (data['Mental_Health_Score'] < 1).any() or (data['Mental_Health_Score'] > 10).any():
+            raise ValueError("Mental_Health_Score contains invalid values")
+        
+        # Data preparation
+        df = data.copy()
+        df['Academic_Level'] = pd.Categorical(df['Academic_Level']).codes
+        df['Mental_Health_Score'] = df['Mental_Health_Score'].astype(float)
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {"xtick.bottom": True, "ytick.left": True})
+        
+        ax = sns.violinplot(x='Academic_Level', y='Avg_Daily_Usage_Hours', 
+                            hue='Mental_Health_Score', data=df, palette='viridis',
+                            inner='quartile', scale='width', order=None, 
+                            hue_order=None, split=True, 
+                            orient=None, saturation=0.75)
+        
+        plt.title('Distribution of Average Daily Usage Hours by Academic Level and Mental Health Score')
+        plt.xlabel('Academic Level')
+        plt.ylabel('Average Daily Usage Hours')
+        plt.legend(title='Mental Health Score', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = []
+        for level in academic_levels:
+            level_df = df[df['Academic_Level'] == level]
+            mean_usage = level_df['Avg_Daily_Usage_Hours'].mean()
+            median_usage = level_df['Avg_Daily_Usage_Hours'].median()
+            std_usage = level_df['Avg_Daily_Usage_Hours'].std()
+            insights.append(f"Academic Level {level} has mean usage of {mean_usage:.2f} hours, "
+                           f"median of {median_usage:.2f}, and standard deviation of {std_usage:.2f}")
+        
+        mental_health_scores = df['Mental_Health_Score'].unique()
+        for score in mental_health_scores:
+            score_df = df[df['Mental_Health_Score'] == score]
+            mean_usage = score_df['Avg_Daily_Usage_Hours'].mean()
+            insights.append(f"Mental Health Score {int(score)} has mean usage of {mean_usage:.2f} hours")
+        
+        insights = "\n".join(insights)
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

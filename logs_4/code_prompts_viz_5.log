@@ -1,0 +1,414 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: violin plot
+Variables: ['Most_Used_Platform', 'Addicted_Score']
+Timestamp: 2025-05-26T18:08:03.094993
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a violin plot visualization.
+
+    Dataset Context:
+    - Shape: (705, 13)
+    - Total columns: 13
+
+    Variables to visualize: ['Most_Used_Platform', 'Addicted_Score']
+    Variable details:
+      - Most_Used_Platform: categorical_nominal (object) - 0 missing, 12 unique
+  - Addicted_Score: categorical_ordinal (int64) - 0 missing, 8 unique
+
+    Sample values:
+      - Most_Used_Platform: ['Snapchat', 'Instagram', 'WhatsApp', 'TikTok', 'TikTok']
+  - Addicted_Score: [7, 6, 8, 7, 7]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for violin plot:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a violin plot visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['Most_Used_Platform', 'Addicted_Score']
+    Data types: ['object', 'int64']
+    Column types: ['categorical_nominal', 'categorical_ordinal']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['Most_Used_Platform', 'Addicted_Score']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for a violin plot visualization. The function must handle various edge cases and adhere to strict requirements. Let me break down the problem step by step.
+
+First, I'll look at the dataset context. The data has 705 rows and 13 columns. The variables to visualize are 'Most_Used_Platform' (categorical nominal) and 'Addicted_Score' (categorical ordinal). The sample values show that 'Most_Used_Platform' has 12 unique categories, and 'Addicted_Score' ranges from 6 to 8 in the sample.
+
+The system prompt specifies avoiding deprecated methods and using only standard libraries. So, I can't use 'eta_squared' or 'bxp()' with 'ci' or 'errorbar' arguments. Also, I must ensure data passed to loops is iterable, avoiding np.float64 issues.
+
+Critical requirements include handling all edge cases, using only standard libraries, proper data validation, and generating meaningful insights. The function must return a base64 image, insights text, and a success boolean.
+
+Looking at the provided function skeleton, I see that it includes necessary imports and a try-except block. The data validation checks for missing columns, which is good. Now, I need to add data preparation with type checking.
+
+For data preparation, I should ensure that 'Most_Used_Platform' is treated as a categorical variable and 'Addicted_Score' as an integer. I'll use pandas' methods to convert them if necessary. Also, I need to handle cases where data might be empty or have missing values beyond what's already checked.
+
+Next, creating the visualization. Since 'Most_Used_Platform' has 12 categories, a violin plot might be too crowded. I should consider using a smaller subset or checking if the number of categories is manageable. But since the user specified to handle it, I'll proceed. I'll use seaborn's violinplot with appropriate parameters, ensuring no deprecated methods are used.
+
+I'll set up the plot with a suitable figure size, modern styling, and appropriate axes labels. Rotating the x-axis labels might help with readability. Using a palette that's visually distinct for each category is important.
+
+For statistical insights, I'll calculate the median and interquartile range for each platform. This provides a clear understanding of the distribution. I'll also check for outliers by comparing the data to the IQR.
+
+Handling edge cases: if the data is empty after validation, the function should return an error. If there are too many categories, the plot might not be informative, so I'll include a note in the insights.
+
+Finally, I'll convert the plot to a base64 string and return it along with the insights. Proper error handling is in place to catch any exceptions and return detailed error information.
+
+I think I've covered all the requirements. Now, I'll structure the code accordingly, ensuring each step is implemented with proper checks and balances.
+</think>
+
+Here's a complete, robust implementation of the violin plot visualization function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Most_Used_Platform', 'Addicted_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        df = data.copy()
+        
+        # Validate 'Most_Used_Platform' column
+        if not isinstance(df['Most_Used_Platform'], pd.core.series.Series):
+            return None, "Invalid data type for 'Most_Used_Platform'", False
+            
+        # Ensure 'Most_Used_Platform' is categorical
+        if not pd.api.types.is_categorical_dtype(df['Most_Used_Platform']):
+            df['Most_Used_Platform'] = pd.Categorical(df['Most_Used_Platform'])
+            
+        # Validate 'Addicted_Score' column
+        if not pd.api.types.is_integer_dtype(df['Addicted_Score']):
+            try:
+                df['Addicted_Score'] = df['Addicted_Score'].astype(int)
+            except (ValueError, TypeError):
+                return None, "Could not convert 'Addicted_Score' to integer", False
+                
+        # Remove any rows with invalid values
+        valid_data = df.dropna(subset=['Most_Used_Platform', 'Addicted_Score'])
+        if len(valid_data) == 0:
+            return None, "No valid data available for visualization", False
+            
+        # Create the visualization
+        plt.figure(figsize=(12, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create violin plot
+        vp = sns.violinplot(
+            x='Most_Used_Platform',
+            y='Addicted_Score',
+            data=valid_data,
+            inner='quartile',
+            scale='width',
+            order=None,
+            bw='silverman',
+            cut=0,
+            scale_hue=False,
+            palette='husl',
+            hue=None,
+            jitter=True,
+            marker='o',
+            saturation=0.75,
+            split=False,
+            orient=None,
+            linewidth=None,
+            linecolor=None,
+            edgecolor=None,
+            kurtosis=False,
+            kernel=None,
+            weights=None,
+            gridsize=100,
+            window=None,
+            poly_kwargs=None,
+            name=None
+        )
+        
+        # Customize the plot
+        plt.title('Distribution of Addiction Scores by Most Used Platform', fontsize=14, pad=20)
+        plt.xlabel('Most Used Social Media Platform', fontsize=12)
+        plt.ylabel('Addiction Score', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Generate meaningful insights
+        insights = []
+        for platform, group in valid_data.groupby('Most_Used_Platform'):
+            scores = group['Addicted_Score']
+            median = scores.median()
+            q1 = scores.quantile(0.25)
+            q3 = scores.quantile(0.75)
+            iqr = q3 - q1
+            
+            insights.append(f"Platform: {platform}")
+            insights.append(f"Median Score: {median:.1f}")
+            insights.append(f"Interquartile Range (IQR): {iqr:.1f}")
+            insights.append(f"Data Range: [{scores.min():.1f}, {scores.max():.1f}]")
+            insights.append(f"Number of Users: {len(scores)}")
+            insights.append("-" * 20)
+            
+            # Identify potential outliers
+            lower_bound = q1 - 1.5 * iqr
+            upper_bound = q3 + 1.5 * iqr
+            outliers = scores[(scores < lower_bound) | (scores > upper_bound)]
+            if not outliers.empty:
+                insights.append(f"Potential outliers found for {platform}: {len(outliers)}")
+                insights.append("-" * 20)
+                
+        insights = "\n".join(insights)
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation and type checking
+2. Robust error handling
+3. Modern styling with appropriate figure size
+4. Clear, publication-ready visualization
+5. Meaningful statistical insights
+6. Proper handling of categorical variables
+7. Outlier detection and reporting
+8. Base64 encoding of the visualization
+9. Support for large datasets
+10. Graceful handling of edge cases
+
+The function returns:
+- A base64-encoded image string of the visualization
+- A formatted string containing statistical insights
+- A boolean indicating success/failure
+
+The insights include:
+- Median values
+- Interquartile ranges
+- Data ranges
+- Number of users per platform
+- Outlier detection and reporting
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Most_Used_Platform', 'Addicted_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        df = data.copy()
+        
+        # Validate 'Most_Used_Platform' column
+        if not isinstance(df['Most_Used_Platform'], pd.core.series.Series):
+            return None, "Invalid data type for 'Most_Used_Platform'", False
+            
+        # Ensure 'Most_Used_Platform' is categorical
+        if not pd.api.types.is_categorical_dtype(df['Most_Used_Platform']):
+            df['Most_Used_Platform'] = pd.Categorical(df['Most_Used_Platform'])
+            
+        # Validate 'Addicted_Score' column
+        if not pd.api.types.is_integer_dtype(df['Addicted_Score']):
+            try:
+                df['Addicted_Score'] = df['Addicted_Score'].astype(int)
+            except (ValueError, TypeError):
+                return None, "Could not convert 'Addicted_Score' to integer", False
+                
+        # Remove any rows with invalid values
+        valid_data = df.dropna(subset=['Most_Used_Platform', 'Addicted_Score'])
+        if len(valid_data) == 0:
+            return None, "No valid data available for visualization", False
+            
+        # Create the visualization
+        plt.figure(figsize=(12, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Create violin plot
+        vp = sns.violinplot(
+            x='Most_Used_Platform',
+            y='Addicted_Score',
+            data=valid_data,
+            inner='quartile',
+            scale='width',
+            order=None,
+            bw='silverman',
+            cut=0,
+            scale_hue=False,
+            palette='husl',
+            hue=None,
+            jitter=True,
+            marker='o',
+            saturation=0.75,
+            split=False,
+            orient=None,
+            linewidth=None,
+            linecolor=None,
+            edgecolor=None,
+            kurtosis=False,
+            kernel=None,
+            weights=None,
+            gridsize=100,
+            window=None,
+            poly_kwargs=None,
+            name=None
+        )
+        
+        # Customize the plot
+        plt.title('Distribution of Addiction Scores by Most Used Platform', fontsize=14, pad=20)
+        plt.xlabel('Most Used Social Media Platform', fontsize=12)
+        plt.ylabel('Addiction Score', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        # Generate meaningful insights
+        insights = []
+        for platform, group in valid_data.groupby('Most_Used_Platform'):
+            scores = group['Addicted_Score']
+            median = scores.median()
+            q1 = scores.quantile(0.25)
+            q3 = scores.quantile(0.75)
+            iqr = q3 - q1
+            
+            insights.append(f"Platform: {platform}")
+            insights.append(f"Median Score: {median:.1f}")
+            insights.append(f"Interquartile Range (IQR): {iqr:.1f}")
+            insights.append(f"Data Range: [{scores.min():.1f}, {scores.max():.1f}]")
+            insights.append(f"Number of Users: {len(scores)}")
+            insights.append("-" * 20)
+            
+            # Identify potential outliers
+            lower_bound = q1 - 1.5 * iqr
+            upper_bound = q3 + 1.5 * iqr
+            outliers = scores[(scores < lower_bound) | (scores > upper_bound)]
+            if not outliers.empty:
+                insights.append(f"Potential outliers found for {platform}: {len(outliers)}")
+                insights.append("-" * 20)
+                
+        insights = "\n".join(insights)
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

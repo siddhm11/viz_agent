@@ -1,0 +1,358 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: violin plot
+Variables: ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+Timestamp: 2025-05-27T11:20:13.951188
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a violin plot visualization.
+
+    Dataset Context:
+    - Shape: (705, 13)
+    - Total columns: 13
+
+    Variables to visualize: ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+    Variable details:
+      - Academic_Level: categorical_nominal (object) - 0 missing, 3 unique
+  - Avg_Daily_Usage_Hours: numerical_continuous (float64) - 0 missing, 67 unique
+  - Mental_Health_Score: numerical_discrete (int64) - 0 missing, 6 unique
+
+    Sample values:
+      - Academic_Level: ['Graduate', 'Graduate', 'Graduate', 'Undergraduate', 'Undergraduate']
+  - Avg_Daily_Usage_Hours: [4.0, 5.3, 5.1, 6.7, 2.3]
+  - Mental_Health_Score: [7, 6, 7, 5, 5]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for violin plot:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a violin plot visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+    Data types: ['object', 'float64', 'int64']
+    Column types: ['categorical_nominal', 'numerical_continuous', 'numerical_discrete']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to generate a robust Python function for creating a violin plot visualization. The function is called generate_plot and takes data as input. The data is a DataFrame with specific columns: 'Academic_Level', 'Avg_Daily_Usage_Hours', and 'Mental_Health_Score'. 
+
+First, I should start by understanding the requirements. The function must return a base64 image string, some insights text, and a success boolean. It needs to handle all edge cases, use only standard libraries, avoid deprecated methods, and ensure proper data validation.
+
+Looking at the provided code skeleton, I see that it imports necessary libraries and sets up a try-except block. The initial steps check for missing columns, which is good. But I need to add more comprehensive data validation.
+
+So, the first step after checking for missing columns is to validate the data types of each column. 'Academic_Level' should be an object type, 'Avg_Daily_Usage_Hours' should be float, and 'Mental_Health_Score' should be integer. I'll use data.dtypes to check these and raise an error if any don't match.
+
+Next, I need to ensure there are no missing values. The problem statement says there are 0 missing, but it's good to check anyway. Using data.isnull().sum() can help here. If any column has missing values, I should handle it, maybe by raising an error or imputing, but the problem says to handle edge cases gracefully, so perhaps just checking and raising an error is sufficient.
+
+Then, for the categorical variable 'Academic_Level', I should check that it's nominal and has exactly 3 unique categories. Using data['Academic_Level'].nunique() should give me that. If not, it's an error.
+
+For the numerical variables, I need to make sure they are within valid ranges. 'Avg_Daily_Usage_Hours' should be between 0 and 24, and 'Mental_Health_Score' should be between 1 and 10. I'll use boolean masks to check these and raise errors if any values are out of range.
+
+Now, onto the plotting. The violin plot should show the distribution of 'Avg_Daily_Usage_Hours' across different 'Academic_Level' categories, with the hue determined by 'Mental_Health_Score'. Using seaborn's violinplot with a palette like 'viridis' makes sense for the mental health scores.
+
+I should set up the plot with appropriate styling: a modern seaborn style, a figure size that's publication-ready, and clear titles and labels. Adding a legend and ensuring the plot is tight will make it look professional.
+
+After creating the plot, I need to generate meaningful insights. This could involve calculating summary statistics for each group, checking for outliers, and noting the distribution shape. For example, if one academic level has significantly higher usage, that's a point to mention.
+
+Finally, I have to convert the plot to a base64 string. The code provided uses BytesIO and matplotlib's savefig, which is correct. I'll make sure to set the dpi to 300 for high resolution and use bbox_inches='tight' to prevent cutting off any part of the plot.
+
+I also need to handle exceptions properly. If any step fails, the function should catch the exception, format the error details, and return them along with False for success.
+
+Putting it all together, I'll structure the function step by step, adding each validation and then the plotting code. I'll make sure to include comments for clarity and handle each possible edge case, like empty data or incorrect types.
+
+Testing each part as I go would help catch any issues. For example, ensuring that the data type checks correctly identify wrong types and that the plotting doesn't fail if the data is valid. Also, checking that the insights are generated based on the data and that the base64 string is correctly formed.
+
+Overall, the function needs to be robust, handling all possible issues gracefully while producing a clear and insightful visualization with meaningful text.
+</think>
+
+To address the problem, I will create a comprehensive Python function that generates a violin plot visualization with the specified requirements. The function will include data validation, handle edge cases, and produce a publication-ready plot along with meaningful insights.
+
+### Approach
+1. **Data Validation**: Ensure all required columns exist and are of the correct data types. Check for missing values and validate the ranges of numerical variables.
+2. **Data Preparation**: Convert and validate data types as necessary to ensure compatibility with plotting functions.
+3. **Visualization**: Use seaborn's violin plot to visualize the distribution of 'Avg_Daily_Usage_Hours' across 'Academic_Level' with hue determined by 'Mental_Health_Score'.
+4. **Insights Generation**: Compute summary statistics and analyze the distribution to provide meaningful insights.
+5. **Error Handling**: Gracefully handle exceptions and provide detailed error information.
+
+### Solution Code
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Check data types
+        if not (data['Academic_Level'].dtype == 'object'):
+            raise TypeError("Academic_Level must be of type object")
+        if not (data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            raise TypeError("Avg_Daily_Usage_Hours must be of type float64")
+        if not (data['Mental_Health_Score'].dtype == 'int64'):
+            raise TypeError("Mental_Health_Score must be of type int64")
+        
+        # Check for missing values
+        missing_values = data[required_cols].isnull().sum().sum()
+        if missing_values > 0:
+            raise ValueError("Dataset contains missing values")
+        
+        # Validate categorical variable
+        academic_levels = data['Academic_Level'].unique()
+        if len(academic_levels) != 3:
+            raise ValueError(f"Expected 3 unique Academic Levels, found {len(academic_levels)}")
+        
+        # Validate numerical ranges
+        if (data['Avg_Daily_Usage_Hours'] < 0).any() or (data['Avg_Daily_Usage_Hours'] > 24).any():
+            raise ValueError("Avg_Daily_Usage_Hours contains invalid values")
+        if (data['Mental_Health_Score'] < 1).any() or (data['Mental_Health_Score'] > 10).any():
+            raise ValueError("Mental_Health_Score contains invalid values")
+        
+        # Data preparation
+        df = data.copy()
+        df['Academic_Level'] = pd.Categorical(df['Academic_Level']).codes
+        df['Mental_Health_Score'] = df['Mental_Health_Score'].astype(float)
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {"xtick.bottom": True, "ytick.left": True})
+        
+        ax = sns.violinplot(x='Academic_Level', y='Avg_Daily_Usage_Hours', 
+                            hue='Mental_Health_Score', data=df, palette='viridis',
+                            inner='quartile', scale='width', order=None, 
+                            hue_order=None, jitter=True, split=True, 
+                            orient=None, saturation=0.75, violin_colors=None)
+        
+        plt.title('Distribution of Average Daily Usage Hours by Academic Level and Mental Health Score')
+        plt.xlabel('Academic Level')
+        plt.ylabel('Average Daily Usage Hours')
+        plt.legend(title='Mental Health Score', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = []
+        for level in academic_levels:
+            level_df = df[df['Academic_Level'] == level]
+            mean_usage = level_df['Avg_Daily_Usage_Hours'].mean()
+            median_usage = level_df['Avg_Daily_Usage_Hours'].median()
+            std_usage = level_df['Avg_Daily_Usage_Hours'].std()
+            insights.append(f"Academic Level {level} has mean usage of {mean_usage:.2f} hours, "
+                           f"median of {median_usage:.2f}, and standard deviation of {std_usage:.2f}")
+        
+        mental_health_scores = df['Mental_Health_Score'].unique()
+        for score in mental_health_scores:
+            score_df = df[df['Mental_Health_Score'] == score]
+            mean_usage = score_df['Avg_Daily_Usage_Hours'].mean()
+            insights.append(f"Mental Health Score {int(score)} has mean usage of {mean_usage:.2f} hours")
+        
+        insights = "\n".join(insights)
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+### Explanation
+1. **Data Validation**: The function first checks for the presence of required columns and their data types. It ensures no missing values and validates the ranges of numerical variables.
+2. **Data Preparation**: The data is prepared for plotting by converting categorical variables and ensuring numerical variables are in the correct format.
+3. **Visualization**: Using seaborn, a violin plot is created to show the distribution of 'Avg_Daily_Usage_Hours' across 'Academic_Level' with different hues for 'Mental_Health_Score'.
+4. **Insights Generation**: The function computes summary statistics for each academic level and mental health score, providing detailed insights into the data distribution.
+5. **Error Handling**: The function catches exceptions and returns detailed error information, ensuring robustness and graceful handling of edge cases.
+
+This approach ensures that the function is comprehensive, handles all specified requirements, and produces a clear and insightful visualization.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['Academic_Level', 'Avg_Daily_Usage_Hours', 'Mental_Health_Score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Check data types
+        if not (data['Academic_Level'].dtype == 'object'):
+            raise TypeError("Academic_Level must be of type object")
+        if not (data['Avg_Daily_Usage_Hours'].dtype == 'float64'):
+            raise TypeError("Avg_Daily_Usage_Hours must be of type float64")
+        if not (data['Mental_Health_Score'].dtype == 'int64'):
+            raise TypeError("Mental_Health_Score must be of type int64")
+        
+        # Check for missing values
+        missing_values = data[required_cols].isnull().sum().sum()
+        if missing_values > 0:
+            raise ValueError("Dataset contains missing values")
+        
+        # Validate categorical variable
+        academic_levels = data['Academic_Level'].unique()
+        if len(academic_levels) != 3:
+            raise ValueError(f"Expected 3 unique Academic Levels, found {len(academic_levels)}")
+        
+        # Validate numerical ranges
+        if (data['Avg_Daily_Usage_Hours'] < 0).any() or (data['Avg_Daily_Usage_Hours'] > 24).any():
+            raise ValueError("Avg_Daily_Usage_Hours contains invalid values")
+        if (data['Mental_Health_Score'] < 1).any() or (data['Mental_Health_Score'] > 10).any():
+            raise ValueError("Mental_Health_Score contains invalid values")
+        
+        # Data preparation
+        df = data.copy()
+        df['Academic_Level'] = pd.Categorical(df['Academic_Level']).codes
+        df['Mental_Health_Score'] = df['Mental_Health_Score'].astype(float)
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {"xtick.bottom": True, "ytick.left": True})
+        
+        ax = sns.violinplot(x='Academic_Level', y='Avg_Daily_Usage_Hours', 
+                            hue='Mental_Health_Score', data=df, palette='viridis',
+                            inner='quartile', scale='width', order=None, 
+                            hue_order=None, jitter=True, split=True, 
+                            orient=None, saturation=0.75, violin_colors=None)
+        
+        plt.title('Distribution of Average Daily Usage Hours by Academic Level and Mental Health Score')
+        plt.xlabel('Academic Level')
+        plt.ylabel('Average Daily Usage Hours')
+        plt.legend(title='Mental Health Score', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        
+        # Generate insights
+        insights = []
+        for level in academic_levels:
+            level_df = df[df['Academic_Level'] == level]
+            mean_usage = level_df['Avg_Daily_Usage_Hours'].mean()
+            median_usage = level_df['Avg_Daily_Usage_Hours'].median()
+            std_usage = level_df['Avg_Daily_Usage_Hours'].std()
+            insights.append(f"Academic Level {level} has mean usage of {mean_usage:.2f} hours, "
+                           f"median of {median_usage:.2f}, and standard deviation of {std_usage:.2f}")
+        
+        mental_health_scores = df['Mental_Health_Score'].unique()
+        for score in mental_health_scores:
+            score_df = df[df['Mental_Health_Score'] == score]
+            mean_usage = score_df['Avg_Daily_Usage_Hours'].mean()
+            insights.append(f"Mental Health Score {int(score)} has mean usage of {mean_usage:.2f} hours")
+        
+        insights = "\n".join(insights)
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+
