@@ -1,4 +1,5 @@
-streamlit>=1.28.0
+# Create a requirements.txt file for dependencies
+requirements_content = '''streamlit>=1.28.0
 pandas>=1.5.0
 numpy>=1.21.0
 matplotlib>=3.5.0
@@ -12,3 +13,9 @@ langchain-core>=0.1.0
 python-dotenv>=0.19.0
 streamlit-shadcn-ui>=0.1.0
 streamlit-option-menu>=0.3.0
+'''
+
+with open('requirements.txt', 'w') as f:
+    f.write(requirements_content)
+
+print("✅ Requirements file created: requirements.txt")
