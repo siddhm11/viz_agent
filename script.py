@@ -14,9 +14,9 @@ from datetime import datetime
 
 # Import the DataAnalystAgent from the provided code
 try:
-    from paste import DataAnalystAgent, DataAnalysisState
+    from newviz3 import DataAnalystAgent, DataAnalysisState
 except ImportError:
-    st.error("Please ensure the DataAnalystAgent code is available as 'paste.py'")
+    st.error("Please ensure the DataAnalystAgent code is available as 'newviz3.py'")
     st.stop()
 
 # Configure page settings
@@ -250,11 +250,14 @@ def analysis_configuration():
     st.markdown("### ⚙️ Analysis Configuration")
     
     # API Key input
+    # In analysis_configuration() function
     api_key = st.text_input(
-        "Groq API Key",
-        type="password",
-        value=st.session_state.groq_api_key,
-        help="Enter your Groq API key for AI-powered analysis"
+    "🔑 Groq API Key",
+    type="password",
+    value=os.getenv('GROQ_API_KEY', '')  # Get from environment first
+    )
+    value=st.session_state.groq_api_key,
+    help="Enter your Groq API key for AI-powered analysis"
     )
     
     if api_key:

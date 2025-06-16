@@ -1,0 +1,368 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: scatter plot
+Variables: ['housing_median_age', 'total_rooms']
+Timestamp: 2025-06-15T19:27:35.084472
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a scatter plot visualization.
+
+    Dataset Context:
+    - Shape: (20640, 10)
+    - Total columns: 10
+
+    Variables to visualize: ['housing_median_age', 'total_rooms']
+    Variable details:
+      - housing_median_age: numerical_continuous (float64) - 0 missing, 52 unique
+  - total_rooms: numerical_discrete (float64) - 0 missing, 5926 unique
+
+    Sample values:
+      - housing_median_age: [34.0, 20.0, 43.0, 20.0, 19.0]
+  - total_rooms: [1632.0, 1089.0, 3241.0, 2431.0, 4913.0]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for scatter plot:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a scatter plot visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['housing_median_age', 'total_rooms']
+    Data types: ['float64', 'float64']
+    Column types: ['numerical_continuous', 'numerical_discrete']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['housing_median_age', 'total_rooms']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for a scatter plot visualization. Let me start by understanding the problem and the requirements.
+
+First, the dataset has 20640 rows and 10 columns. The variables to visualize are 'housing_median_age' and 'total_rooms'. Both are numerical, with 'housing_median_age' being continuous and 'total_rooms' discrete. The sample values provided show that they are float64 types with no missing values.
+
+The function signature is given as def generate_plot(data):, and it needs to return a tuple with a base64 image string, some insights text, and a success boolean. The function must handle all edge cases, use only standard libraries, avoid deprecated methods, and include proper data validation.
+
+Looking at the provided code skeleton, I see that it imports necessary libraries and sets up a try-except block. The initial steps check for missing columns, which is good. Now, I need to fill in the data preparation and plotting sections.
+
+Data Preparation:
+1. Check if the required columns exist. If not, return an error.
+2. Ensure that both variables are of the correct type. Since they are float64, I should check if they are numeric. If not, attempt to convert them, but if that fails, handle the error.
+3. Handle edge cases like empty data. If the dataframe is empty, return an error.
+
+Plotting:
+1. Use seaborn's scatterplot for better styling. Set the palette to 'husl' for a modern look.
+2. Apply a regression line using numpy's polyfit to show the trend. This helps in generating insights about the relationship.
+3. Set appropriate labels for the axes and a title. Use a larger figure size for clarity.
+4. Style the plot with a white background and adjust the layout to prevent overlapping.
+
+Insights Generation:
+1. Calculate the correlation coefficient (Pearson's r) to determine the strength and direction of the relationship.
+2. Check for outliers by comparing each point's distance from the regression line. If more than 5% are outliers, note that.
+3. Based on the correlation, provide a meaningful interpretation, such as whether the relationship is strong, moderate, or weak.
+
+Error Handling:
+1. Use try-except to catch any exceptions during data processing or plotting. Log the error details and return them in the insights text with a success flag as False.
+
+Additional Considerations:
+- Ensure that all data passed to loops is iterable. Since the variables are numerical, this shouldn't be an issue, but it's something to keep in mind.
+- Use modern matplotlib and seaborn parameters, avoiding deprecated ones. For example, use 'errorbar=None' instead of 'ci=None' in seaborn functions.
+
+Putting it all together, I'll structure the function to first validate the data, then prepare it, create the plot with regression, calculate insights, and handle any exceptions gracefully. The styling should be professional, with a clear figure size and appropriate elements for publication.
+</think>
+
+Here's a complete, robust implementation of the scatter plot visualization function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['housing_median_age', 'total_rooms']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        housing_median_age = data['housing_median_age']
+        total_rooms = data['total_rooms']
+        
+        # Ensure numeric types
+        if not (isinstance(housing_median_age.dtype, np.dtype) and np.issubdtype(housing_median_age.dtype, np.number)):
+            return None, "housing_median_age must be numeric", False
+        if not (isinstance(total_rooms.dtype, np.dtype) and np.issubdtype(total_rooms.dtype, np.number)):
+            return None, "total_rooms must be numeric", False
+        
+        # Handle edge cases
+        if housing_median_age.empty or total_rooms.empty:
+            return None, "Empty data in one or more columns", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Add regression line
+        z = np.polyfit(housing_median_age, total_rooms, 1)
+        p = np.poly1d(z)
+        
+        plt.scatter(housing_median_age, total_rooms, 
+                   alpha=0.7, 
+                   s=10,
+                   label='Data points')
+        plt.plot(housing_median_age, p(housing_median_age), 
+                "r--", 
+                label='Regression line')
+        
+        plt.xlabel('Housing Median Age', fontsize=12)
+        plt.ylabel('Total Rooms', fontsize=12)
+        plt.title('Scatter Plot of Housing Median Age vs Total Rooms', fontsize=14)
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        
+        # Generate statistical insights
+        correlation = np.corrcoef(housing_median_age, total_rooms)[0, 1]
+        insights = f"Correlation Coefficient: {correlation:.2f}\n"
+        
+        if abs(correlation) > 0.7:
+            insights += "Strong positive correlation between housing median age and total rooms."
+        elif abs(correlation) > 0.3:
+            insights += "Moderate positive correlation between housing median age and total rooms."
+        else:
+            insights += "Weak or no significant correlation between housing median age and total rooms."
+            
+        # Calculate potential outliers
+        residuals = total_rooms - p(housing_median_age)
+        outlier_threshold = np.mean(np.abs(residuals)) * 3
+        outliers = np.abs(residuals) > outlier_threshold
+        outlier_count = sum(outliers)
+        
+        if outlier_count > 0:
+            insights += f"\nDetected {outlier_count} potential outliers."
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation:
+   - Checks for required columns
+   - Verifies numeric data types
+   - Handles empty data
+
+2. Modern visualization:
+   - Uses seaborn for styling
+   - Adds regression line for trend analysis
+   - Includes proper labels and title
+   - Uses appropriate figure size and styling
+
+3. Meaningful insights:
+   - Calculates correlation coefficient
+   - Detects potential outliers
+   - Provides interpretation of correlation strength
+
+4. Robust error handling:
+   - Catches all exceptions
+   - Provides detailed error information
+   - Returns appropriate success/failure indicators
+
+5. Professional output:
+   - Returns base64 encoded image
+   - Provides statistical insights
+   - Maintains proper function signature
+
+The code is designed to handle all edge cases gracefully while providing meaningful visualizations and insights.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['housing_median_age', 'total_rooms']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data preparation with type checking
+        housing_median_age = data['housing_median_age']
+        total_rooms = data['total_rooms']
+        
+        # Ensure numeric types
+        if not (isinstance(housing_median_age.dtype, np.dtype) and np.issubdtype(housing_median_age.dtype, np.number)):
+            return None, "housing_median_age must be numeric", False
+        if not (isinstance(total_rooms.dtype, np.dtype) and np.issubdtype(total_rooms.dtype, np.number)):
+            return None, "total_rooms must be numeric", False
+        
+        # Handle edge cases
+        if housing_median_age.empty or total_rooms.empty:
+            return None, "Empty data in one or more columns", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid")
+        sns.set_palette("husl")
+        
+        # Add regression line
+        z = np.polyfit(housing_median_age, total_rooms, 1)
+        p = np.poly1d(z)
+        
+        plt.scatter(housing_median_age, total_rooms, 
+                   alpha=0.7, 
+                   s=10,
+                   label='Data points')
+        plt.plot(housing_median_age, p(housing_median_age), 
+                "r--", 
+                label='Regression line')
+        
+        plt.xlabel('Housing Median Age', fontsize=12)
+        plt.ylabel('Total Rooms', fontsize=12)
+        plt.title('Scatter Plot of Housing Median Age vs Total Rooms', fontsize=14)
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        
+        # Generate statistical insights
+        correlation = np.corrcoef(housing_median_age, total_rooms)[0, 1]
+        insights = f"Correlation Coefficient: {correlation:.2f}\n"
+        
+        if abs(correlation) > 0.7:
+            insights += "Strong positive correlation between housing median age and total rooms."
+        elif abs(correlation) > 0.3:
+            insights += "Moderate positive correlation between housing median age and total rooms."
+        else:
+            insights += "Weak or no significant correlation between housing median age and total rooms."
+            
+        # Calculate potential outliers
+        residuals = total_rooms - p(housing_median_age)
+        outlier_threshold = np.mean(np.abs(residuals)) * 3
+        outliers = np.abs(residuals) > outlier_threshold
+        outlier_count = sum(outliers)
+        
+        if outlier_count > 0:
+            insights += f"\nDetected {outlier_count} potential outliers."
+        
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                   facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

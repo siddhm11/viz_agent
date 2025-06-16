@@ -37,7 +37,7 @@ ai-data-dashboard/
 ├── streamlit_app.py          # Basic app
 ├── enhanced_app.py           # Advanced app (recommended)
 ├── config.py                 # Configuration
-├── paste.py                  # Your DataAnalystAgent code (you add this)
+├── newviz3.py                  # Your DataAnalystAgent code (you add this)
 ├── requirements.txt          # Dependencies
 ├── setup.py                 # Setup script
 ├── launch.py                # Launcher
@@ -87,7 +87,7 @@ ai-data-dashboard/
 
 1. **Setup**: Run `python setup.py`
 2. **Configure**: Add your Groq API key to `.env`
-3. **Add Code**: Save your DataAnalystAgent as `paste.py`
+3. **Add Code**: Save your DataAnalystAgent as `newviz3.py`
 4. **Launch**: Run `python launch.py` or `streamlit run enhanced_app.py`
 5. **Test**: Upload sample data and run analysis!
 
@@ -138,7 +138,7 @@ print("   📊 Data: 3 sample datasets for testing")
 print("   📚 Docs: README.md, QUICKSTART.md, PROJECT_SUMMARY.md")
 print()
 print("🚀 Ready to launch!")
-print("   1. Save your DataAnalystAgent code as 'paste.py'")
+print("   1. Save your DataAnalystAgent code as 'newviz3.py'")
 print("   2. Run: python setup.py")
 print("   3. Add your Groq API key to .env")
 print("   4. Launch: python launch.py")

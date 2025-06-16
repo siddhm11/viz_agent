@@ -1,0 +1,454 @@
+=== HEALING PROMPT ===
+Attempt: 2
+Error: Error: module 'pandas.api.types' has no attribute 'is_float64_dtype'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 28, in generate_plot
+AttributeError: module 'pandas.api.types' has no attribute 'is_float64_dtype'. Did you mean: 'is_float_dtype'?
+
+Timestamp: 2025-06-15T19:29:38.922174
+
+PROMPT:
+URGENT: Fix this broken Python visualization code.
+
+    ATTEMPT NUMBER: 2
+    ERROR ENCOUNTERED: Error: module 'pandas.api.types' has no attribute 'is_float64_dtype'
+Traceback: Traceback (most recent call last):
+  File "<string>", line 28, in generate_plot
+AttributeError: module 'pandas.api.types' has no attribute 'is_float64_dtype'. Did you mean: 'is_float_dtype'?
+
+
+    
+
+    PROBLEMATIC CODE:
+    ```python
+    def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['median_income', 'households']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+        
+        # Check for required columns
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data[required_cols[0]], pd.core.series.Series) and 
+                isinstance(data[required_cols[1]], pd.core.series.Series)):
+            return None, "Error: Invalid data structure for required columns", False
+        
+        # Ensure correct data types
+        if not (pd.api.types.is_float64_dtype(data['median_income']) and 
+                pd.api.types.is_float64_dtype(data['households'])):
+            return None, "Error: Invalid data types for required columns", False
+        
+        # Handle empty data
+        if data.shape[0] == 0:
+            return None, "Error: Empty dataset provided", False
+        
+        # Data preparation
+        df = data.copy()
+        df = df.dropna(subset=required_cols)  # Handle any unexpected missing values
+        df = df[required_cols]  # Select only required columns
+        
+        # Outlier detection and handling
+        Q1 = df['median_income'].quantile(0.25)
+        Q3 = df['median_income'].quantile(0.75)
+        IQR = Q3 - Q1
+        income_outliers = df[(df['median_income'] < (Q1 - 1.5 * IQR)) | 
+                            (df['median_income'] > (Q3 + 1.5 * IQR))]
+        
+        Q1_h = df['households'].quantile(0.25)
+        Q3_h = df['households'].quantile(0.75)
+        IQR_h = Q3_h - Q1_h
+        households_outliers = df[(df['households'] < (Q1_h - 1.5 * IQR_h)) | 
+                                 (df['households'] > (Q3_h + 1.5 * IQR_h))]
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {'axes.edgecolor': '0.15'})
+        sns.set_palette("husl")
+        
+        # Main scatter plot
+        scatter = sns.scatterplot(x='median_income', y='households', data=df, 
+                                 ci=None, color='skyblue')
+        
+        # Add regression line
+        sns.regplot(x='median_income', y='households', data=df, 
+                    ci=None, color='firebrick', 
+                    scatter=False, label='Regression Line')
+        
+        plt.title('Scatter Plot of Median Income vs Number of Households', fontsize=14, pad=20)
+        plt.xlabel('Median Income', fontsize=12)
+        plt.ylabel('Number of Households', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        
+        # Generate statistical insights
+        correlation = df['median_income'].corr(df['households'])
+        income_skewness = df['median_income'].skew()
+        households_skewness = df['households'].skew()
+        
+        insights = (
+            f"Scatter Plot Insights:\n"
+            f"1. Correlation Coefficient: {correlation:.4f}\n"
+            f"2. Median Income Skewness: {income_skewness:.4f}\n"
+            f"3. Number of Households Skewness: {households_skewness:.4f}\n"
+            f"4. Outliers detected in median income: {len(income_outliers)}\n"
+            f"5. Outliers detected in number of households: {len(households_outliers)}\n"
+            "6. The relationship appears {relationship} based on the correlation coefficient."
+            .format(relationship="positive" if correlation > 0 else "negative" if correlation < 0 else "neutral")
+        )
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+    ```
+
+    COMMON FIXES NEEDED:
+    1. Seaborn 'ci' parameter → use 'errorbar=None' instead
+    2. Missing imports → add required imports
+    3. Data type issues → add proper validation and conversion
+    4. Empty data → add data checks
+    5. Column access errors → validate column existence
+    6. Plotting parameter errors → use correct parameter names
+    7. Memory/resource issues → add proper cleanup
+
+    REQUIREMENTS:
+    - Fix the specific error mentioned above
+    - Maintain the same function signature: def generate_plot(data):
+    - Return: (base64_string, insights_text, success_boolean)
+    - Keep all existing functionality that works
+    - Add better error handling
+    - Ensure robust data validation
+
+    RETURN ONLY THE CORRECTED PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        # Fixed code here
+    ```
+
+=== LLM HEALING RESPONSE ===
+<think>
+Okay, I need to fix this broken Python visualization code. The error encountered is that pandas.api.types doesn't have 'is_float64_dtype'. The user mentioned that maybe 'is_float_dtype' was intended. Let me look at the code.
+
+Looking at the problematic code, I see that in the data validation section, there's a check using pd.api.types.is_float64_dtype for both 'median_income' and 'households' columns. So, the error is because that function doesn't exist. I remember that in pandas, the correct function is is_float_dtype, which checks for any float type, not specifically float64. So, I should replace is_float64_dtype with is_float_dtype.
+
+Wait, but maybe the code requires specifically float64. Hmm, but the error suggests that is_float64_dtype isn't available. So perhaps the correct approach is to use is_float_dtype, which checks for any floating type. Alternatively, maybe the code should use data.dtypes to check if it's np.float64. But using pandas' own functions is better.
+
+So, I'll change those lines. Instead of pd.api.types.is_float64_dtype, I'll use pd.api.types.is_float_dtype. That should fix the error.
+
+Next, I should check if there are other issues. The user provided a list of common fixes needed. Let me go through them.
+
+1. Seaborn 'ci' parameter: The code uses ci=None in scatterplot and regplot. I remember that in newer versions of Seaborn, 'ci' is for confidence intervals, and for scatterplots, it's better to use 'errorbar' perhaps. Wait, no, in the code, it's set to None, which should be fine. But maybe the parameter has been changed. Oh, the user says to use 'errorbar=None' instead. So I should replace ci=None with errorbar=None in both scatterplot and regplot calls.
+
+2. Missing imports: The code seems to have all necessary imports, but I should double-check. It imports matplotlib, seaborn, pandas, numpy, io, base64, warnings. I think that's all needed.
+
+3. Data type issues: The code does some validation, but after changing is_float64 to is_float, it should be okay. Also, maybe after that, it's good to ensure that the data is in float. Perhaps after the check, if the columns are not float, we could convert them, but the current code returns an error if they are not. So maybe adding a conversion step could help, but the problem is that the code expects the data to be correct. So perhaps it's better to leave it as is but fix the dtype check.
+
+4. Empty data: The code checks if data.shape[0] == 0, which is correct. So that's handled.
+
+5. Column access errors: The code checks for required columns, so that's okay.
+
+6. Plotting parameter errors: As mentioned, the 'ci' parameter in regplot and scatterplot should be replaced with 'errorbar=None'.
+
+7. Memory issues: The code uses buf.close() and plt.close(), which is good. But I should make sure that all figures are properly closed after saving.
+
+Now, let me go through the code step by step.
+
+First, the function starts with importing all necessary modules. Then, it does data validation.
+
+In the data validation, the code checks if data is a DataFrame. Then, it checks for required columns. Then, it checks if the required columns are Series, which is redundant because if they are in the DataFrame, they are Series. But that's okay.
+
+Next, the code checks the dtype using is_float64_dtype, which is causing the error. So I'll change those to is_float_dtype.
+
+Then, it handles empty data, which is correct.
+
+In data preparation, it copies the data, drops NAs in required columns, and selects only required columns.
+
+Outlier detection uses quantiles and IQR, which is correct.
+
+In the visualization part, the code uses scatterplot and regplot. Both have ci=None, which I need to change to errorbar=None.
+
+So, in the code, I'll modify those two lines.
+
+Also, in the except block, the code returns an error message. I should make sure that the error handling is robust.
+
+Another thing: in the data validation, after checking the dtype, if it's not float, the code returns an error. But what if the data is, say, integer type? Then, it would fail. So perhaps the code should attempt to convert the columns to float if possible. But according to the problem statement, the code should be fixed as per the error, so maybe that's beyond the current fix. But perhaps adding a conversion step would make it more robust.
+
+But the user's main issue is the error with is_float64_dtype, so I'll focus on that.
+
+So, to summarize the changes:
+
+1. Replace pd.api.types.is_float64_dtype with pd.api.types.is_float_dtype in the data validation.
+
+2. In the scatterplot and regplot, replace ci=None with errorbar=None.
+
+Let me make these changes in the code.
+
+Wait, looking at the code again, in the regplot, the code uses ci=None. So I'll change both instances.
+
+Now, let me write the corrected code.
+
+I'll start by copying the function and making the necessary changes.
+
+In the data validation part:
+
+if not (pd.api.types.is_float_dtype(data['median_income']) and
+        pd.api.types.is_float_dtype(data['households'])):
+
+Then, in the scatterplot:
+
+scatter = sns.scatterplot(x='median_income', y='households', data=df, 
+                           errorbar=None, color='skyblue')
+
+And in regplot:
+
+sns.regplot(x='median_income', y='households', data=df, 
+            errorbar=None, scatter=False, label='Regression Line')
+
+I think that's all.
+
+Wait, but in the original code, the regplot uses ci=None. So changing that to errorbar=None is correct.
+
+I should also check if the code has any other issues, but according to the user's problem, the main error is the is_float64_dtype. So fixing that and the ci parameter should solve the problem.
+
+Additionally, I should ensure that all other functionalities remain the same. So the rest of the code should be okay.
+
+I think that's all. Now, I'll write the corrected function.
+</think>
+
+To fix the code, we addressed the specific error by replacing `is_float64_dtype` with `is_float_dtype` and updated the Seaborn plotting parameters. Here's the corrected function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['median_income', 'households']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+        
+        # Check for required columns
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data[required_cols[0]], pd.core.series.Series) and 
+                isinstance(data[required_cols[1]], pd.core.series.Series)):
+            return None, "Error: Invalid data structure for required columns", False
+        
+        # Ensure correct data types
+        if not (pd.api.types.is_float_dtype(data['median_income']) and 
+                pd.api.types.is_float_dtype(data['households'])):
+            return None, "Error: Invalid data types for required columns", False
+        
+        # Handle empty data
+        if data.shape[0] == 0:
+            return None, "Error: Empty dataset provided", False
+        
+        # Data preparation
+        df = data.copy()
+        df = df.dropna(subset=required_cols)  # Handle any unexpected missing values
+        df = df[required_cols]  # Select only required columns
+        
+        # Outlier detection and handling
+        Q1 = df['median_income'].quantile(0.25)
+        Q3 = df['median_income'].quantile(0.75)
+        IQR = Q3 - Q1
+        income_outliers = df[(df['median_income'] < (Q1 - 1.5 * IQR)) | 
+                            (df['median_income'] > (Q3 + 1.5 * IQR))]
+        
+        Q1_h = df['households'].quantile(0.25)
+        Q3_h = df['households'].quantile(0.75)
+        IQR_h = Q3_h - Q1_h
+        households_outliers = df[(df['households'] < (Q1_h - 1.5 * IQR_h)) | 
+                                 (df['households'] > (Q3_h + 1.5 * IQR_h))]
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {'axes.edgecolor': '0.15'})
+        sns.set_palette("husl")
+        
+        # Main scatter plot
+        scatter = sns.scatterplot(x='median_income', y='households', data=df, 
+                                 errorbar=None, color='skyblue')
+        
+        # Add regression line
+        sns.regplot(x='median_income', y='households', data=df, 
+                    errorbar=None, scatter=False, label='Regression Line')
+        
+        plt.title('Scatter Plot of Median Income vs Number of Households', fontsize=14, pad=20)
+        plt.xlabel('Median Income', fontsize=12)
+        plt.ylabel('Number of Households', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        
+        # Generate statistical insights
+        correlation = df['median_income'].corr(df['households'])
+        income_skewness = df['median_income'].skew()
+        households_skewness = df['households'].skew()
+        
+        insights = (
+            f"Scatter Plot Insights:\n"
+            f"1. Correlation Coefficient: {correlation:.4f}\n"
+            f"2. Median Income Skewness: {income_skewness:.4f}\n"
+            f"3. Number of Households Skewness: {households_skewness:.4f}\n"
+            f"4. Outliers detected in median income: {len(income_outliers)}\n"
+            f"5. Outliers detected in number of households: {len(households_outliers)}\n"
+            f"6. The relationship appears {('positive' if correlation > 0 else 'negative' if correlation < 0 else 'neutral')}."
+        )
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+=== CORRECTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['median_income', 'households']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+        
+        # Check for required columns
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Validate data types
+        if not (isinstance(data[required_cols[0]], pd.core.series.Series) and 
+                isinstance(data[required_cols[1]], pd.core.series.Series)):
+            return None, "Error: Invalid data structure for required columns", False
+        
+        # Ensure correct data types
+        if not (pd.api.types.is_float_dtype(data['median_income']) and 
+                pd.api.types.is_float_dtype(data['households'])):
+            return None, "Error: Invalid data types for required columns", False
+        
+        # Handle empty data
+        if data.shape[0] == 0:
+            return None, "Error: Empty dataset provided", False
+        
+        # Data preparation
+        df = data.copy()
+        df = df.dropna(subset=required_cols)  # Handle any unexpected missing values
+        df = df[required_cols]  # Select only required columns
+        
+        # Outlier detection and handling
+        Q1 = df['median_income'].quantile(0.25)
+        Q3 = df['median_income'].quantile(0.75)
+        IQR = Q3 - Q1
+        income_outliers = df[(df['median_income'] < (Q1 - 1.5 * IQR)) | 
+                            (df['median_income'] > (Q3 + 1.5 * IQR))]
+        
+        Q1_h = df['households'].quantile(0.25)
+        Q3_h = df['households'].quantile(0.75)
+        IQR_h = Q3_h - Q1_h
+        households_outliers = df[(df['households'] < (Q1_h - 1.5 * IQR_h)) | 
+                                 (df['households'] > (Q3_h + 1.5 * IQR_h))]
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 6))
+        sns.set_style("whitegrid", {'axes.edgecolor': '0.15'})
+        sns.set_palette("husl")
+        
+        # Main scatter plot
+        scatter = sns.scatterplot(x='median_income', y='households', data=df, 
+                                 errorbar=None, color='skyblue')
+        
+        # Add regression line
+        sns.regplot(x='median_income', y='households', data=df, 
+                    errorbar=None, scatter=False, label='Regression Line')
+        
+        plt.title('Scatter Plot of Median Income vs Number of Households', fontsize=14, pad=20)
+        plt.xlabel('Median Income', fontsize=12)
+        plt.ylabel('Number of Households', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        
+        # Generate statistical insights
+        correlation = df['median_income'].corr(df['households'])
+        income_skewness = df['median_income'].skew()
+        households_skewness = df['households'].skew()
+        
+        insights = (
+            f"Scatter Plot Insights:\n"
+            f"1. Correlation Coefficient: {correlation:.4f}\n"
+            f"2. Median Income Skewness: {income_skewness:.4f}\n"
+            f"3. Number of Households Skewness: {households_skewness:.4f}\n"
+            f"4. Outliers detected in median income: {len(income_outliers)}\n"
+            f"5. Outliers detected in number of households: {len(households_outliers)}\n"
+            f"6. The relationship appears {('positive' if correlation > 0 else 'negative' if correlation < 0 else 'neutral')}."
+        )
+        
+        # Convert plot to base64 string
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

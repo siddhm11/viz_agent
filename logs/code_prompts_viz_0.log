@@ -1,0 +1,355 @@
+=== CODE GENERATION PROMPT ===
+Chart Type: scatter plot
+Variables: ['median_income', 'median_house_value']
+Timestamp: 2025-06-15T19:21:13.530617
+
+PROMPT:
+<thinking>
+    I need to generate robust, error-free Python code for a scatter plot visualization.
+
+    Dataset Context:
+    - Shape: (20640, 10)
+    - Total columns: 10
+
+    Variables to visualize: ['median_income', 'median_house_value']
+    Variable details:
+      - median_income: numerical_continuous (float64) - 0 missing, 12928 unique
+  - median_house_value: numerical_continuous (float64) - 0 missing, 3842 unique
+
+    Sample values:
+      - median_income: [4.1406, 3.5461, 15.0001, 2.0625, 4.0337]
+  - median_house_value: [174100.0, 162500.0, 67500.0, 224100.0, 244800.0]
+
+    System Prompt: 
+    - Avoid deprecated or unavailable methods like `eta_squared`.
+    - Do not use matplotlib `bxp()` arguments like `ci`, `errorbar`.
+    - Ensure data passed to loops is iterable (avoid iterating np.float64).
+
+
+    Critical Requirements:
+    1. Handle ALL edge cases (empty data, missing values, wrong types)
+    2. Use ONLY standard libraries (matplotlib, seaborn, pandas, numpy)
+    3. NO deprecated parameters (use 'errorbar=None' not 'ci=None')
+    4. NO external libraries like sklearn
+    5. Proper data type validation and conversion
+    6. Clear, publication-ready visualization
+    7. Meaningful statistical insights
+    8. Robust error handling
+    9. Modern styling and appropriate figure size
+
+
+    Chart-specific considerations for scatter plot:
+    - Validate that variables exist and have appropriate data types
+    - Handle categorical variables with many levels appropriately
+    - Ensure numerical variables are actually numeric
+    - Apply appropriate statistical transformations if needed
+    - Consider data distribution and outliers
+    </thinking>
+
+    Generate a complete, robust Python function for a scatter plot visualization.
+
+    STRICT REQUIREMENTS:
+    - Function signature: def generate_plot(data):
+    - Return: (base64_image_string, insights_text, success_boolean)
+    - Include comprehensive data validation
+    - Handle edge cases gracefully
+    - Use modern matplotlib/seaborn (avoid deprecated parameters)
+    - Generate meaningful insights based on what's visible in the plot
+    - Professional styling with appropriate figure size
+
+    Variables: ['median_income', 'median_house_value']
+    Data types: ['float64', 'float64']
+    Column types: ['numerical_continuous', 'numerical_continuous']
+
+    RETURN ONLY THE COMPLETE PYTHON FUNCTION:
+
+    ```python
+    def generate_plot(data):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+        import numpy as np
+        import io
+        import base64
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        try:
+            # Comprehensive data validation
+            required_cols = ['median_income', 'median_house_value']
+            missing_cols = [col for col in required_cols if col not in data.columns]
+            if missing_cols:
+                return None, f"Missing columns: {missing_cols}", False
+            
+            # Data preparation with type checking
+            # ... your complete implementation here ...
+            
+            # Create the visualization
+            # ... plotting code here ...
+            
+            # Generate insights
+            insights = "Detailed analysis of patterns observed in the visualization..."
+            
+            # Convert to base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+            buf.seek(0)
+            img_str = base64.b64encode(buf.read()).decode()
+            buf.close()
+            plt.close()
+            
+            return img_str, insights, True
+            
+        except Exception as e:
+            import traceback
+            error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+            return None, error_details, False
+    ```
+
+=== LLM RESPONSE ===
+<think>
+Okay, I need to help the user by generating a robust Python function for a scatter plot visualization. Let me start by understanding the requirements and the problem.
+
+First, the function must take a dataset and return a base64 image string, some insights text, and a success boolean. The dataset has two variables: 'median_income' and 'median_house_value', both numerical and continuous. The function needs to handle all edge cases, use only standard libraries, avoid deprecated methods, and ensure proper data validation.
+
+Looking at the provided code skeleton, I see that it includes necessary imports and a try-except block. The initial steps check for missing columns, which is good. Now, I need to fill in the data preparation and plotting sections.
+
+Data preparation: I should check that both variables are present and of the correct type. If not, the function should handle it gracefully. Also, I need to ensure the data is in the correct format for plotting. Maybe I should extract the relevant columns into a DataFrame and check for any missing values, even though the user said there are zero missing. It's better to be safe.
+
+For the scatter plot, using seaborn's scatterplot would be appropriate. I should set a reasonable figure size, maybe 10x8 inches. Applying a regression line could add value, so I'll include that with a 95% confidence interval. I'll also need to style the plot with a professional look—using a seaborn theme, maybe 'whitegrid', and adjust the fonts for clarity.
+
+Handling edge cases: What if the data is empty? The function should catch that and return an error. Also, if the variables aren't numerical, I should raise an error during data validation.
+
+Statistical insights: After plotting, I should calculate the Pearson correlation coefficient to understand the relationship between the two variables. This will provide a meaningful insight. I'll also check for the presence of outliers using IQR and mention them in the insights.
+
+Error handling: The try-except block is already in place, but I need to make sure all possible exceptions are caught and handled, providing detailed error messages.
+
+Putting it all together, I'll structure the function to first validate the data, then prepare it, create the plot with regression, calculate the correlation, generate insights, and finally convert the plot to a base64 string.
+
+I should also ensure that the code is clean, well-commented, and follows best practices for readability and maintainability. Testing each part step by step would help catch any issues, but since I can't test now, I'll have to rely on thorough code review.
+
+Finally, I'll make sure the function returns the correct tuple with the image string, insights, and success boolean. If any step fails, it should return appropriate error messages and False for success.
+</think>
+
+Here's a complete, robust implementation of the scatter plot visualization function:
+
+```python
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['median_income', 'median_house_value']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data type validation
+        for col in required_cols:
+            if not (isinstance(data[col].dtype, np.dtype) and 
+                    np.issubdtype(data[col].dtype, np.number)):
+                return None, f"Column {col} must be of numeric type", False
+                
+        # Data preparation
+        plot_data = data[required_cols].copy()
+        if plot_data.empty:
+            return None, "Error: Empty data provided", False
+        
+        # Check for invalid values
+        if plot_data['median_income'].hasnans or plot_data['median_house_value'].hasnans:
+            return None, "Error: Missing values found in data", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 8))
+        sns.set_theme(style="whitegrid", font_scale=1.2)
+        
+        # Add regression line
+        sns.regplot(x='median_income', y='median_house_value', 
+                    data=plot_data, ci=95, scatter_kws={'alpha': 0.6, 's': 80},
+                    line_kws={'color': 'red', 'linewidth': 2},
+                    label='Regression Line')
+        
+        plt.title('Scatter Plot of Median Income vs Median House Value', 
+                  fontsize=14, pad=20)
+        plt.xlabel('Median Income', fontsize=12)
+        plt.ylabel('Median House Value', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.legend(loc='upper right')
+        
+        # Calculate Pearson correlation coefficient
+        corr, _ = np.corrcoef(plot_data['median_income'], 
+                              plot_data['median_house_value'])[0, 1]
+        
+        # Generate insights
+        insights = f"Scatter plot shows the relationship between median income and median house value.\n"
+        insights += f"Pearson correlation coefficient: {corr:.2f}\n"
+        if abs(corr) > 0.7:
+            insights += "Strong positive correlation observed between the variables.\n"
+        elif abs(corr) > 0.5:
+            insights += "Moderate positive correlation observed between the variables.\n"
+        else:
+            insights += "Weak to moderate positive correlation observed between the variables.\n"
+            
+        # Check for outliers using IQR
+        q1 = plot_data['median_income'].quantile(0.25)
+        q3 = plot_data['median_income'].quantile(0.75)
+        iqr = q3 - q1
+        income_outliers = plot_data[(plot_data['median_income'] < q1 - 1.5*iqr) | 
+                                  (plot_data['median_income'] > q3 + 1.5*iqr)]
+        
+        if not income_outliers.empty:
+            insights += f"Found {len(income_outliers)} potential outliers in the data.\n"
+            
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+```
+
+This implementation includes:
+
+1. Comprehensive data validation:
+   - Checks for required columns
+   - Verifies numeric data types
+   - Handles empty data
+   - Checks for missing values
+
+2. Professional visualization:
+   - Seaborn styling with regression line
+   - Proper figure size and formatting
+   - Clear labels and title
+   - Grid lines and legend
+
+3. Statistical insights:
+   - Pearson correlation coefficient
+   - Outlier detection using IQR
+   - Interpretation of correlation strength
+
+4. Robust error handling:
+   - Catches all exceptions
+   - Provides detailed error messages
+   - Returns appropriate success/failure indicators
+
+5. Modern styling:
+   - Whitegrid theme
+   - Proper font sizes
+   - Transparent grid lines
+   - Clear visualization elements
+
+The function returns a base64-encoded PNG image of the plot, along with meaningful statistical insights and a success flag.
+
+=== EXTRACTED CODE ===
+def generate_plot(data):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    import numpy as np
+    import io
+    import base64
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    try:
+        # Comprehensive data validation
+        required_cols = ['median_income', 'median_house_value']
+        if not isinstance(data, pd.DataFrame):
+            return None, "Error: Input data must be a pandas DataFrame", False
+            
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            return None, f"Missing columns: {missing_cols}", False
+        
+        # Data type validation
+        for col in required_cols:
+            if not (isinstance(data[col].dtype, np.dtype) and 
+                    np.issubdtype(data[col].dtype, np.number)):
+                return None, f"Column {col} must be of numeric type", False
+                
+        # Data preparation
+        plot_data = data[required_cols].copy()
+        if plot_data.empty:
+            return None, "Error: Empty data provided", False
+        
+        # Check for invalid values
+        if plot_data['median_income'].hasnans or plot_data['median_house_value'].hasnans:
+            return None, "Error: Missing values found in data", False
+        
+        # Create the visualization
+        plt.figure(figsize=(10, 8))
+        sns.set_theme(style="whitegrid", font_scale=1.2)
+        
+        # Add regression line
+        sns.regplot(x='median_income', y='median_house_value', 
+                    data=plot_data, ci=95, scatter_kws={'alpha': 0.6, 's': 80},
+                    line_kws={'color': 'red', 'linewidth': 2},
+                    label='Regression Line')
+        
+        plt.title('Scatter Plot of Median Income vs Median House Value', 
+                  fontsize=14, pad=20)
+        plt.xlabel('Median Income', fontsize=12)
+        plt.ylabel('Median House Value', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.legend(loc='upper right')
+        
+        # Calculate Pearson correlation coefficient
+        corr, _ = np.corrcoef(plot_data['median_income'], 
+                              plot_data['median_house_value'])[0, 1]
+        
+        # Generate insights
+        insights = f"Scatter plot shows the relationship between median income and median house value.\n"
+        insights += f"Pearson correlation coefficient: {corr:.2f}\n"
+        if abs(corr) > 0.7:
+            insights += "Strong positive correlation observed between the variables.\n"
+        elif abs(corr) > 0.5:
+            insights += "Moderate positive correlation observed between the variables.\n"
+        else:
+            insights += "Weak to moderate positive correlation observed between the variables.\n"
+            
+        # Check for outliers using IQR
+        q1 = plot_data['median_income'].quantile(0.25)
+        q3 = plot_data['median_income'].quantile(0.75)
+        iqr = q3 - q1
+        income_outliers = plot_data[(plot_data['median_income'] < q1 - 1.5*iqr) | 
+                                  (plot_data['median_income'] > q3 + 1.5*iqr)]
+        
+        if not income_outliers.empty:
+            insights += f"Found {len(income_outliers)} potential outliers in the data.\n"
+            
+        # Convert to base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight', 
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        img_str = base64.b64encode(buf.read()).decode()
+        buf.close()
+        plt.close()
+        
+        return img_str, insights, True
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        return None, error_details, False
+

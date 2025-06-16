@@ -25,9 +25,9 @@ except ImportError:
 
 # Import the DataAnalystAgent from the provided code
 try:
-    from paste import DataAnalystAgent, DataAnalysisState
+    from newviz3 import DataAnalystAgent, DataAnalysisState
 except ImportError:
-    st.error("Please ensure the DataAnalystAgent code is available as 'paste.py'")
+    st.error("Please ensure the DataAnalystAgent code is available as 'newviz3.py'")
     st.stop()
 
 from config import get_config
