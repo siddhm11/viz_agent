@@ -46,7 +46,7 @@ class DataAnalystAgent:
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing DataAnalystAgent")
         self.llm = ChatGroq(
-            api_key="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",
+            api_key="API",
             model_name="deepseek-r1-distill-llama-70b",
             temperature=0.1
         )
